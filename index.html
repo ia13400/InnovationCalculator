@@ -210,7 +210,7 @@ footer{font-size:.8rem;color:var(--muted);padding-bottom:32px}
 </header>
 
 <div class="wrap"><main id="view"></main>
-<footer>Nachbau des Innovations-Rendite-Kalkulators nach Prof. Dr. Gerhard Hube (THWS Business School). SpaceX-Case: Prüfungsleistung „Trend2Business“, Gruppe 2. Eingaben werden nur in diesem Browser gespeichert; zum Teilen unter „Gewichtung &amp; Basisdaten“ exportieren.</footer>
+<footer>Methode und Originalwerkzeug: Prof. Dr. Gerhard Hube, THWS Business School – Hube, G. (2024): Innovationsrendite-Formel und Innovationsrendite-Kalkulator, Wissenschaftsmanagement. Quellen, Videos und Material unter „Methode“. SpaceX-Case: Prüfungsleistung „Trend2Business“, Gruppe 2. Eingaben werden nur in diesem Browser gespeichert; zum Teilen unter „Gewichtung &amp; Basisdaten“ exportieren.</footer>
 </div>
 <div class="toast" id="toast" hidden></div>
 
@@ -684,7 +684,32 @@ function vMethod(){
   <h3>Portfolio-Felder</h3>
   <div class="tablewrap"><table><thead><tr><th>Aufwand ↓ / Nutzen →</th><th>niedrig</th><th>mittel</th><th>hoch</th></tr></thead><tbody>
    ${[1,2,3].map(ca=>`<tr><td>${catName(ca)}</td>${[1,2,3].map(cn=>`<td>${esc(PF_LABELS[ca][cn][0])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
-  <p class="muted" style="font-size:.85rem">Quelle der Methode: Hube, G.: Innovationsformel und Innovationsrendite, Vorlesung Innovationsmanagement / New Business Development, THWS Business School; Inno-Rendite-Kalkulator V3.1.</p>
+  </section>
+  <section class="panel method" id="hube" style="display:grid;gap:16px">
+   <div><div class="eyebrow">Urheber der Methode</div><h2>Prof. Dr. Gerhard Hube</h2></div>
+   <p>Die Innovationsrendite-Formel, der Innovationsrendite-Kalkulator, die Innovationsformel I = N × U und der Innovationsprüfstand wurden von Prof. Dr. Gerhard Hube entwickelt, Professor für Strategisches Innovationsmanagement an der THWS Business School (Technische Hochschule Würzburg-Schweinfurt). Diese Website ist ein studentischer Nachbau seines Excel-Kalkulators für die Vorlesung Innovationsmanagement / New Business Development am Graduate Campus der Hochschule Aalen. Alle Rechte an Methode und Originalwerkzeugen liegen beim Urheber.</p>
+   <p><a href="https://business.thws.de/en/business-school/contact-persons/person/prof-dr-gerhard-hube/" target="_blank" rel="noopener">Profil von Prof. Dr. Gerhard Hube an der THWS Business School</a></p>
+   <h3>Veröffentlichungen</h3>
+   <ol class="src">
+    <li>Hube, G. (2024): Innovationsrendite-Formel und Innovationsrendite-Kalkulator. In: Wissenschaftsmanagement, 20.03.2024. <a href="https://www.wissenschaftsmanagement.de/news/innovationsrendite-formel-und-innovationsrendite-kalkulator" target="_blank" rel="noopener">wissenschaftsmanagement.de</a></li>
+    <li>Hube, G. (2024): Innovation return formula and Innovation-return-calculator. Wissenschaftsmanagement, Open Access, 23.03.2024. <a href="https://www.wissenschaftsmanagement.de/open-access/innovation-return-formula-and-innovation-return-calculator" target="_blank" rel="noopener">Artikel</a> · <a href="https://www.wissenschaftsmanagement.de/dateien/downloads-open-access/wima_2023_prof_hube_englisch_open_access_0.pdf" target="_blank" rel="noopener">PDF</a></li>
+    <li>Hube, G. (2024): Innovation Return Formula. In: WIBF@Doğuş 2024 Conference Proceedings. DOI <a href="https://doi.org/10.53174/UAS/WS/2024" target="_blank" rel="noopener">10.53174/UAS/WS/2024</a> · <a href="https://wibf.thws.de/fileadmin/wibf/Media/WIBF_2024/WIBF%40Dogus_2024_Conference_Proceedings_Book.pdf" target="_blank" rel="noopener">Tagungsband (PDF)</a></li>
+    <li>Hube, G. (2022): Innovationsformel und Innovationsprüfstand. Entwicklung eines Instrumentes zur Bestimmung des Innovationsstatus in der Gegenwart. In: Wissenschaftsmanagement, 15.10.2022. <a href="https://www.wissenschaftsmanagement.de/news/innovationsformel-und-innovationspruefstand" target="_blank" rel="noopener">wissenschaftsmanagement.de</a></li>
+    <li>Hube, G. (2022): Innovation Formula and Innovation Test Bed: Development of an instrument to determine the Innovation Status in the Present. Open Access, THWS Fakultät Wirtschaftswissenschaften, DOI 10.53174/UAS/WS/2022. <a href="https://www.wissenschaftsmanagement.de/dateien/downloads-open-access/wima_2022_hube_open_access_0.pdf" target="_blank" rel="noopener">PDF</a></li>
+    <li>Hube, G. (2023): Innovation Formula and Innovation Test Bed. In: WIBF 6th International Business Conference, Proceedings.</li>
+   </ol>
+   <h3>Video</h3>
+   <ol class="src">
+    <li>Hube, G. (Kanal „Inno-Prof“, 24.02.2024): How to calculate the Innovation-Return? Erklärvideo zur Innovationsrendite-Formel. <a href="https://www.youtube.com/watch?v=vAL8CZqFMqw" target="_blank" rel="noopener">YouTube</a></li>
+   </ol>
+   <h3>Lehrmaterial (Kurs-Canvas, nicht öffentlich)</h3>
+   <ol class="src">
+    <li>Hube, G. (2026): Innovationsmanagement / New Business Development, Vorlesungsfolien Kapitel 1–5 und „Innovationsformel nach Hube / Innovationsprüfstand“, Graduate Campus Hochschule Aalen.</li>
+    <li>Hube, G.: Innovations-Rendite-Kalkulator V3.1 (Excel, mit Beispielen), Vorlage für diese Website.</li>
+    <li>Hube, G.: Innovations-Prüfstand V6 (Excel, mit 5 Beispielen).</li>
+   </ol>
+   <h3>So zitieren</h3>
+   <p class="mono" style="font-size:.85rem;background:var(--surface-2);padding:12px;border-radius:var(--r)">Hube, G. (2024): Innovationsrendite-Formel und Innovationsrendite-Kalkulator. In: Wissenschaftsmanagement, 20.03.2024.</p>
   </section>`;
 }
 
