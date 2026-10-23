@@ -58,6 +58,14 @@ nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;pad
 nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
 nav.tabs button:hover{color:var(--ink)}
 main{padding-block:24px 64px;display:grid;gap:24px}
+.subnav{display:flex;gap:6px;flex-wrap:wrap;align-items:stretch}
+.subnav button{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:8px 14px;cursor:pointer;text-align:left;display:grid;gap:1px;min-width:0}
+.subnav button .n{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.subnav button .t{font-weight:600;font-size:.9rem}
+.subnav button[aria-current="step"]{border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent)}
+.subnav button[aria-current="step"] .n{color:var(--accent)}
+.intro{display:grid;gap:6px;max-width:80ch}
+.intro p{color:var(--muted)}
 
 /* generic */
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
@@ -184,7 +192,7 @@ footer{font-size:.8rem;color:var(--muted);padding-bottom:32px}
   <div class="wrap">
     <div class="hrow">
       <div>
-        <div class="eyebrow" id="workbookName">Trend2Business · SpaceX · Gruppe 2</div>
+        <div class="eyebrow" id="workbookName">Innovationsmanagement · Prof. Hube</div>
         <h1>Innovationsrendite-Rechner</h1>
       </div>
       <div class="formula">
@@ -194,18 +202,15 @@ footer{font-size:.8rem;color:var(--muted);padding-bottom:32px}
       </div>
     </div>
     <nav class="tabs" role="tablist" id="tabs">
-      <button role="tab" data-tab="overview">Übersicht</button>
-      <button role="tab" data-tab="assess">Bewerten</button>
-      <button role="tab" data-tab="fy">5-Jahres-Kalkulation</button>
-      <button role="tab" data-tab="ideas">Ideenpool</button>
-      <button role="tab" data-tab="settings">Gewichtung &amp; Daten</button>
-      <button role="tab" data-tab="method">Methode</button>
+      <button role="tab" data-ctx="user">Eigene Idee bewerten</button>
+      <button role="tab" data-ctx="spacex">SpaceX-Case · Gruppe 2</button>
+      <button role="tab" data-ctx="method">Methode</button>
     </nav>
   </div>
 </header>
 
 <div class="wrap"><main id="view"></main>
-<footer>Nachbau des Innovations-Rendite-Kalkulators nach Prof. Dr. Gerhard Hube (THWS Business School) für die Prüfungsleistung „Trend2Business“. Eingaben werden nur in diesem Browser gespeichert. Für die Gruppe: über „Gewichtung &amp; Daten“ exportieren und teilen.</footer>
+<footer>Nachbau des Innovations-Rendite-Kalkulators nach Prof. Dr. Gerhard Hube (THWS Business School). SpaceX-Case: Prüfungsleistung „Trend2Business“, Gruppe 2. Eingaben werden nur in diesem Browser gespeichert; zum Teilen unter „Gewichtung &amp; Basisdaten“ exportieren.</footer>
 </div>
 <div class="toast" id="toast" hidden></div>
 
@@ -359,6 +364,14 @@ function seed(){
       'U.S. Bureau of Labor Statistics – Software Developers, Median 133.080 USD (2024); Aerospace Engineers 134.830 USD.'])}}
   ]};
 }
+function userSeed(){
+ return {version:3,workbook:'Eigene Idee',mode:'Multiprojekt',horizon:'5 Jahre',
+  w:{n:HUBE_W.n.slice(),a:HUBE_W.a.slice()},
+  base:{company:'Mein Unternehmen',currency:'EUR',revenue:10,profit:1,rnd:10,
+   note:'Beispielwerte aus der Vorlesung (Gewinn 1 Mio €, F&E-Budget 10 Mio €). Bitte durch die Zahlen deines Unternehmens ersetzen.'},
+  list:[{id:'u1',project:'Meine Idee',assessor:'',idea:'',link:false,
+   n:[3,3,3,3,3,3],a:[3,3,3,3,3,3],why:{},fy:null}]};
+}
 const IDEAS=[
  {id:1,name:'Starlink Climate Watch',trend:'Neo-Ökologie',d:'Emissionsmonitoring as a Service: Methan-Sensoren als Zusatznutzlast auf Starlink-Satelliten.',m:[3,3],o:[4,4],c:['HOW','HOW']},
  {id:2,name:'SpaceX My Mission',trend:'Individualismus',d:'Personalisierte Mini-Missionen und Mikro-Nutzlasten für Privatkunden und Schulen.',m:[4,5],o:[3,3],c:['NOW','NOW']},
@@ -374,15 +387,18 @@ const IDEAS=[
  {id:12,name:'Satellitenschubser',trend:'Open Innovation',d:'Roboter-Satelliten schieben defekte Satelliten zum Verglühen in die Atmosphäre.',m:[3,3],o:[3,3],c:['VERWERFEN','VERWERFEN']}];
 
 /* ============================== Zustand ============================== */
-const KEY='innorendite.v3';
-let state, ui={tab:'overview',sel:null,confirm:null};
-try{state=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){state=null}
-if(!state||state.version!==3)state=seed();
-try{ui.sel=localStorage.getItem(KEY+'.sel')}catch(e){}
-if(!state.list.find(a=>a.id===ui.sel))ui.sel=(state.list[2]||state.list[0]||{}).id;
+const KEY='innorendite.v4';
+let root=null, state;
+const ui={ctx:'user',sub:{user:'assess',spacex:'ideas'},sel:{user:'u1',spacex:'sli'},confirm:null};
+try{root=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+if(!root||!root.user||!root.spacex){let old=null;try{old=JSON.parse(localStorage.getItem('innorendite.v3')||'null')}catch(e){}
+  root={user:userSeed(),spacex:(old&&old.version===3&&Array.isArray(old.list))?old:seed()}}
+try{const u=JSON.parse(localStorage.getItem(KEY+'.ui')||'null');if(u){Object.assign(ui.sub,u.sub||{});Object.assign(ui.sel,u.sel||{})}}catch(e){}
+function useCtx(c){ui.ctx=c;if(c!=='method'){state=root[c];if(!state.list.find(a=>a.id===ui.sel[c]))ui.sel[c]=(state.list[0]||{}).id}}
 let saveT;
-function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(state));localStorage.setItem(KEY+'.sel',ui.sel||'')}catch(e){}},250)}
-const cur=()=>state.list.find(a=>a.id===ui.sel);
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(root));localStorage.setItem(KEY+'.ui',JSON.stringify({sub:ui.sub,sel:ui.sel}))}catch(e){}},250)}
+const cur=()=>state.list.find(a=>a.id===ui.sel[ui.ctx]);
+const isX=()=>ui.ctx==='spacex';
 const colorOf=a=>`var(${SERIES[state.list.indexOf(a)%SERIES.length]})`;
 
 /* ============================== Hilfen ============================== */
@@ -446,7 +462,7 @@ function portfolio(items){
 
 /* ============================== Views ============================== */
 function vOverview(){
-  const L=state.list; if(!L.length)return `<section class="panel"><p>Noch keine Bewertungen. Lege unter „Bewerten“ die erste an.</p></section>`;
+  const L=state.list; if(!L.length)return `<section class="panel"><p>Noch keine Bewertungen. Lege im ersten Schritt die erste an.</p></section>`;
   const R=L.map(a=>({a,r:calc(a)})).sort((p,q)=>(q.r.IR===Infinity?1e9:q.r.IR)-(p.r.IR===Infinity?1e9:p.r.IR));
   const best=R[0];
   const avgN=sum(R.map(o=>o.r.IN))/R.length, avgA=sum(R.map(o=>o.r.IA))/R.length;
@@ -472,8 +488,8 @@ function vOverview(){
   </div>`;
 }
 function picker(){
-  return `<div class="picker" role="group" aria-label="Bewertung wählen">${state.list.map(a=>`<button aria-pressed="${a.id===ui.sel}" data-sel="${a.id}"><i class="dot" style="background:${colorOf(a)}"></i>${esc(label(a))}</button>`).join('')}
-  <button data-act="new">+ Neue Bewertung</button></div>`;
+  return `<div class="picker" role="group" aria-label="Bewertung wählen">${state.list.map(a=>`<button aria-pressed="${a.id===ui.sel[ui.ctx]}" data-sel="${a.id}"><i class="dot" style="background:${colorOf(a)}"></i>${esc(label(a))}</button>`).join('')}
+  <button data-act="new">${isX()?'+ Neue Bewertung':'+ Neue Idee'}</button></div>`;
 }
 function critBlock(list,arr,scoresEff,kind,a){
   return list.map((c,i)=>{
@@ -514,8 +530,8 @@ function vAssess(){
    <div style="display:grid;gap:24px;min-width:0">
     <section class="panel"><div class="fields">
       <label class="f">Projekt / Idee<input id="f-project" data-field="project" value="${esc(a.project)}"></label>
-      <label class="f">${state.mode==='Multibeurteilende'?'Beurteiler (Name, Funktion)':'Beurteilt von'}<input id="f-assessor" data-field="assessor" value="${esc(a.assessor)}"></label>
-      <label class="f">Idee aus dem Ideenpool<select id="f-idea" data-field="idea"><option value="">–</option>${IDEAS.map(i=>`<option value="${i.id}" ${a.idea==i.id?'selected':''}>${i.id}. ${esc(i.name)}</option>`).join('')}</select></label>
+      <label class="f">${state.mode==='Multibeurteilende'?'Beurteiler (Name, Funktion)':'Beurteilt von (optional)'}<input id="f-assessor" data-field="assessor" value="${esc(a.assessor)}"></label>
+      ${isX()?`<label class="f">Idee aus dem Ideenpool<select id="f-idea" data-field="idea"><option value="">–</option>${IDEAS.map(i=>`<option value="${i.id}" ${a.idea==i.id?'selected':''}>${i.id}. ${esc(i.name)}</option>`).join('')}</select></label>`:''}
      </div>
      <div class="row" style="margin-top:14px;justify-content:space-between">
       <label class="row" style="font-size:.9rem"><input type="checkbox" id="f-link" data-act="link" ${a.link&&a.fy?'checked':''} ${a.fy?'':'disabled'}> Wirtschaftlichen Nutzen und F&amp;E-Aufwand aus der 5-Jahres-Kalkulation übernehmen</label>
@@ -529,7 +545,11 @@ function vAssess(){
      ${critBlock(A_CRIT,a.a,r.x,'cost',a)}</section>
    </div>
    <div id="resultSlot">${resultCard(a)}</div>
-  </div>`;
+  </div>
+  ${isX()?'':`<div class="grid2">
+   <section class="panel"><header><h2>Aufwand/Nutzen-Portfolio</h2><button class="btn small" data-tabgo="overview">Alle Ideen vergleichen</button></header>${portfolio([a])}</section>
+   <section class="panel"><header><h2>Netzgrafik</h2><span class="muted">Einzelbewertungen 0–5</span></header>${radar([a])}</section>
+  </div>`}`;
 }
 function vFY(){
   const a=cur();
@@ -637,8 +657,8 @@ function vSettings(){
    <div class="row"><button class="btn" data-act="export">JSON kopieren</button><button class="btn" data-act="download">JSON herunterladen</button><label class="btn" for="importFile">Datei importieren</label><input type="file" id="importFile" accept="application/json,.json" hidden></div>
    <textarea id="io" class="in" rows="4" style="margin-top:12px;font-family:var(--f-mono);font-size:.78rem" placeholder="JSON hier einfügen und „Einfügen übernehmen“ klicken"></textarea>
    <div class="row" style="margin-top:8px"><button class="btn small" data-act="import">Einfügen übernehmen</button>
-   ${ui.confirm==='reset'?`<span class="row"><span>Alle Eingaben durch die Beispieldaten ersetzen?</span><button class="btn small danger" data-act="reset-yes">Ersetzen</button><button class="btn small" data-act="reset-no">Abbrechen</button></span>`:`<button class="btn small danger" data-act="reset">Auf Beispieldaten zurücksetzen</button>`}
-   ${ui.confirm==='blank'?`<span class="row"><span>Leere Arbeitsmappe ohne Bewertungen starten?</span><button class="btn small danger" data-act="blank-yes">Leeren</button><button class="btn small" data-act="blank-no">Abbrechen</button></span>`:`<button class="btn small" data-act="blank">Leere Arbeitsmappe</button>`}</div>
+   ${ui.confirm==='reset'?`<span class="row"><span>${isX()?'Alle Änderungen durch die Daten der Gruppe ersetzen?':'Alle eigenen Ideen löschen und neu beginnen?'}</span><button class="btn small danger" data-act="reset-yes">Ersetzen</button><button class="btn small" data-act="reset-no">Abbrechen</button></span>`:`<button class="btn small danger" data-act="reset">${isX()?'SpaceX-Daten der Gruppe wiederherstellen':'Zurücksetzen'}</button>`}
+   ${!isX()?'':ui.confirm==='blank'?`<span class="row"><span>Leere Arbeitsmappe ohne Bewertungen starten?</span><button class="btn small danger" data-act="blank-yes">Leeren</button><button class="btn small" data-act="blank-no">Abbrechen</button></span>`:`<button class="btn small" data-act="blank">Leere Arbeitsmappe</button>`}</div>
   </section></div></div>`;
 }
 function vMethod(){
@@ -669,44 +689,65 @@ function vMethod(){
 }
 
 /* ============================== Rendering & Events ============================== */
-const VIEWS={overview:vOverview,assess:vAssess,fy:vFY,ideas:vIdeas,settings:vSettings,method:vMethod};
+const VIEWS={overview:vOverview,assess:vAssess,fy:vFY,ideas:vIdeas,settings:vSettings};
+const STEPS={
+ user:[['assess','1','Idee bewerten'],['fy','2','5-Jahres-Kalkulation (optional)'],['overview','3','Ergebnisse & Diagramme'],['settings','⚙','Gewichtung & Basisdaten']],
+ spacex:[['ideas','Schritt 1','Ideenpool & How-Wow-Now'],['assess','Schritt 2','Rendite-Bewertung'],['fy','Schritt 3','5-Jahres-Kalkulation'],['overview','Schritt 4','Ergebnisse & Portfolio'],['settings','⚙','Gewichtung & Basisdaten']]};
+const INTRO={
+ user:{assess:['Eigene Idee bewerten','Gib deiner Idee einen Namen und bewerte die sechs Nutzen- und sechs Aufwandkriterien von 0 bis 5. Rechts siehst du sofort Rendite, Bilanz und Portfolio-Feld. Mit „+ Neue Idee“ kannst du mehrere Ideen vergleichen.'],
+  fy:['5-Jahres-Kalkulation','Optional: Statt nach Gefühl werden „Wirtschaftlicher Nutzen“ und „F&E-Aufwand“ aus Umsatz, Gewinn und Entwicklungskosten berechnet. Zuerst unter „Gewichtung & Basisdaten“ die Zahlen deines Unternehmens eintragen.'],
+  overview:['Ergebnisse & Diagramme','Rendite, Bilanz, Aufwand/Nutzen-Portfolio und Netzgrafik für alle deine Ideen.'],
+  settings:['Gewichtung & Basisdaten','Gewichte der Kriterien (Standard nach Prof. Hube) und Kennzahlen deines Unternehmens für die 5-Jahres-Kalkulation.']},
+ spacex:{ideas:['Schritt 1 · Vom Trend zur Idee','Aus der Trendportfolioanalyse (8 Trends, 360°) hat die Gruppe je Trend Geschäftsideen nach dem Stufenmodell abgeleitet und 12 davon in der How-Wow-Now-Matrix nach Machbarkeit und Originalität eingeordnet. Die WOW-Ideen gehen in die Renditebewertung.'],
+  assess:['Schritt 2 · Bewertung mit dem Inno-Rendite-Kalkulator','Die drei besten Ideen werden mit dem Inno-Rendite-Kalkulator bewertet, im Mensch&KI-Tandem: Das RocketLight Dinner hat eine Bewertung der Gruppe und eine der KI. Jede Punktzahl ist begründet.'],
+  fy:['Schritt 3 · 5-Jahres-Kalkulation','Gewinn- und F&E-Kostenrechnung über 5 Jahre auf Basis des SpaceX-Börsenprospekts (S-1). Daraus ergeben sich die Bewertungen für „Wirtschaftlicher Nutzen“ und „Investitionsaufwand F&E“.'],
+  overview:['Schritt 4 · Ergebnis','Vergleich aller Bewertungen: Ranking nach Innovationsrendite, Aufwand/Nutzen-Portfolio, Netzgrafik, Rendite und Bilanz.'],
+  settings:['Gewichtung & Basisdaten','Von der Gruppe angepasste Gewichtung und die SpaceX-Kennzahlen 2025, auf die sich die 5-Jahres-Kalkulation bezieht.']}};
+function subnav(){return `<nav class="subnav" aria-label="Schritte">${STEPS[ui.ctx].map(([k,n,t])=>`<button data-sub="${k}" ${ui.sub[ui.ctx]===k?'aria-current="step"':''}><span class="n">${n}</span><span class="t">${esc(t)}</span></button>`).join('')}</nav>`}
 function render(keepScroll){
-  document.getElementById('workbookName').textContent=state.workbook;
-  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===ui.tab));
+  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.ctx===ui.ctx));
   const y=window.scrollY;
-  document.getElementById('view').innerHTML=VIEWS[ui.tab]();
-  if(ui.tab==='fy')fillFY();
-  if(ui.tab==='settings')fillW();
+  let html;
+  if(ui.ctx==='method'){html=vMethod();document.getElementById('workbookName').textContent='Innovationsmanagement · Prof. Hube';}
+  else{const sub=ui.sub[ui.ctx];const [h,p]=INTRO[ui.ctx][sub];
+    document.getElementById('workbookName').textContent=isX()?state.workbook:'Innovationsmanagement · Prof. Hube';
+    html=subnav()+`<section class="intro"><h2>${esc(h)}</h2><p>${esc(p)}</p></section>`+VIEWS[sub]();}
+  document.getElementById('view').innerHTML=html;
+  const sub=ui.sub[ui.ctx];
+  if(ui.ctx!=='method'&&sub==='fy')fillFY();
+  if(ui.ctx!=='method'&&sub==='settings')fillW();
   document.querySelectorAll('textarea.in').forEach(autoGrow);
   if(keepScroll)window.scrollTo(0,y);
   save();
 }
 function fillW(){['n','a'].forEach(k=>{const s=sum(state.w[k]);document.querySelectorAll(`[data-out="wsum-${k}"]`).forEach(e=>{e.textContent=s+' %';e.style.color=s===100?'var(--gain)':'var(--bad)'})})}
 function autoGrow(t){t.style.height='auto';t.style.height=Math.min(t.scrollHeight+2,320)+'px'}
-function go(tab){ui.tab=tab;ui.confirm=null;try{history.replaceState(null,'','#'+tab)}catch(e){}render();window.scrollTo(0,0)}
+function go(sub){ui.sub[ui.ctx]=sub;ui.confirm=null;render();window.scrollTo(0,0)}
+function goCtx(c){useCtx(c);ui.confirm=null;try{history.replaceState(null,'','#'+({user:'idee',spacex:'spacex',method:'methode'}[c]))}catch(e){}render();window.scrollTo(0,0)}
 function newAssessment(ideaId){
   const idea=IDEAS.find(i=>i.id===ideaId);
-  const a={id:'b'+Date.now().toString(36),project:idea?idea.name:'Neue Idee',assessor:state.mode==='Multibeurteilende'?'Beurteiler '+(state.list.length+1):'Gruppe 2',idea:idea?idea.id:'',link:false,n:[0,0,0,0,0,0],a:[0,0,0,0,0,0],why:{},fy:null};
-  state.list.push(a);ui.sel=a.id;return a;
+  const a={id:'b'+Date.now().toString(36),project:idea?idea.name:'Neue Idee '+(state.list.length+1),assessor:state.mode==='Multibeurteilende'?'Beurteiler '+(state.list.length+1):(isX()?'Gruppe 2':''),idea:idea?idea.id:'',link:false,n:isX()?[0,0,0,0,0,0]:[3,3,3,3,3,3],a:isX()?[0,0,0,0,0,0]:[3,3,3,3,3,3],why:{},fy:null};
+  state.list.push(a);ui.sel[ui.ctx]=a.id;return a;
 }
 function blankFY(){return {unit:'Stück',priceUnit:'Preis je Stück',qty:[0,0,0,0,0],price:[0,0,0,0,0],qtyNote:'',priceNote:'',staff:[{label:'F&E-Mitarbeiter',fte:[0,0,0,0,0],cost:150000,note:''}],material:[0,0,0,0,0],materialNote:'',sources:[]}}
 function setPath(obj,path,val){const p=path.split('.');let o=obj;for(let i=0;i<p.length-1;i++)o=o[p[i]];o[p[p.length-1]]=val}
 
-document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(b)go(b.dataset.tab)});
+document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-ctx]');if(b)goCtx(b.dataset.ctx)});
 document.getElementById('view').addEventListener('click',e=>{
   const t=e.target.closest('button,[data-open]');if(!t)return;
-  if(t.dataset.open){ui.sel=t.dataset.open;go('assess');return}
-  if(t.dataset.sel){ui.sel=t.dataset.sel;ui.confirm=null;render(true);return}
+  if(t.dataset.open){ui.sel[ui.ctx]=t.dataset.open;go('assess');return}
+  if(t.dataset.sel){ui.sel[ui.ctx]=t.dataset.sel;ui.confirm=null;render(true);return}
   if(t.dataset.tabgo){go(t.dataset.tabgo);return}
+  if(t.dataset.sub){go(t.dataset.sub);return}
   if(t.dataset.newidea){newAssessment(+t.dataset.newidea);go('assess');return}
   if(t.dataset.score){const [k,i,s]=t.dataset.score.split(':');const a=cur();(k==='gain'?a.n:a.a)[+i]=+s;render(true);return}
   const act=t.dataset.act,a=cur();
   switch(act){
    case 'new':newAssessment();render(true);break;
-   case 'dup':{const c=JSON.parse(JSON.stringify(a));c.id='b'+Date.now().toString(36);c.assessor=(c.assessor||'')+' (Kopie)';state.list.push(c);ui.sel=c.id;render(true);toast('Bewertung dupliziert');break}
+   case 'dup':{const c=JSON.parse(JSON.stringify(a));c.id='b'+Date.now().toString(36);c.assessor=(c.assessor||'')+' (Kopie)';state.list.push(c);ui.sel[ui.ctx]=c.id;render(true);toast('Bewertung dupliziert');break}
    case 'del':ui.confirm='del';render(true);break;
    case 'del-no':ui.confirm=null;render(true);break;
-   case 'del-yes':{state.list=state.list.filter(x=>x!==a);ui.sel=(state.list[0]||{}).id;ui.confirm=null;render(true);toast('Bewertung gelöscht');break}
+   case 'del-yes':{state.list=state.list.filter(x=>x!==a);ui.sel[ui.ctx]=(state.list[0]||{}).id;ui.confirm=null;render(true);toast('Bewertung gelöscht');break}
    case 'addfy':a.fy=blankFY();a.link=true;go('fy');break;
    case 'addstaff':a.fy.staff.push({label:'Neue Position',fte:[0,0,0,0,0],cost:150000,note:''});render(true);break;
    case 'rmstaff':a.fy.staff.splice(+t.dataset.k,1);render(true);break;
@@ -719,12 +760,12 @@ document.getElementById('view').addEventListener('click',e=>{
    case 'import':tryImport(document.getElementById('io').value);break;
    case 'reset':ui.confirm='reset';render(true);break;
    case 'reset-no':case 'blank-no':ui.confirm=null;render(true);break;
-   case 'reset-yes':state=seed();ui.sel=state.list[2].id;ui.confirm=null;render(true);toast('Beispieldaten geladen');break;
+   case 'reset-yes':root[ui.ctx]=isX()?seed():userSeed();useCtx(ui.ctx);ui.confirm=null;render(true);toast('Zurückgesetzt');break;
    case 'blank':ui.confirm='blank';render(true);break;
-   case 'blank-yes':{const s=seed();s.list=[];s.workbook='Neue Arbeitsmappe';state=s;ui.sel=null;ui.confirm=null;render(true);toast('Leere Arbeitsmappe');break}
+   case 'blank-yes':{const s=userSeed();s.list=[];root[ui.ctx]=s;useCtx(ui.ctx);ui.confirm=null;render(true);toast('Leere Arbeitsmappe');break}
   }
 });
-function tryImport(txt){try{const s=JSON.parse(txt);if(!s||!Array.isArray(s.list)||!s.w||!s.base)throw 0;s.version=3;state=s;ui.sel=(s.list[0]||{}).id;render();toast(`${s.list.length} Bewertungen importiert`)}catch(e){toast('Import fehlgeschlagen: keine gültige Export-Datei')}}
+function tryImport(txt){try{const s=JSON.parse(txt);if(!s||!Array.isArray(s.list)||!s.w||!s.base)throw 0;s.version=3;root[ui.ctx]=s;ui.sel[ui.ctx]=(s.list[0]||{}).id;useCtx(ui.ctx);render();toast(`${s.list.length} Bewertungen importiert`)}catch(e){toast('Import fehlgeschlagen: keine gültige Export-Datei')}}
 document.getElementById('view').addEventListener('change',e=>{
   const t=e.target;
   if(t.id==='importFile'&&t.files[0]){const r=new FileReader();r.onload=()=>tryImport(r.result);r.readAsText(t.files[0]);return}
@@ -744,7 +785,7 @@ document.getElementById('view').addEventListener('input',e=>{
   if(t.dataset.base){const k=t.dataset.base;state.base[k]=['revenue','profit','rnd'].includes(k)?(+t.value||0):t.value;save();return}
   if(t.dataset.set){state[t.dataset.set]=t.value;if(t.dataset.set==='workbook')document.getElementById('workbookName').textContent=t.value;save();return}
 });
-const h=(location.hash||'').slice(1);if(VIEWS[h])ui.tab=h;
+const h=(location.hash||'').slice(1);useCtx({spacex:'spacex',methode:'method',method:'method'}[h]||'user');
 render();
 </script>
 </body></html>
