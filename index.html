@@ -52,6 +52,7 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background
 .hrow{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:16px 10px}
 .formula{font-family:var(--f-mono);font-size:.82rem;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
 .formula b{color:var(--ink);font-weight:500}
+@media (max-width:640px){.formula{display:none}}
 nav.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
 nav.tabs::-webkit-scrollbar{display:none}
 nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px 9px;cursor:pointer;color:var(--muted);font-weight:600;white-space:nowrap}
@@ -65,6 +66,39 @@ main{padding-block:24px 64px;display:grid;gap:24px}
 .subnav button[aria-current="step"]{border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent)}
 .subnav button[aria-current="step"] .n{color:var(--accent)}
 .intro{display:grid;gap:6px;max-width:80ch}
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:40px;align-items:center;padding-block:28px 8px}
+@media (max-width:860px){.hero{grid-template-columns:minmax(0,1fr);gap:24px}}
+.hero h2.claim{font-size:clamp(2.6rem,7vw,4.8rem);font-weight:800;font-stretch:78%;line-height:.95;letter-spacing:-.02em}
+.hero h2.claim span{display:block;color:var(--accent)}
+.hero .lead{font-size:1.08rem;color:var(--muted);max-width:52ch;margin-top:16px}
+.howto{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-family:var(--f-mono);font-size:.78rem;color:var(--muted)}
+.howto b{color:var(--ink);font-weight:500}
+.startcard{display:grid;gap:12px}
+.startcard .btn.primary{padding:12px 16px;font-size:1rem;font-weight:600}
+.wiz{max-width:820px;width:100%;margin:0 auto;display:grid;gap:20px}
+.prog{display:grid;grid-template-columns:repeat(12,1fr);gap:3px}
+.prog button{height:8px;border:0;border-radius:2px;background:var(--surface-2);cursor:pointer;padding:0}
+.prog button.g.done{background:var(--gain)} .prog button.c.done{background:var(--cost)}
+.prog button.here{outline:2px solid var(--ink);outline-offset:1px}
+.wiz h2.q{font-size:clamp(1.6rem,4vw,2.3rem);font-weight:800;line-height:1.1}
+.opts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+@media (max-width:640px){.opts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.opt{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:14px 8px 12px;cursor:pointer;display:grid;gap:4px;justify-items:center;text-align:center;min-width:0}
+.opt .d{font-family:var(--f-mono);font-size:1.9rem;line-height:1}
+.opt .l{font-size:.78rem;color:var(--muted);line-height:1.2}
+.opt:hover{border-color:var(--ink)}
+.opt[aria-pressed="true"].g{background:var(--gain);border-color:var(--gain);color:var(--surface)}
+.opt[aria-pressed="true"].c{background:var(--cost);border-color:var(--cost);color:var(--surface)}
+.opt[aria-pressed="true"] .l{color:inherit}
+.wiznav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.wiznav .btn.primary{padding:10px 18px;font-weight:600}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.kbd{font-family:var(--f-mono);font-size:.75rem;color:var(--muted)}
+.res-hero{display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:center}
+@media (max-width:640px){.res-hero{grid-template-columns:minmax(0,1fr)}}
+.res-hero .big{font-size:clamp(3.5rem,10vw,5.5rem)}
+.sw{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px}
+.sw ul{margin:6px 0 0;padding-left:18px;display:grid;gap:4px;font-size:.9rem}
 .intro p{color:var(--muted)}
 
 /* generic */
@@ -263,7 +297,7 @@ function effScores(a){
 }
 function calc(a){
   const {n,x,fy}=effScores(a);
-  const wn=n.map((s,i)=>s*state.w.n[i]/100), wa=x.map((s,i)=>s*state.w.a[i]/100);
+  const wn=n.map((s,i)=>(+s||0)*state.w.n[i]/100), wa=x.map((s,i)=>(+s||0)*state.w.a[i]/100);
   const IN=sum(wn), IA=sum(wa);
   return {n,x,fy,wn,wa,IN,IA,IR:IA>0?IN/IA:Infinity,bil:IN-IA,
     mN:IN/6,mA:IA/6,cN:cat(IN),cA:cat(IA),pf:PF_LABELS[cat(IA)][cat(IN)]};
@@ -369,8 +403,7 @@ function userSeed(){
   w:{n:HUBE_W.n.slice(),a:HUBE_W.a.slice()},
   base:{company:'Mein Unternehmen',currency:'EUR',revenue:10,profit:1,rnd:10,
    note:'Beispielwerte aus der Vorlesung (Gewinn 1 Mio €, F&E-Budget 10 Mio €). Bitte durch die Zahlen deines Unternehmens ersetzen.'},
-  list:[{id:'u1',project:'Meine Idee',assessor:'',idea:'',link:false,
-   n:[3,3,3,3,3,3],a:[3,3,3,3,3,3],why:{},fy:null}]};
+  list:[]};
 }
 const IDEAS=[
  {id:1,name:'Starlink Climate Watch',trend:'Neo-Ökologie',d:'Emissionsmonitoring as a Service: Methan-Sensoren als Zusatznutzlast auf Starlink-Satelliten.',m:[3,3],o:[4,4],c:['HOW','HOW']},
@@ -389,7 +422,7 @@ const IDEAS=[
 /* ============================== Zustand ============================== */
 const KEY='innorendite.v4';
 let root=null, state;
-const ui={ctx:'user',sub:{user:'assess',spacex:'ideas'},sel:{user:'u1',spacex:'sli'},confirm:null};
+const ui={ctx:'user',wiz:0,sub:{user:'wizard',spacex:'ideas'},sel:{user:'u1',spacex:'sli'},confirm:null};
 try{root=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
 if(!root||!root.user||!root.spacex){let old=null;try{old=JSON.parse(localStorage.getItem('innorendite.v3')||'null')}catch(e){}
   root={user:userSeed(),spacex:(old&&old.version===3&&Array.isArray(old.list))?old:seed()}}
@@ -444,8 +477,8 @@ function radar(items){
     const anchor=Math.abs(lx-cx)<10?'middle':lx>cx?'start':'end';
     g+=`<text class="lab" x="${lx}" y="${ly+4}" text-anchor="${anchor}" style="fill:${i<6?'var(--gain)':'var(--cost)'};font-size:11px">${short[i]}</text>`}
   items.forEach(a=>{const r=calc(a);const v=[...r.n,...r.x];
-    g+=`<polygon points="${v.map((s,i)=>pt(i,s).join(',')).join(' ')}" fill="${colorOf(a)}" fill-opacity=".12" stroke="${colorOf(a)}" stroke-width="2"/>`;
-    v.forEach((s,i)=>{const [x,y]=pt(i,s);g+=`<circle cx="${x}" cy="${y}" r="3" fill="${colorOf(a)}"/>`})});
+    g+=`<polygon points="${v.map((s,i)=>pt(i,+s||0).join(',')).join(' ')}" fill="${colorOf(a)}" fill-opacity=".12" stroke="${colorOf(a)}" stroke-width="2"/>`;
+    v.forEach((s,i)=>{const [x,y]=pt(i,+s||0);g+=`<circle cx="${x}" cy="${y}" r="3" fill="${colorOf(a)}"/>`})});
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Netzgrafik der Einzelbewertungen">${g}</svg>`;
 }
 function legend(items){return `<div class="legend">${items.map(a=>`<span><i class="dot" style="background:${colorOf(a)}"></i>${esc(label(a))}</span>`).join('')}</div>`}
@@ -496,7 +529,7 @@ function critBlock(list,arr,scoresEff,kind,a){
     const locked=c.quant&&a.link&&a.fy;const val=scoresEff[i];const w=state.w[kind==='gain'?'n':'a'][i];
     return `<div class="crit"><div><div class="name">${esc(c.t)}</div>${locked?`<div class="linked">Automatisch aus der 5-Jahres-Kalkulation</div>`:''}</div>
      <div class="row" style="justify-content:flex-end"><div class="seg ${kind}" role="group" aria-label="${esc(c.t)}">${[0,1,2,3,4,5].map(s=>`<button aria-pressed="${val===s}" ${locked?'disabled':''} data-score="${kind}:${i}:${s}">${s}</button>`).join('')}</div>
-     <span class="meta">× ${w} % = <b data-out="w-${kind}-${i}">${f2(val*w/100)}</b></span></div>
+     <span class="meta">× ${w} % = <b data-out="w-${kind}-${i}">${f2((+val||0)*w/100)}</b></span></div>
      <div class="desc">${esc(c.d)}</div>
      ${locked?`<div class="why muted" style="font-size:.85rem">${quantWhy(a,kind)}</div>`:''}
      <div class="why"><textarea class="in" rows="1" placeholder="${locked?'Ergänzende Begründung (optional)':'Begründung'}" data-why="${c.k}" aria-label="Begründung ${esc(c.t)}">${esc(a.why[c.k]||'')}</textarea></div></div>`}).join('');
@@ -518,6 +551,91 @@ function resultCard(a){
     <tr><td>Kategorie Nutzen / Aufwand</td><td class="r">${catName(r.cN)} / ${catName(r.cA)}</td></tr>
    </tbody></table>
    <div class="verdict chip ${vcls}" style="display:block;border-radius:var(--r);white-space:normal">Portfolio: ${esc(r.pf[0])}</div>
+  </div>`;
+}
+const Q={
+ wirt:'Wie viel Gewinn bringt die Idee im Vergleich zum heutigen Unternehmensgewinn?',
+ kunde:'Wie deutlich spüren Kunden den Nutzen?',
+ komp:'Baut ihr damit Fähigkeiten auf, die auch anderswo wertvoll sind?',
+ trend:'Wie stark trägt ein langfristiger Trend die Idee?',
+ nachh:'Wie groß ist der ökologische oder soziale Nutzen?',
+ bauchN:'Dein Bauchgefühl: Wie groß ist der Nutzen insgesamt?',
+ fue:'Wie hoch sind die Entwicklungskosten im Vergleich zum F&E-Budget?',
+ kundeA:'Wie schwer wird es, Kunden zu überzeugen?',
+ tech:'Wie hoch ist das technische Risiko?',
+ markt:'Wie riskant sind Markt, Wettbewerb und Regulierung?',
+ intern:'Wie viel Widerstand und Umstellung gibt es intern?',
+ bauchA:'Dein Bauchgefühl: Wie groß sind Aufwand und Risiko insgesamt?'};
+const OPT_L=['nicht vorhanden','sehr gering','gering','mittel','hoch','sehr hoch'];
+const OPT_Q={wirt:['kein Gewinn','≤ 3 %','≤ 5 %','≤ 20 %','≤ 30 %','> 30 %'],fue:['keine Kosten','≤ 10 %','≤ 20 %','≤ 50 %','≤ 100 %','> 100 %']};
+const ADVICE={'Quick win':'Wenig Aufwand bei ordentlichem Nutzen: zügig umsetzen.',
+ 'Fast zu schön um wahr zu sein!':'Hoher Nutzen bei geringem Aufwand. Prüft eure Annahmen noch einmal kritisch.',
+ 'Nutzen prüfen/steigern!':'Wenig Aufwand, aber auch wenig Nutzen. Wie lässt sich der Nutzen erhöhen?',
+ 'Kritisch prüfen!':'Mittlerer Aufwand bei geringem Nutzen. Genau prüfen, ob sich das lohnt.',
+ '?':'Nutzen und Aufwand liegen beide im Mittelfeld. Sammelt mehr Informationen, bevor ihr entscheidet.',
+ 'Dranbleiben!':'Der hohe Nutzen rechtfertigt den Aufwand: weiterverfolgen.',
+ 'Abbrechen!!':'Hoher Aufwand bei geringem Nutzen: die Idee nicht weiterverfolgen.',
+ 'Aufwand prüfen/senken, Nutzen steigern!':'Zu viel Aufwand für zu wenig Nutzen. Aufwand senken und Nutzen steigern, sonst lohnt es sich nicht.',
+ 'Aufwand prüfen/senken!':'Großer Nutzen, aber auch großer Aufwand. Den Aufwand gezielt senken.'};
+const ALLC=[...N_CRIT.map((c,i)=>({...c,g:'n',i})),...A_CRIT.map((c,i)=>({...c,g:'a',i}))];
+const answered=(a,k)=>{const c=ALLC[k];const v=(c.g==='n'?a.n:a.a)[c.i];return v!==null&&v!==undefined};
+function vWizard(){
+  const a=cur(),st=ui.wiz;
+  if(!a||st===0){
+    const open=state.list.filter(x=>ALLC.some((_,k)=>!answered(x,k)));
+    return `<section class="hero">
+     <div><div class="eyebrow">Innovationsrendite-Check nach Prof. Hube</div>
+      <h2 class="claim">Idee rein.<span>Rendite raus.</span></h2>
+      <p class="lead">Zwölf Fragen, ein Ergebnis: Der Check zeigt in wenigen Minuten, ob der Nutzen deiner Idee den Aufwand übersteigt, und wo sie im Aufwand/Nutzen-Portfolio landet.</p>
+      <div class="howto"><span><b>6</b> Fragen zum Nutzen</span><span><b>6</b> Fragen zum Aufwand</span><span><b>1</b> Innovationsrendite</span></div></div>
+     <form class="panel startcard" id="wizStart">
+      <h3>Welche Idee willst du prüfen?</h3>
+      <label class="f">Name der Idee<input id="wiz-name" placeholder="z. B. Lieferdrohne für Apotheken" autocomplete="off"></label>
+      <label class="f">Kurz beschrieben (optional)<textarea id="wiz-desc" class="in" rows="2" placeholder="Was ist neu, für wen, warum?"></textarea></label>
+      <button class="btn primary" type="submit">Check starten →</button>
+      ${state.list.length?`<div style="display:grid;gap:6px;margin-top:4px"><span class="eyebrow">Deine Ideen</span><div class="row">${state.list.map(x=>{const done=ALLC.every((_,k)=>answered(x,k));return `<button type="button" class="btn small" data-wizopen="${x.id}">${esc(x.project)}${done?` · IR ${f2(calc(x).IR)}`:' · weitermachen'}</button>`}).join('')}</div></div>`:''}
+     </form></section>`;
+  }
+  if(st===13)return vWizResult(a);
+  const k=st-1,c=ALLC[k],arr=c.g==='n'?a.n:a.a,val=arr[c.i],gc=c.g==='n'?'g':'c';
+  const lock=c.quant&&a.link&&a.fy;
+  const labels=OPT_Q[c.k]||OPT_L;
+  return `<div class="wiz">
+   <div class="prog" aria-label="Fortschritt">${ALLC.map((x,j)=>`<button data-wizgo="${j+1}" class="${x.g==='n'?'g':'c'} ${answered(a,j)?'done':''} ${j===k?'here':''}" aria-label="Frage ${j+1}"></button>`).join('')}</div>
+   <div><div class="eyebrow" style="color:var(${c.g==='n'?'--gain':'--cost'})">${c.g==='n'?'Nutzen/Chancen':'Aufwand/Risiko'} · Frage ${st} von 12 · Gewicht ${state.w[c.g][c.i]} %</div>
+    <div class="muted" style="margin-top:2px">${esc(a.project)}</div></div>
+   <h2 class="q">${esc(Q[c.k])}</h2>
+   <p class="muted">${esc(c.d)}</p>
+   ${lock?`<div class="notice info">Dieser Wert kommt aus deiner 5-Jahres-Kalkulation: ${quantWhy(a,c.g==='n'?'gain':'cost')}</div>`:''}
+   <div class="opts" role="group" aria-label="Bewertung">${[0,1,2,3,4,5].map(v=>`<button class="opt ${gc}" data-opt="${v}" aria-pressed="${val===v}" ${lock?'disabled':''}><span class="d">${v}</span><span class="l">${esc(labels[v])}</span></button>`).join('')}</div>
+   <label class="f">Begründung (optional)<textarea class="in" rows="2" data-why="${c.k}" placeholder="Warum diese Einschätzung?">${esc(a.why[c.k]||'')}</textarea></label>
+   <div class="wiznav"><button class="btn" data-wiz="prev">← Zurück</button><span class="kbd">Tasten 0–5 wählen · Enter weiter</span><button class="btn primary" data-wiz="next" ${answered(a,k)?'':'disabled'}>${st===12?'Ergebnis zeigen':'Weiter →'}</button></div>
+  </div>`;
+}
+function vWizResult(a){
+  const r=calc(a);const vc={g:'ok',y:'mid',r:'bad'}[r.pf[1]];
+  const contrib=(g)=>(g==='n'?N_CRIT:A_CRIT).map((c,i)=>({t:c.t,v:(g==='n'?r.wn:r.wa)[i],s:(g==='n'?r.n:r.x)[i]})).sort((p,q)=>q.v-p.v).slice(0,3);
+  return `<div class="wiz" style="max-width:1100px">
+   <section class="panel"><div class="res-hero">
+    <div><div class="eyebrow">Innovationsrendite</div><div class="big">${f2(r.IR)}</div></div>
+    <div style="display:grid;gap:10px"><h2>${esc(a.project)}</h2>${a.desc?`<p class="muted">${esc(a.desc)}</p>`:''}
+     <div><span class="chip ${vc}" style="font-size:.9rem;padding:4px 12px">${esc(r.pf[0])}</span></div>
+     <p>${r.IR>=1?'Die Idee ist „profitabel“: Der Nutzen übersteigt den Aufwand.':'Die Idee ist nicht „profitabel“: Der Aufwand übersteigt den Nutzen.'} ${esc(ADVICE[r.pf[0]]||'')}</p></div></div>
+    <div class="grid2" style="margin-top:20px;gap:16px">
+     <div class="bar2"><div class="t"><span>Nutzen/Chancen IN</span><b class="num" style="color:var(--gain)">${f2(r.IN)}</b></div><div class="track"><div class="fill" style="width:${r.IN/5*100}%;background:var(--gain)"></div></div></div>
+     <div class="bar2"><div class="t"><span>Aufwand/Risiko IA</span><b class="num" style="color:var(--cost)">${f2(r.IA)}</b></div><div class="track"><div class="fill" style="width:${r.IA/5*100}%;background:var(--cost)"></div></div></div>
+    </div>
+    <div class="sw" style="margin-top:20px">
+     <div><span class="eyebrow">Bilanz</span><div class="num" style="font-size:1.4rem">${r.bil>=0?'+':''}${f2(r.bil)}</div></div>
+     <div><span class="eyebrow">Größte Nutzentreiber</span><ul>${contrib('n').map(o=>`<li>${esc(o.t)} <span class="num muted">(${o.s} → ${f2(o.v)})</span></li>`).join('')}</ul></div>
+     <div><span class="eyebrow">Größte Aufwandstreiber</span><ul>${contrib('a').map(o=>`<li>${esc(o.t)} <span class="num muted">(${o.s} → ${f2(o.v)})</span></li>`).join('')}</ul></div>
+    </div></section>
+   <div class="grid2">
+    <section class="panel"><header><h2>Aufwand/Nutzen-Portfolio</h2></header>${portfolio([a])}</section>
+    <section class="panel"><header><h2>Netzgrafik</h2><span class="muted">Einzelbewertungen 0–5</span></header>${radar([a])}</section>
+   </div>
+   <div class="wiznav"><button class="btn" data-wizgo="12">← Antworten ändern</button>
+    <span class="row"><button class="btn" data-tabgo="fy">5-Jahres-Kalkulation ergänzen</button><button class="btn" data-tabgo="overview">Mit anderen Ideen vergleichen</button><button class="btn primary" data-wiz="restart">Neue Idee prüfen</button></span></div>
   </div>`;
 }
 function vAssess(){
@@ -714,12 +832,12 @@ function vMethod(){
 }
 
 /* ============================== Rendering & Events ============================== */
-const VIEWS={overview:vOverview,assess:vAssess,fy:vFY,ideas:vIdeas,settings:vSettings};
+const VIEWS={wizard:vWizard,overview:vOverview,assess:vAssess,fy:vFY,ideas:vIdeas,settings:vSettings};
 const STEPS={
- user:[['assess','1','Idee bewerten'],['fy','2','5-Jahres-Kalkulation (optional)'],['overview','3','Ergebnisse & Diagramme'],['settings','⚙','Gewichtung & Basisdaten']],
+ user:[['wizard','1','Ideen-Check'],['assess','2','Alle Kriterien bearbeiten'],['fy','3','5-Jahres-Kalkulation (optional)'],['overview','4','Ideen vergleichen'],['settings','⚙','Gewichtung & Basisdaten']],
  spacex:[['ideas','Schritt 1','Ideenpool & How-Wow-Now'],['assess','Schritt 2','Rendite-Bewertung'],['fy','Schritt 3','5-Jahres-Kalkulation'],['overview','Schritt 4','Ergebnisse & Portfolio'],['settings','⚙','Gewichtung & Basisdaten']]};
 const INTRO={
- user:{assess:['Eigene Idee bewerten','Gib deiner Idee einen Namen und bewerte die sechs Nutzen- und sechs Aufwandkriterien von 0 bis 5. Rechts siehst du sofort Rendite, Bilanz und Portfolio-Feld. Mit „+ Neue Idee“ kannst du mehrere Ideen vergleichen.'],
+user:{wizard:['',''],assess:['Eigene Idee bewerten','Gib deiner Idee einen Namen und bewerte die sechs Nutzen- und sechs Aufwandkriterien von 0 bis 5. Rechts siehst du sofort Rendite, Bilanz und Portfolio-Feld. Mit „+ Neue Idee“ kannst du mehrere Ideen vergleichen.'],
   fy:['5-Jahres-Kalkulation','Optional: Statt nach Gefühl werden „Wirtschaftlicher Nutzen“ und „F&E-Aufwand“ aus Umsatz, Gewinn und Entwicklungskosten berechnet. Zuerst unter „Gewichtung & Basisdaten“ die Zahlen deines Unternehmens eintragen.'],
   overview:['Ergebnisse & Diagramme','Rendite, Bilanz, Aufwand/Nutzen-Portfolio und Netzgrafik für alle deine Ideen.'],
   settings:['Gewichtung & Basisdaten','Gewichte der Kriterien (Standard nach Prof. Hube) und Kennzahlen deines Unternehmens für die 5-Jahres-Kalkulation.']},
@@ -734,9 +852,9 @@ function render(keepScroll){
   const y=window.scrollY;
   let html;
   if(ui.ctx==='method'){html=vMethod();document.getElementById('workbookName').textContent='Innovationsmanagement · Prof. Hube';}
-  else{const sub=ui.sub[ui.ctx];const [h,p]=INTRO[ui.ctx][sub];
+  else{const sub=ui.sub[ui.ctx];const [h,p]=INTRO[ui.ctx][sub]||['',''];
     document.getElementById('workbookName').textContent=isX()?state.workbook:'Innovationsmanagement · Prof. Hube';
-    html=subnav()+`<section class="intro"><h2>${esc(h)}</h2><p>${esc(p)}</p></section>`+VIEWS[sub]();}
+    html=subnav()+(sub==='wizard'?'':`<section class="intro"><h2>${esc(h)}</h2><p>${esc(p)}</p></section>`)+VIEWS[sub]();}
   document.getElementById('view').innerHTML=html;
   const sub=ui.sub[ui.ctx];
   if(ui.ctx!=='method'&&sub==='fy')fillFY();
@@ -758,8 +876,23 @@ function blankFY(){return {unit:'Stück',priceUnit:'Preis je Stück',qty:[0,0,0,
 function setPath(obj,path,val){const p=path.split('.');let o=obj;for(let i=0;i<p.length-1;i++)o=o[p[i]];o[p[p.length-1]]=val}
 
 document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-ctx]');if(b)goCtx(b.dataset.ctx)});
+function wizSet(n){ui.wiz=Math.max(0,Math.min(13,n));render();window.scrollTo(0,0)}
+document.getElementById('view').addEventListener('submit',e=>{if(e.target.id!=='wizStart')return;e.preventDefault();
+  const name=(document.getElementById('wiz-name').value||'').trim()||'Meine Idee '+(state.list.length+1);
+  const a=newAssessment();a.project=name;a.desc=document.getElementById('wiz-desc').value||'';a.n=[null,null,null,null,null,null];a.a=[null,null,null,null,null,null];
+  wizSet(1)});
+document.addEventListener('keydown',e=>{
+  if(ui.ctx!=='user'||ui.sub.user!=='wizard'||ui.wiz<1||ui.wiz>12)return;
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))return;
+  if(/^[0-5]$/.test(e.key)){const b=document.querySelector(`[data-opt="${e.key}"]`);if(b&&!b.disabled)b.click()}
+  else if(e.key==='Enter'){const b=document.querySelector('[data-wiz="next"]');if(b&&!b.disabled){e.preventDefault();b.click()}}
+  else if(e.key==='Backspace'||e.key==='ArrowLeft'){wizSet(ui.wiz-1)}});
 document.getElementById('view').addEventListener('click',e=>{
   const t=e.target.closest('button,[data-open]');if(!t)return;
+  if(t.dataset.opt!==undefined){const a=cur(),c=ALLC[ui.wiz-1];(c.g==='n'?a.n:a.a)[c.i]=+t.dataset.opt;render();return}
+  if(t.dataset.wizgo){wizSet(+t.dataset.wizgo);return}
+  if(t.dataset.wizopen){ui.sel.user=t.dataset.wizopen;const a=cur();const k=ALLC.findIndex((_,j)=>!answered(a,j));wizSet(k<0?13:k+1);return}
+  if(t.dataset.wiz){const w=t.dataset.wiz;if(w==='next')wizSet(ui.wiz+1);if(w==='prev')wizSet(ui.wiz-1);if(w==='restart')wizSet(0);return}
   if(t.dataset.open){ui.sel[ui.ctx]=t.dataset.open;go('assess');return}
   if(t.dataset.sel){ui.sel[ui.ctx]=t.dataset.sel;ui.confirm=null;render(true);return}
   if(t.dataset.tabgo){go(t.dataset.tabgo);return}
