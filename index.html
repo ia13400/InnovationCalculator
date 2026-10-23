@@ -1,0 +1,750 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Innovationsrendite-Rechner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: sticky mission bar + tabbed workspace; results always beside the inputs they come from. */
+:root{
+  --bg:#f2f4f7; --surface:#ffffff; --surface-2:#e9edf2; --ink:#141922; --muted:#566070; --line:#d5dbe3;
+  --accent:#2343c9; --accent-ink:#ffffff;
+  --gain:#0b7a6c; --gain-soft:#d5efe9; --cost:#c2410c; --cost-soft:#fbe3d6; --warn:#a16207; --warn-soft:#fbefc7;
+  --bad:#b4232c; --bad-soft:#f8dcdd;
+  --s1:#2343c9; --s2:#c2410c; --s3:#0b7a6c; --s4:#7c3aed; --s5:#a16207; --s6:#be185d;
+  --f-display:"Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1117; --surface:#161a22; --surface-2:#1e232d; --ink:#e7eaf0; --muted:#9aa3b2; --line:#2b313c;
+  --accent:#8299ff; --accent-ink:#0e1117;
+  --gain:#34d1bd; --gain-soft:#12332f; --cost:#ff9a5c; --cost-soft:#3a2117; --warn:#f2c14e; --warn-soft:#3a3014;
+  --bad:#ff7b84; --bad-soft:#3d1a1d;
+  --s1:#8299ff; --s2:#ff9a5c; --s3:#34d1bd; --s4:#b794ff; --s5:#f2c14e; --s6:#ff7eb6;
+  color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#0e1117; --surface:#161a22; --surface-2:#1e232d; --ink:#e7eaf0; --muted:#9aa3b2; --line:#2b313c;
+  --accent:#8299ff; --accent-ink:#0e1117;
+  --gain:#34d1bd; --gain-soft:#12332f; --cost:#ff9a5c; --cost-soft:#3a2117; --warn:#f2c14e; --warn-soft:#3a3014;
+  --bad:#ff7b84; --bad-soft:#3d1a1d;
+  --s1:#8299ff; --s2:#ff9a5c; --s3:#34d1bd; --s4:#b794ff; --s5:#f2c14e; --s6:#ff7eb6;
+  color-scheme:dark;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);font-stretch:85%;letter-spacing:-.005em;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.5rem,3.2vw,2.1rem);font-weight:800;line-height:1.05}
+h2{font-size:1.35rem;font-weight:700}
+h3{font-size:1.05rem;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+.mono,.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+a{color:var(--accent)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--line)}
+.hrow{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:16px 10px}
+.formula{font-family:var(--f-mono);font-size:.82rem;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+.formula b{color:var(--ink);font-weight:500}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px 9px;cursor:pointer;color:var(--muted);font-weight:600;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+nav.tabs button:hover{color:var(--ink)}
+main{padding-block:24px 64px;display:grid;gap:24px}
+
+/* generic */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
+.panel>header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:24px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:7px 12px;cursor:pointer;font-weight:500;font-size:.9rem}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{color:var(--bad)}
+.btn.small{padding:4px 9px;font-size:.82rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.chip.ok{background:var(--gain-soft);color:var(--gain)}
+.chip.mid{background:var(--warn-soft);color:var(--warn)}
+.chip.bad{background:var(--bad-soft);color:var(--bad)}
+.chip.neutral{background:var(--surface-2);color:var(--muted)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td.r,th.r{text-align:right}
+tr.clickable{cursor:pointer}
+tr.clickable:hover td{background:var(--surface-2)}
+.notice{border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 var(--r) var(--r) 0;font-size:.9rem}
+.notice.info{border-color:var(--accent);background:var(--surface-2)}
+
+/* KPI strip */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.kpi{background:var(--surface);padding:14px 16px;display:grid;gap:4px}
+.kpi .v{font-family:var(--f-mono);font-size:1.6rem;font-weight:500;line-height:1.1}
+.kpi .v.gain{color:var(--gain)} .kpi .v.cost{color:var(--cost)}
+
+/* portfolio */
+.pf{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(96px,auto)) auto;gap:4px;font-size:.82rem}
+.pf .ylab,.pf .xlab{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);display:flex;align-items:center;justify-content:center;text-align:center;padding:4px}
+.pf .ylab{writing-mode:vertical-rl;transform:rotate(180deg)}
+.pf .cell{border-radius:4px;padding:8px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.pf .cell .lbl{font-weight:600;font-size:.78rem}
+.pf .cell.g{background:var(--gain-soft)} .pf .cell.g .lbl{color:var(--gain)}
+.pf .cell.y{background:var(--warn-soft)} .pf .cell.y .lbl{color:var(--warn)}
+.pf .cell.r{background:var(--bad-soft)} .pf .cell.r .lbl{color:var(--bad)}
+.pf .item{display:flex;gap:6px;align-items:center;font-size:.8rem;line-height:1.25;cursor:pointer;background:none;border:0;padding:0;text-align:left}
+.pf .item:hover{text-decoration:underline}
+.axis-note{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:.7rem;color:var(--muted);margin-top:6px}
+
+/* assess editor */
+.layout-edit{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+@media (max-width:980px){.layout-edit{grid-template-columns:minmax(0,1fr)}}
+.sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + 120px)}
+@media (max-width:980px){.sticky{position:static}}
+.picker{display:flex;gap:8px;flex-wrap:wrap}
+.picker button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px 5px 9px;cursor:pointer;font-size:.86rem;display:inline-flex;gap:7px;align-items:center}
+.picker button[aria-pressed="true"]{border-color:var(--ink);background:var(--surface-2);font-weight:600}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px}
+label.f{display:grid;gap:4px;font-size:.8rem;color:var(--muted)}
+label.f input,label.f select,label.f textarea, .in{border:1px solid var(--line);background:var(--bg);border-radius:4px;padding:7px 9px;color:var(--ink);font-size:.92rem;width:100%;min-width:0}
+textarea.in{resize:vertical;min-height:38px}
+.block-title{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;padding-bottom:8px;border-bottom:2px solid currentColor;margin-bottom:4px}
+.block-title.gain{color:var(--gain)} .block-title.cost{color:var(--cost)}
+.block-title h3{color:var(--ink)}
+.crit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.crit .name{font-weight:600}
+.crit .desc{font-size:.8rem;color:var(--muted);grid-column:1/-1;margin-top:-4px}
+.crit .why{grid-column:1/-1}
+.crit .meta{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);text-align:right;white-space:nowrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.seg button{width:34px;height:32px;border:0;border-right:1px solid var(--line);background:var(--surface);cursor:pointer;font-family:var(--f-mono);font-size:.9rem}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface);font-weight:500}
+.seg.gain button[aria-pressed="true"]{background:var(--gain);color:var(--surface)}
+.seg.cost button[aria-pressed="true"]{background:var(--cost);color:var(--surface)}
+.seg button:disabled{cursor:not-allowed;opacity:.55}
+.linked{font-size:.78rem;color:var(--accent);font-weight:600}
+.result-card{display:grid;gap:14px}
+.big{font-family:var(--f-mono);font-size:3rem;line-height:1;font-weight:500}
+.bar2{display:grid;gap:6px}
+.bar2 .t{display:flex;justify-content:space-between;font-size:.82rem}
+.bar2 .track{height:10px;background:var(--surface-2);border-radius:5px;overflow:hidden}
+.bar2 .fill{height:100%;border-radius:5px}
+.verdict{padding:12px 14px;border-radius:var(--r);font-weight:600}
+
+/* 5-year */
+table.fy td,table.fy th{white-space:nowrap}
+table.fy td.note{white-space:normal;min-width:280px;font-size:.8rem;color:var(--muted)}
+table.fy input.in{width:96px;text-align:right;font-family:var(--f-mono);padding:5px 7px}
+table.fy input.in.wide{width:250px;text-align:left;font-family:var(--f-body)}
+table.fy tr.sum td{font-weight:600;background:var(--surface-2)}
+table.fy tr.key td{background:var(--surface-2)}
+.calc{font-family:var(--f-mono);text-align:right}
+.scale{display:flex;gap:2px;margin-top:6px}
+.scale span{flex:1;text-align:center;font-family:var(--f-mono);font-size:.7rem;padding:5px 2px;background:var(--surface-2);color:var(--muted);border-radius:3px}
+.scale span.on{background:var(--accent);color:var(--accent-ink);font-weight:600}
+ol.src{margin:0;padding-left:22px;font-size:.84rem;display:grid;gap:4px;word-break:break-word}
+
+/* ideas */
+.ideas{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:14px}
+.idea{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+.idea .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.idea p{font-size:.86rem;color:var(--muted);flex:1}
+.mo{display:flex;gap:14px;font-family:var(--f-mono);font-size:.78rem;color:var(--muted)}
+.hwn{display:grid;grid-template-columns:auto 1fr 1fr;grid-template-rows:1fr 1fr auto;gap:4px;font-size:.8rem}
+.hwn .cell{padding:10px;border-radius:4px;min-height:90px}
+.hwn .cell b{display:block;font-family:var(--f-display);font-size:1rem;margin-bottom:4px}
+.hwn .wow{background:var(--gain-soft)} .hwn .wow b{color:var(--gain)}
+.hwn .how{background:var(--surface-2)} .hwn .now{background:var(--warn-soft)} .hwn .now b{color:var(--warn)}
+.hwn .drop{background:var(--bad-soft)} .hwn .drop b{color:var(--bad)}
+.hwn .ylab,.hwn .xlab{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.hwn .ylab{writing-mode:vertical-rl;transform:rotate(180deg)}
+
+svg text{fill:var(--muted);font-family:var(--f-mono);font-size:11px}
+svg .lab{fill:var(--ink);font-family:var(--f-body);font-size:12px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;margin-top:8px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));right:max(16px,env(safe-area-inset-right,0px));background:var(--ink);color:var(--surface);padding:10px 14px;border-radius:var(--r);font-size:.9rem;z-index:20}
+.method p{max-width:70ch}
+.method ul{margin:0;padding-left:20px;max-width:70ch}
+footer{font-size:.8rem;color:var(--muted);padding-bottom:32px}
+@media (prefers-reduced-motion:no-preference){.bar2 .fill{transition:width .25s ease}}
+</style>
+</head><body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="hrow">
+      <div>
+        <div class="eyebrow" id="workbookName">Trend2Business · SpaceX · Gruppe 2</div>
+        <h1>Innovationsrendite-Rechner</h1>
+      </div>
+      <div class="formula">
+        <span><b>IR = IN / IA</b> Rendite</span>
+        <span><b>IN − IA</b> Bilanz</span>
+        <span>IR &gt; 1 ⇒ „profitabel“</span>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" id="tabs">
+      <button role="tab" data-tab="overview">Übersicht</button>
+      <button role="tab" data-tab="assess">Bewerten</button>
+      <button role="tab" data-tab="fy">5-Jahres-Kalkulation</button>
+      <button role="tab" data-tab="ideas">Ideenpool</button>
+      <button role="tab" data-tab="settings">Gewichtung &amp; Daten</button>
+      <button role="tab" data-tab="method">Methode</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap"><main id="view"></main>
+<footer>Nachbau des Innovations-Rendite-Kalkulators nach Prof. Dr. Gerhard Hube (THWS Business School) für die Prüfungsleistung „Trend2Business“. Eingaben werden nur in diesem Browser gespeichert. Für die Gruppe: über „Gewichtung &amp; Daten“ exportieren und teilen.</footer>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+/* ============================== Modell (nach Hube) ============================== */
+const N_CRIT=[
+ {k:'wirt',t:'Wirtschaftlicher Nutzen',d:'Umsatz/Gewinn oder Einsparpotenzial als Gewinnanteil am Unternehmensgewinn. 0 kein Gewinn · 1 ≤ 3 % · 2 ≤ 5 % · 3 ≤ 20 % · 4 ≤ 30 % · 5 > 30 %',quant:true},
+ {k:'kunde',t:'Wahrnehmbarer Kundennutzen',d:'Kann auch ein interner Kunde sein.'},
+ {k:'komp',t:'Nutzen durch neue Kompetenzen und Fähigkeiten',d:'Werden Fähigkeiten aufgebaut, die auch für andere Anwendungsfelder oder Märkte wertvoll sind?'},
+ {k:'trend',t:'Chancen durch Zukunftsmarkt/Trend',d:'Liegt die Idee in einem langfristigen Trend mit großen Chancen und Potenzialen?'},
+ {k:'nachh',t:'Nachhaltigkeits-Nutzen',d:'Ökologischer und/oder sozialer Nutzen neben dem ökonomischen.'},
+ {k:'bauchN',t:'Nutzen/Chancen gesamt nach Bauchgefühl',d:'Gesamteindruck der Beurteilenden.'}];
+const A_CRIT=[
+ {k:'fue',t:'Investitionsaufwand für Entwicklung und Kompetenzaufbau (F&E)',d:'Kumulierte F&E-Kosten als Anteil am F&E-Budget des letzten Jahres. 0 keine Kosten · 1 ≤ 10 % · 2 ≤ 20 % · 3 ≤ 50 % · 4 ≤ 100 % · 5 > 100 %',quant:true},
+ {k:'kundeA',t:'Aufwand, Kunden zu überzeugen',d:'Wie schwer ist es, Kunden zum Nutzen und Kauf zu bewegen?'},
+ {k:'tech',t:'Erfolgsrisiko (technische) Umsetzbarkeit',d:'Komplexität, Verfügbarkeit, weitere Unsicherheiten.'},
+ {k:'markt',t:'Erfolgsrisiko Markt und Wettbewerb',d:'Wettbewerber, Marktdynamik (VUCA), gesetzliche Rahmenbedingungen.'},
+ {k:'intern',t:'Aufwand, intern zu überzeugen, und Umstellungsaufwand',d:'Widerstand in der Organisation, Änderungen an Prozessen und Strukturen.'},
+ {k:'bauchA',t:'Aufwand/Risiko gesamt nach Bauchgefühl',d:'Gesamteindruck der Beurteilenden.'}];
+const HUBE_W={n:[10,20,30,20,10,10],a:[20,10,30,10,10,20]};
+const PF_LABELS=[ // [aufwandKat][nutzenKat]  Kat: 1 niedrig, 2 mittel, 3 hoch
+ null,
+ [null,['Nutzen prüfen/steigern!','y'],['Quick win','g'],['Fast zu schön um wahr zu sein!','g']],
+ [null,['Kritisch prüfen!','r'],['?','y'],['Dranbleiben!','g']],
+ [null,['Abbrechen!!','r'],['Aufwand prüfen/senken, Nutzen steigern!','r'],['Aufwand prüfen/senken!','y']]];
+const SERIES=['--s1','--s2','--s3','--s4','--s5','--s6'];
+
+function cat(v){return v>=3?3:v>=2?2:1}
+function catName(c){return ['','niedrig','mittel','hoch'][c]}
+function profitRating(profit,share){if(profit<=0)return 0;if(share<=.03)return 1;if(share<=.05)return 2;if(share<=.2)return 3;if(share<=.3)return 4;return 5}
+function costRating(cost,share){if(cost<=0)return 0;if(share<=.1)return 1;if(share<=.2)return 2;if(share<=.5)return 3;if(share<=1)return 4;return 5}
+const sum=a=>a.reduce((x,y)=>x+(+y||0),0);
+
+function calcFY(fy,base){
+  const margin=base.revenue>0?base.profit/base.revenue:0;
+  const revenue=fy.qty.map((q,i)=>(+q||0)*(+fy.price[i]||0));
+  const profit=revenue.map(r=>r*margin);
+  const staffCost=[0,1,2,3,4].map(i=>sum(fy.staff.map(s=>(+s.fte[i]||0)*(+s.cost||0))));
+  const rnd=staffCost.map((s,i)=>s+(+fy.material[i]||0));
+  const P=sum(profit),C=sum(rnd);
+  const pShare=base.profit>0?P/(base.profit*1e6):0, cShare=base.rnd>0?C/(base.rnd*1e6):0;
+  return {margin,revenue,profit,staffCost,rnd,R:sum(revenue),P,C,pShare,cShare,
+    pRating:profitRating(P,pShare),cRating:costRating(C,cShare),qtySum:sum(fy.qty.map(Number))};
+}
+function effScores(a){
+  const n=a.n.slice(),x=a.a.slice();
+  let fy=null;
+  if(a.fy){fy=calcFY(a.fy,state.base);if(a.link){n[0]=fy.pRating;x[0]=fy.cRating}}
+  return {n,x,fy};
+}
+function calc(a){
+  const {n,x,fy}=effScores(a);
+  const wn=n.map((s,i)=>s*state.w.n[i]/100), wa=x.map((s,i)=>s*state.w.a[i]/100);
+  const IN=sum(wn), IA=sum(wa);
+  return {n,x,fy,wn,wa,IN,IA,IR:IA>0?IN/IA:Infinity,bil:IN-IA,
+    mN:IN/6,mA:IA/6,cN:cat(IN),cA:cat(IA),pf:PF_LABELS[cat(IA)][cat(IN)]};
+}
+
+/* ============================== Startdaten ============================== */
+const SRC_SPACEX=[
+ 'SpaceX Form S-1, U.S. SEC EDGAR, 20.05.2026 – Segmentzahlen 2025 (zitiert nach SatNews 21.05.2026 und Vested Finance 22.05.2026). https://www.sec.gov/Archives/edgar/data/1181412/000162828026040364/spaceexplorationtechnologib.htm',
+ 'Reuters via RTÉ, 01.05.2026 – F&E-Aufwand Space-Segment 2025 rund 3 Mrd. USD.'];
+function seed(){
+ return {
+  version:3, workbook:'Trend2Business · SpaceX · Gruppe 2', mode:'Multiprojekt', horizon:'5 Jahre',
+  w:{n:[25,15,25,20,5,10],a:[20,10,30,10,10,20]},
+  base:{company:'SpaceX',currency:'USD',revenue:15473,profit:3766,rnd:3000,
+    note:'Geschäftsjahr 2025, Kerngeschäft Space + Connectivity ohne AI-Segment (S-1 vom 20.05.2026). Gewinn = operatives Ergebnis Kerngeschäft (−657 + 4.423 Mio USD); F&E = Space-Segment (ca. 3 Mrd. USD). Umsatzrendite daraus 24,3 %.'},
+  list:[
+   {id:'rld-team',project:'RocketLight Dinner',assessor:'Team (Gruppe 2)',idea:9,link:false,
+    n:[1,4,1,3,2,4],a:[1,1,1,1,3,1],
+    why:{},fy:null},
+   {id:'rld-ki',project:'RocketLight Dinner',assessor:'KI (Claude)',idea:9,link:true,
+    n:[1,4,2,3,1,2],a:[1,2,4,4,4,3],
+    why:{kunde:'Einzigartiges Erlebnis mit hoher Zahlungsbereitschaft bei zahlungskräftigen Kunden.',
+     komp:'Gastronomie ist kein Kerngeschäft; nur begrenzter Kompetenzaufbau im Endkunden- bzw. Weltraumtourismus-Erlebnis.',
+     trend:'Passt zu den Trends Weltraumtourismus und Experience Economy, bleibt aber eine Nische.',
+     nachh:'Luxus-Event rund um Raketenstarts – kaum ökologischer oder sozialer Nutzen.',
+     bauchN:'Attraktives Imageprojekt, aber insgesamt nur geringer strategischer und wirtschaftlicher Nutzen.',
+     kundeA:'Das Erlebnis verkauft sich weitgehend selbst; Unsicherheit durch verschobene oder abgesagte Starts.',
+     tech:'Sicherheits-Sperrzonen um Start- und Landeplätze (Explosions- und Lärmrisiko, v. a. bei Starship) machen ein Dinner direkt am Startplatz kaum umsetzbar.',
+     markt:'Hohe regulatorische Hürden (FAA, Space-Force-Gelände in Cape Canaveral, Umweltauflagen Starbase), Sicherheit/ITAR und Haftungsrisiken.',
+     intern:'Ablenkung vom Kernauftrag; Widerstand von Betriebs-, Sicherheits- und Launch-Teams ist zu erwarten.',
+     bauchA:'Hohe Umsetzungs- und Genehmigungsrisiken bei vergleichsweise geringem Ertrag.'},
+    fy:{unit:'verkaufte Plätze',priceUnit:'Preis je Platz',
+     qty:[0,64,180,288,432],price:[0,35000,50000,50000,50000],
+     qtyNote:'Events × 20 Plätze × Auslastung: Jahr 1 keine Events (Genehmigungen), Jahr 2 vier Pilot-Dinner (80 %), dann 10/16/24 Events bei 90 %.',
+     priceNote:'Pilotjahr 35.000 USD, danach 50.000 USD je Platz. Benchmarks: UFC-Ringside bis 24.600 USD, Virgin-Galactic-Flug 750.000 USD.',
+     staff:[{label:'Safety-/Launch-Operations-Ingenieur',fte:[1,1,0,0,0],cost:190000,note:'BLS-Median Aerospace Engineers 134.830 USD × 1,43 (Nebenkosten).'},
+            {label:'Hospitality-/Event-Konzept (Projektleitung)',fte:[1,1,1,1,0],cost:100000,note:'BLS-Median Event Planners 59.440 USD × 1,43, Aufschlag Luxussegment.'}],
+     material:[1500000,800000,300000,100000,0],
+     materialNote:'Jahr 1: Prototyp mobiler Glas-Pavillon „Rocket Light Lounge“ (ca. 0,8 Mio USD), Gutachten, Genehmigungen; danach Optimierung.',
+     sources:SRC_SPACEX.concat([
+      'Matador Network, 02/2024 – Sublimotion Ibiza: 12 Plätze, ca. 2.380 USD p. P.',
+      'Sportsnaut, 07/2026 – UFC 329: Plätze bis 24.600 USD.',
+      'U.S. Bureau of Labor Statistics, Occupational Outlook Handbook (Aerospace Engineers; Meeting, Convention and Event Planners), Mai 2024.'])}},
+   {id:'sli',project:'Starlink Insights',assessor:'Gruppe 2 (Entwurf)',idea:4,link:true,
+    n:[1,4,4,5,4,4],a:[1,3,3,3,2,2],
+    why:{kunde:'Echtzeit-Niederschlagsdaten auch über Ozeanen und in Regionen ohne Wetterradar: Wetterdienste, Versicherer (parametrische Policen), Logistik und Luftfahrt erhalten Messpunkte, die es heute nicht gibt.',
+     komp:'Aufbau von Fähigkeiten in Sensorik, Datenprodukten und KI-Auswertung; übertragbar auf Starshield, xAI und Netzbetrieb (Ausfallvorhersage).',
+     trend:'Kern des Megatrends „Daten als Ressource“ plus KI. Parametrische Versicherungen wachsen von 16,2 Mrd. USD (2024) auf 51,3 Mrd. USD (2034, CAGR 12,6 %).',
+     nachh:'Bessere Unwetter- und Hochwasserwarnungen, Klimaanpassung in Regionen ohne Messnetz (Globaler Süden).',
+     bauchN:'Nutzt vorhandene Assets (über 12 Mio. Terminals) für ein neues Geschäftsfeld mit klarem Kundennutzen.',
+     kundeA:'Neue Datenquelle muss ihre Genauigkeit gegenüber Radar und Regenmessern erst beweisen (in GEO-Studien Korrelation mit Messstationen nur r = 0,45).',
+     tech:'Messprinzip bei Richtfunk bewiesen (Niederlande, 3.383 Links), für LEO-Satelliten aber erst theoretisch belegt; Kalibrierung über sich bewegende Satelliten ist aufwendig.',
+     markt:'Datenschutz (DSGVO, Standortdaten der Kunden), Eigentum an Terminal-Daten, Wettbewerb durch Tomorrow.io und nationale Wetterdienste.',
+     intern:'Telemetrie wird bereits erhoben; passt zu Starlink und xAI. Datenfreigabe braucht aber Abstimmung mit Netzbetrieb und Recht.',
+     bauchA:'Überschaubares Risiko, weil weder Hardware noch Starts nötig sind; schrittweise ausbaubar.'},
+    fy:{unit:'zahlende Datenkunden',priceUnit:'Jahresvertrag je Kunde',
+     qty:[0,8,25,50,80],price:[0,250000,350000,400000,450000],
+     qtyNote:'Jahr 1 Aufbau und Kalibrierung, Jahr 2 Pilotkunden (Wetterdienste, Rückversicherer), danach Ausbau auf Versicherer, Logistik, Luftfahrt, Agrar. Annahme.',
+     priceNote:'Enterprise-Datenlizenz (API) mit steigendem Umfang. Zum Vergleich: Tomorrow.io erzielt ca. 100 Mio USD ARR mit Enterprise- und Behördenkunden. Annahme.',
+     staff:[{label:'Data-/ML-Engineers (Kalibrierung, Datenprodukt)',fte:[6,6,4,2,2],cost:190000,note:'BLS-Median Software Developers 133.080 USD × 1,43 Nebenkosten.'},
+            {label:'Produkt, Datenschutz und Recht',fte:[2,2,1,1,0],cost:150000,note:'Annahme.'}],
+     material:[2000000,1500000,1000000,500000,500000],
+     materialNote:'Datenplattform und Cloud-Rechenleistung, Referenzdaten (Radar, Regenmesser) für die Kalibrierung, Datenschutz-Gutachten. Annahme.',
+     sources:SRC_SPACEX.concat([
+      'Drive Tesla Canada, 05.08.2026 – Starlink über 12 Mio. Nutzer (Q2 2026), ARPU 66 USD/Monat. https://driveteslacanada.ca/news/starlink-12-million-subscribers-price-hikes/',
+      'Dong et al. (University of Cambridge), „Rain Rate Estimation Bounds and Weather-Adaptive Pilot Allocation for LEO Satellite ISAC“, arXiv 2604.10830, 2026. https://arxiv.org/abs/2604.10830',
+      'Overeem, Leijnse, Uijlenhoet (2016): Two and a half years of country-wide rainfall maps using radio links from commercial cellular telecommunication networks, Water Resources Research.',
+      'GlobeNewswire, 01.05.2025 – Parametric Insurance Market: 16,2 Mrd. USD (2024) → 51,3 Mrd. USD (2034), CAGR 12,6 %.',
+      'Wikipedia: Tomorrow.io – ca. 100 Mio USD ARR (Feb. 2026), Kunden u. a. JetBlue, Delta, Uber. https://en.wikipedia.org/wiki/Tomorrow.io',
+      'MarketsandMarkets – Weather Forecasting Services: 1,9 Mrd. USD (2023) → 2,8 Mrd. USD (2028), CAGR 8,2 %.',
+      'U.S. Bureau of Labor Statistics – Software Developers, Median 133.080 USD (2024).'])}},
+   {id:'lec',project:'SpaceX Launch Engineering Cloud',assessor:'Gruppe 2 (Entwurf)',idea:8,link:true,
+    n:[1,4,4,4,2,3],a:[1,3,3,3,3,2],
+    why:{kunde:'Satellitenhersteller finden Integrationsprobleme (Masse, Schwerpunkt, Lasten, Schnittstellen) schon in der Konstruktion statt kurz vor dem Start; spart Zeit und teure Nacharbeit.',
+     komp:'Aufbau von Digital-Engineering- und Software-Kompetenz (digitaler Zwilling, Simulation, KI-Prüfung), auch intern für Starship und Starlink nutzbar.',
+     trend:'Megatrend Innovationsdruck: 2025 wurden 4.544 Raumfahrzeuge gestartet (Rekord), 98 % davon unter 1.200 kg; immer mehr Kunden mit kurzen Entwicklungszyklen.',
+     nachh:'Weniger Fehlversuche, Test-Hardware und Nacharbeit; ökologischer Nutzen eher indirekt.',
+     bauchN:'Stärkt die Kundenbindung an Falcon/Starship und macht SpaceX zum Partner schon in der Entwicklung.',
+     kundeA:'Kunden arbeiten mit eigenen Tools (z. B. Ansys) und müssen geschützte Konstruktionsdaten mit SpaceX teilen; Vertrauen muss aufgebaut werden.',
+     tech:'Genaue Lastsimulationen für sehr unterschiedliche Nutzlasten sind komplex; Haftung für Prüfergebnisse.',
+     markt:'Exportkontrolle (ITAR) für Fahrzeugdaten; Wettbewerb durch Integratoren wie Exolaunch und etablierte Simulationsanbieter.',
+     intern:'Fahrzeug-Schnittstellendaten müssten offengelegt werden; widerspricht teilweise der Geheimhaltungskultur.',
+     bauchA:'Reine Software, schrittweise ausbaubar (erst Schnittstellen-Check, später Simulation); begrenztes Risiko.'},
+    fy:{unit:'Nutzlast-Projekte (Abos)',priceUnit:'Jahresabo je Projekt',
+     qty:[0,25,70,120,180],price:[0,20000,40000,45000,50000],
+     qtyNote:'2025 flogen allein auf den vier Transporter-Missionen ca. 415 Nutzlasten. Jahr 2 Beta mit Rideshare-Kunden, Jahr 5 ca. 180 Projekte inkl. dedizierter Missionen. Annahme.',
+     priceNote:'Jahr 2 Einführungspreis 20.000 USD, danach 40–50.000 USD je Projekt und Jahr. Zum Vergleich: kommerzielle Ansys-Pakete ca. 10.000–50.000 USD; Rideshare-Platz 50 kg = 350.000 USD.',
+     staff:[{label:'Software-Engineers (Plattform, digitaler Zwilling, KI)',fte:[10,10,6,4,3],cost:190000,note:'BLS-Median Software Developers 133.080 USD × 1,43.'},
+            {label:'Launch-Integrations-Ingenieure (Fahrzeugdaten)',fte:[3,3,2,1,1],cost:190000,note:'BLS-Median Aerospace Engineers 134.830 USD × 1,43.'},
+            {label:'Exportkontrolle und Recht (ITAR)',fte:[1,1,1,0,0],cost:150000,note:'Annahme.'}],
+     material:[1500000,1500000,1000000,800000,600000],
+     materialNote:'Simulationslizenzen, HPC-Rechenleistung in der Cloud, Aufbau digitaler Zwilling der Falcon-/Starship-Schnittstellen. Annahme.',
+     sources:SRC_SPACEX.concat([
+      'NewSpace Economy, 27.02.2026 – SpaceX Rideshare 2026: 350.000 USD für 50 kg (7.000 USD/kg); Transporter-12 bis -15 mit 131, 74, ca. 70 und 140 Nutzlasten. https://newspaceeconomy.ca/2026/02/27/satellite-ridesharing-market-analysis-2026/',
+      'BryceTech, Global Orbital Activity 2025 – 4.544 gestartete Raumfahrzeuge, 98 % unter 1.200 kg. https://www.brycetech.com/reports/report-documents/global-orbital-activity-2025',
+      'Exolaunch Integration Services – bestehender Anbieter für Integrationsprüfungen bei Rideshare-Missionen. https://exolaunch.com/integration_services',
+      'ThePricer, Ansys-Lizenzkosten: kommerzielle Pakete ca. 10.000–50.000 USD. https://www.thepricer.org/ansys-cost/',
+      'U.S. Bureau of Labor Statistics – Software Developers, Median 133.080 USD (2024); Aerospace Engineers 134.830 USD.'])}}
+  ]};
+}
+const IDEAS=[
+ {id:1,name:'Starlink Climate Watch',trend:'Neo-Ökologie',d:'Emissionsmonitoring as a Service: Methan-Sensoren als Zusatznutzlast auf Starlink-Satelliten.',m:[3,3],o:[4,4],c:['HOW','HOW']},
+ {id:2,name:'SpaceX My Mission',trend:'Individualismus',d:'Personalisierte Mini-Missionen und Mikro-Nutzlasten für Privatkunden und Schulen.',m:[4,5],o:[3,3],c:['NOW','NOW']},
+ {id:3,name:'Starlink Edge AI',trend:'KI',d:'KI-Auswertung direkt im Netz für Regionen ohne Rechenzentren.',m:[4,4],o:[3,3],c:['NOW','NOW']},
+ {id:4,name:'Starlink Insights',trend:'Daten als Ressource',d:'Data as a Service: anonymisierte Terminal-Daten (Regendämpfung, Auslastung) als Niederschlagskarten und Datenprodukte.',m:[4,4],o:[4,4],c:['WOW','WOW']},
+ {id:5,name:'SpaceX Academy',trend:'Fachkräftemangel',d:'Aus- und Weiterbildung für Raumfahrt-Fachkräfte.',m:[4,4],o:[2,1],c:['NOW','NOW']},
+ {id:6,name:'Starlink Remote Hubs',trend:'Digital Nomads',d:'Arbeitsorte mit Konnektivitätsgarantie an abgelegenen Orten.',m:[4,4],o:[2,2],c:['NOW','NOW']},
+ {id:7,name:'SpaceX Compliance Navigator',trend:'Überregulierung',d:'Licensing as a Service: Genehmigungen, Frequenzen, Exportkontrolle für kleinere Kunden.',m:[4,4],o:[3,3],c:['NOW','NOW']},
+ {id:8,name:'SpaceX Launch Engineering Cloud',trend:'Innovationsdruck',d:'Cloud-Plattform, auf der Kunden ihre Nutzlast laufend gegen reale Falcon-/Starship-Anforderungen prüfen.',m:[4,4],o:[4,3],c:['WOW','NOW']},
+ {id:9,name:'Rocket-Light-Dinner',trend:'Open Innovation',d:'Sterne-Dinner mit Live-Blick auf einen Raketenstart durch eine große Glasfront.',m:[4,5],o:[4,5],c:['WOW','WOW']},
+ {id:10,name:'SpaceX Luxury Club',trend:'Open Innovation',d:'Mitgliedschaft mit Events, Vorteilen und Verlosungen (z. B. Rocket-Light-Dinner).',m:[4,5],o:[2,2],c:['NOW','NOW']},
+ {id:11,name:'Dyson Sphere',trend:'Open Innovation',d:'Konstruktion um einen Stern, um dessen Energie nutzbar zu machen.',m:[1,1],o:[4,4],c:['HOW','HOW']},
+ {id:12,name:'Satellitenschubser',trend:'Open Innovation',d:'Roboter-Satelliten schieben defekte Satelliten zum Verglühen in die Atmosphäre.',m:[3,3],o:[3,3],c:['VERWERFEN','VERWERFEN']}];
+
+/* ============================== Zustand ============================== */
+const KEY='innorendite.v3';
+let state, ui={tab:'overview',sel:null,confirm:null};
+try{state=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){state=null}
+if(!state||state.version!==3)state=seed();
+try{ui.sel=localStorage.getItem(KEY+'.sel')}catch(e){}
+if(!state.list.find(a=>a.id===ui.sel))ui.sel=(state.list[2]||state.list[0]||{}).id;
+let saveT;
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(state));localStorage.setItem(KEY+'.sel',ui.sel||'')}catch(e){}},250)}
+const cur=()=>state.list.find(a=>a.id===ui.sel);
+const colorOf=a=>`var(${SERIES[state.list.indexOf(a)%SERIES.length]})`;
+
+/* ============================== Hilfen ============================== */
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const f2=v=>v===Infinity?'∞':(Number.isFinite(v)?v.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2}):'–');
+const fInt=v=>Math.round(+v||0).toLocaleString('de-DE');
+const fMio=v=>((+v||0)/1e6).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' Mio';
+const fPct=v=>((+v||0)*100).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:3})+' %';
+const label=a=>a.assessor?`${a.project} · ${a.assessor}`:a.project;
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,2200)}
+function irChip(r){const v=r.IR;const c=v>=1.5?'ok':v>=1?'mid':'bad';return `<span class="chip ${c}">IR ${f2(v)}</span>`}
+function pfChip(r){const c={g:'ok',y:'mid',r:'bad'}[r.pf[1]];return `<span class="chip ${c}">${esc(r.pf[0])}</span>`}
+
+/* ============================== Charts (SVG) ============================== */
+function barChart(items,{key,ref=null,fmt=f2,title}){
+  const rows=items.map(a=>({a,v:calc(a)[key]})).map(o=>({...o,v:o.v===Infinity?null:o.v}));
+  const vals=rows.map(o=>o.v??0);
+  let max=Math.max(ref??0,...vals,0.5),min=Math.min(0,...vals);
+  const step=niceStep((max-min)/4);max=Math.ceil(max/step)*step;min=Math.floor(min/step)*step;
+  const W=580,lw=215,rh=30,top=8,H=top+rows.length*rh+26,pw=W-lw-46;
+  const x=v=>lw+(v-min)/(max-min||1)*pw;
+  let g='';
+  for(let t=min;t<=max+1e-9;t+=step){g+=`<line x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${H-20}" stroke="var(--line)"/><text x="${x(t)}" y="${H-6}" text-anchor="middle">${fmt(t)}</text>`}
+  if(ref!==null)g+=`<line x1="${x(ref)}" x2="${x(ref)}" y1="${top-4}" y2="${H-20}" stroke="var(--ink)" stroke-dasharray="4 3"/><text x="${x(ref)+4}" y="${top+6}" style="fill:var(--ink)">${fmt(ref)}</text>`;
+  rows.forEach((o,i)=>{const y=top+i*rh+6;const v=o.v;const name=label(o.a);
+    g+=`<text class="lab" x="${lw-10}" y="${y+12}" text-anchor="end">${esc(name.length>30?name.slice(0,29)+'…':name)}</text>`;
+    if(v===null){g+=`<text x="${x(max)-4}" y="${y+12}" text-anchor="end" style="fill:var(--ink)">∞</text>`;return}
+    const x0=x(Math.min(0,v)),x1=x(Math.max(0,v));
+    g+=`<rect x="${x0}" y="${y}" width="${Math.max(1,x1-x0)}" height="16" rx="2" fill="${colorOf(o.a)}"/>`;
+    g+=`<text x="${x1+5}" y="${y+12}" style="fill:var(--ink)">${fmt(v)}</text>`});
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(title)}">${g}</svg>`;
+}
+function niceStep(r){const p=Math.pow(10,Math.floor(Math.log10(r||1)));const n=r/p;return (n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*p}
+function radar(items){
+  const crit=[...N_CRIT.map(c=>({t:c.t,g:'n'})),...A_CRIT.map(c=>({t:c.t,g:'a'}))];
+  const short=['Wirtschaftl. Nutzen','Kundennutzen','Kompetenzen','Zukunftsmarkt','Nachhaltigkeit','Bauch Nutzen','F&E-Aufwand','Kunden überzeugen','Techn. Risiko','Markt/Wettbewerb','Intern überzeugen','Bauch Aufwand'];
+  const W=600,H=440,cx=W/2,cy=H/2,R=150,n=12;
+  const pt=(i,v)=>{const ang=-Math.PI/2+i*2*Math.PI/n;return [cx+Math.cos(ang)*R*v/5,cy+Math.sin(ang)*R*v/5]};
+  let g='';
+  for(let r=1;r<=5;r++){g+=`<polygon points="${[...Array(n)].map((_,i)=>pt(i,r).join(',')).join(' ')}" fill="none" stroke="var(--line)"/>`;g+=`<text x="${cx+3}" y="${cy-R*r/5-2}">${r}</text>`}
+  for(let i=0;i<n;i++){const [x,y]=pt(i,5);const [lx,ly]=pt(i,6.1);
+    g+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"/>`;
+    const anchor=Math.abs(lx-cx)<10?'middle':lx>cx?'start':'end';
+    g+=`<text class="lab" x="${lx}" y="${ly+4}" text-anchor="${anchor}" style="fill:${i<6?'var(--gain)':'var(--cost)'};font-size:11px">${short[i]}</text>`}
+  items.forEach(a=>{const r=calc(a);const v=[...r.n,...r.x];
+    g+=`<polygon points="${v.map((s,i)=>pt(i,s).join(',')).join(' ')}" fill="${colorOf(a)}" fill-opacity=".12" stroke="${colorOf(a)}" stroke-width="2"/>`;
+    v.forEach((s,i)=>{const [x,y]=pt(i,s);g+=`<circle cx="${x}" cy="${y}" r="3" fill="${colorOf(a)}"/>`})});
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Netzgrafik der Einzelbewertungen">${g}</svg>`;
+}
+function legend(items){return `<div class="legend">${items.map(a=>`<span><i class="dot" style="background:${colorOf(a)}"></i>${esc(label(a))}</span>`).join('')}</div>`}
+function portfolio(items){
+  const cells={};items.forEach(a=>{const r=calc(a);(cells[r.cA+'-'+r.cN]??=[]).push(a)});
+  let h='';
+  for(let ca=1;ca<=3;ca++){
+    h+=`<div class="ylab">${['','Niedrig &lt; 2','Mittel 2 – &lt; 3','Hoch 3 – 5'][ca]}</div>`;
+    for(let cn=1;cn<=3;cn++){const [t,c]=PF_LABELS[ca][cn];
+      h+=`<div class="cell ${c}"><span class="lbl">${esc(t)}</span>${(cells[ca+'-'+cn]||[]).map(a=>`<button class="item" data-open="${a.id}"><i class="dot" style="background:${colorOf(a)}"></i>${esc(label(a))}</button>`).join('')}</div>`}}
+  h+=`<div></div><div class="xlab">Niedrig &lt; 2</div><div class="xlab">Mittel 2 – &lt; 3</div><div class="xlab">Hoch 3 – 5</div>`;
+  return `<div class="pf">${h}</div><div class="axis-note"><span>↕ Aufwand/Risiko gesamt</span><span>Nutzen/Chancen gesamt →</span></div>`;
+}
+
+/* ============================== Views ============================== */
+function vOverview(){
+  const L=state.list; if(!L.length)return `<section class="panel"><p>Noch keine Bewertungen. Lege unter „Bewerten“ die erste an.</p></section>`;
+  const R=L.map(a=>({a,r:calc(a)})).sort((p,q)=>(q.r.IR===Infinity?1e9:q.r.IR)-(p.r.IR===Infinity?1e9:p.r.IR));
+  const best=R[0];
+  const avgN=sum(R.map(o=>o.r.IN))/R.length, avgA=sum(R.map(o=>o.r.IA))/R.length;
+  const wOk=sum(state.w.n)===100&&sum(state.w.a)===100;
+  return `
+  ${wOk?'':`<div class="notice">Die Gewichte ergeben nicht je 100 % (Nutzen ${sum(state.w.n)} %, Aufwand ${sum(state.w.a)} %). Unter „Gewichtung &amp; Daten“ korrigieren.</div>`}
+  <section class="kpis">
+    <div class="kpi"><span class="eyebrow">Bewertungen</span><span class="v">${L.length}</span><span class="muted">${esc(state.mode)} · ${esc(state.horizon)}</span></div>
+    <div class="kpi"><span class="eyebrow">Höchste Rendite</span><span class="v">${f2(best.r.IR)}</span><span class="muted">${esc(label(best.a))}</span></div>
+    <div class="kpi"><span class="eyebrow">Ø Nutzen/Chancen</span><span class="v gain">${f2(avgN)}</span><span class="muted">alle Bewertungen</span></div>
+    <div class="kpi"><span class="eyebrow">Ø Aufwand/Risiko</span><span class="v cost">${f2(avgA)}</span><span class="muted">alle Bewertungen</span></div>
+  </section>
+  <section class="panel"><header><h2>Ranking nach Innovationsrendite</h2><span class="muted">Zeile anklicken zum Bearbeiten</span></header>
+   <div class="tablewrap"><table><thead><tr><th>#</th><th>Projekt</th><th>Beurteilung</th><th class="r">Nutzen IN</th><th class="r">Aufwand IA</th><th class="r">Rendite IR</th><th class="r">Bilanz</th><th>Portfolio</th></tr></thead><tbody>
+   ${R.map((o,i)=>`<tr class="clickable" data-open="${o.a.id}"><td class="num">${i+1}</td><td><span class="row"><i class="dot" style="background:${colorOf(o.a)}"></i><b>${esc(o.a.project)}</b></span></td><td class="muted">${esc(o.a.assessor)}</td>
+   <td class="r num">${f2(o.r.IN)}</td><td class="r num">${f2(o.r.IA)}</td><td class="r">${irChip(o.r)}</td><td class="r num">${o.r.bil>=0?'+':''}${f2(o.r.bil)}</td><td>${pfChip(o.r)}</td></tr>`).join('')}
+   </tbody></table></div></section>
+  <div class="grid2">
+   <section class="panel"><header><h2>Aufwand/Nutzen-Portfolio</h2></header>${portfolio(L)}</section>
+   <section class="panel"><header><h2>Netzgrafik</h2><span class="muted">Einzelbewertungen 0–5</span></header>${radar(L)}${legend(L)}</section>
+   <section class="panel"><header><h2>Rendite</h2><span class="muted">Nutzen ÷ Aufwand, Linie = 1</span></header>${barChart(R.map(o=>o.a),{key:'IR',ref:1,title:'Rendite je Bewertung'})}</section>
+   <section class="panel"><header><h2>Bilanz</h2><span class="muted">Nutzen − Aufwand</span></header>${barChart(R.map(o=>o.a),{key:'bil',title:'Bilanz je Bewertung'})}</section>
+  </div>`;
+}
+function picker(){
+  return `<div class="picker" role="group" aria-label="Bewertung wählen">${state.list.map(a=>`<button aria-pressed="${a.id===ui.sel}" data-sel="${a.id}"><i class="dot" style="background:${colorOf(a)}"></i>${esc(label(a))}</button>`).join('')}
+  <button data-act="new">+ Neue Bewertung</button></div>`;
+}
+function critBlock(list,arr,scoresEff,kind,a){
+  return list.map((c,i)=>{
+    const locked=c.quant&&a.link&&a.fy;const val=scoresEff[i];const w=state.w[kind==='gain'?'n':'a'][i];
+    return `<div class="crit"><div><div class="name">${esc(c.t)}</div>${locked?`<div class="linked">Automatisch aus der 5-Jahres-Kalkulation</div>`:''}</div>
+     <div class="row" style="justify-content:flex-end"><div class="seg ${kind}" role="group" aria-label="${esc(c.t)}">${[0,1,2,3,4,5].map(s=>`<button aria-pressed="${val===s}" ${locked?'disabled':''} data-score="${kind}:${i}:${s}">${s}</button>`).join('')}</div>
+     <span class="meta">× ${w} % = <b data-out="w-${kind}-${i}">${f2(val*w/100)}</b></span></div>
+     <div class="desc">${esc(c.d)}</div>
+     ${locked?`<div class="why muted" style="font-size:.85rem">${quantWhy(a,kind)}</div>`:''}
+     <div class="why"><textarea class="in" rows="1" placeholder="${locked?'Ergänzende Begründung (optional)':'Begründung'}" data-why="${c.k}" aria-label="Begründung ${esc(c.t)}">${esc(a.why[c.k]||'')}</textarea></div></div>`}).join('');
+}
+function quantWhy(a,kind){const c=calcFY(a.fy,state.base),cu=esc(state.base.currency);
+  return kind==='gain'?`Quantitativ: 5-Jahres-Gewinn ${fMio(c.P)} ${cu} = ${fPct(c.pShare)} des Unternehmensgewinns (${fInt(state.base.profit)} Mio ${cu}) → Bewertung ${c.pRating}.`
+  :`Quantitativ: kumulierte F&E-Kosten ${fMio(c.C)} ${cu} = ${fPct(c.cShare)} des F&E-Budgets (${fInt(state.base.rnd)} Mio ${cu}) → Bewertung ${c.cRating}.`}
+function resultCard(a){
+  const r=calc(a);const maxv=5;
+  const vcls={g:'ok',y:'mid',r:'bad'}[r.pf[1]];
+  return `<div class="panel result-card sticky">
+   <div><div class="eyebrow">Innovationsrendite</div><div class="big">${f2(r.IR)}</div><div class="muted">${r.IR>=1?'„profitabel“: Nutzen übersteigt Aufwand':'nicht „profitabel“: Aufwand übersteigt Nutzen'}</div></div>
+   <div class="bar2"><div class="t"><span>Nutzen/Chancen IN</span><b class="num" style="color:var(--gain)">${f2(r.IN)}</b></div><div class="track"><div class="fill" style="width:${r.IN/maxv*100}%;background:var(--gain)"></div></div></div>
+   <div class="bar2"><div class="t"><span>Aufwand/Risiko IA</span><b class="num" style="color:var(--cost)">${f2(r.IA)}</b></div><div class="track"><div class="fill" style="width:${r.IA/maxv*100}%;background:var(--cost)"></div></div></div>
+   <table><tbody>
+    <tr><td>Bilanz IN − IA</td><td class="r num">${r.bil>=0?'+':''}${f2(r.bil)}</td></tr>
+    <tr><td>Mittelwert Nutzen</td><td class="r num">${f2(r.mN)}</td></tr>
+    <tr><td>Mittelwert Aufwand</td><td class="r num">${f2(r.mA)}</td></tr>
+    <tr><td>Kategorie Nutzen / Aufwand</td><td class="r">${catName(r.cN)} / ${catName(r.cA)}</td></tr>
+   </tbody></table>
+   <div class="verdict chip ${vcls}" style="display:block;border-radius:var(--r);white-space:normal">Portfolio: ${esc(r.pf[0])}</div>
+  </div>`;
+}
+function vAssess(){
+  const a=cur();
+  if(!a)return `<section class="panel">${picker()}</section>`;
+  const r=calc(a);
+  const conf=ui.confirm==='del'?`<span class="row"><span>Bewertung wirklich löschen?</span><button class="btn small danger" data-act="del-yes">Löschen</button><button class="btn small" data-act="del-no">Abbrechen</button></span>`:`<button class="btn small danger" data-act="del">Löschen</button>`;
+  return `<section class="panel">${picker()}</section>
+  <div class="layout-edit">
+   <div style="display:grid;gap:24px;min-width:0">
+    <section class="panel"><div class="fields">
+      <label class="f">Projekt / Idee<input id="f-project" data-field="project" value="${esc(a.project)}"></label>
+      <label class="f">${state.mode==='Multibeurteilende'?'Beurteiler (Name, Funktion)':'Beurteilt von'}<input id="f-assessor" data-field="assessor" value="${esc(a.assessor)}"></label>
+      <label class="f">Idee aus dem Ideenpool<select id="f-idea" data-field="idea"><option value="">–</option>${IDEAS.map(i=>`<option value="${i.id}" ${a.idea==i.id?'selected':''}>${i.id}. ${esc(i.name)}</option>`).join('')}</select></label>
+     </div>
+     <div class="row" style="margin-top:14px;justify-content:space-between">
+      <label class="row" style="font-size:.9rem"><input type="checkbox" id="f-link" data-act="link" ${a.link&&a.fy?'checked':''} ${a.fy?'':'disabled'}> Wirtschaftlichen Nutzen und F&amp;E-Aufwand aus der 5-Jahres-Kalkulation übernehmen</label>
+      <span class="row">${a.fy?`<button class="btn small" data-tabgo="fy">5-Jahres-Kalkulation öffnen</button>`:`<button class="btn small" data-act="addfy">5-Jahres-Kalkulation anlegen</button>`}<button class="btn small" data-act="dup">Duplizieren</button>${conf}</span>
+     </div></section>
+    <section class="panel"><div class="block-title gain"><h3>Nutzen/Chancen</h3><span class="mono">Gewichte ${sum(state.w.n)} %</span></div>
+     <p class="muted" style="font-size:.82rem">Skala: 0 nicht vorhanden · 1 sehr gering … 5 sehr hoch</p>
+     ${critBlock(N_CRIT,a.n,r.n,'gain',a)}</section>
+    <section class="panel"><div class="block-title cost"><h3>Aufwand/Risiko</h3><span class="mono">Gewichte ${sum(state.w.a)} %</span></div>
+     <p class="muted" style="font-size:.82rem">Skala: 0 nicht vorhanden · 1 sehr gering … 5 sehr hoch</p>
+     ${critBlock(A_CRIT,a.a,r.x,'cost',a)}</section>
+   </div>
+   <div id="resultSlot">${resultCard(a)}</div>
+  </div>`;
+}
+function vFY(){
+  const a=cur();
+  if(!a)return `<section class="panel">${picker()}</section>`;
+  if(!a.fy)return `<section class="panel">${picker()}</section><section class="panel"><h2>${esc(label(a))}</h2><p class="muted" style="margin:8px 0 14px">Für diese Bewertung gibt es noch keine 5-Jahres-Kalkulation. Sie liefert die Bewertung für „Wirtschaftlicher Nutzen“ und „Investitionsaufwand F&amp;E“ aus Zahlen statt aus dem Bauchgefühl.</p><button class="btn primary" data-act="addfy">5-Jahres-Kalkulation anlegen</button></section>`;
+  const fy=a.fy,b=state.base,cu=esc(b.currency);
+  const yrs=[0,1,2,3,4];
+  const numIn=(path,v,step='any')=>`<input class="in" type="number" step="${step}" data-fy="${path}" value="${v}" aria-label="${path}">`;
+  return `<section class="panel">${picker()}</section>
+  <section class="panel"><header><div><div class="eyebrow">Basisdaten ${esc(b.company)} · letztes Geschäftsjahr</div><h2>${esc(label(a))}</h2></div><span class="row"><button class="btn small" data-tabgo="settings">Basisdaten ändern</button><button class="btn small" data-tabgo="assess">Zur Bewertung</button></span></header>
+   <div class="kpis">
+    <div class="kpi"><span class="eyebrow">Umsatz</span><span class="v">${fInt(b.revenue)}</span><span class="muted">Mio ${cu}</span></div>
+    <div class="kpi"><span class="eyebrow">Gewinn</span><span class="v">${fInt(b.profit)}</span><span class="muted">Mio ${cu}</span></div>
+    <div class="kpi"><span class="eyebrow">Umsatzrendite</span><span class="v" data-out="margin"></span><span class="muted">Gewinn ÷ Umsatz</span></div>
+    <div class="kpi"><span class="eyebrow">F&amp;E-Kosten</span><span class="v">${fInt(b.rnd)}</span><span class="muted">Mio ${cu}</span></div>
+   </div>
+   <p class="muted" style="font-size:.82rem;margin-top:10px">${esc(b.note)}</p>
+  </section>
+  <section class="panel"><header><h2>Gewinnrechnung</h2><span class="muted">Gewinn = Umsatz × Umsatzrendite des Unternehmens</span></header>
+   <div class="tablewrap"><table class="fy"><thead><tr><th>Jahr</th>${yrs.map(i=>`<th class="r">${i+1}</th>`).join('')}<th class="r">Summe</th><th>Begründung / Quelle</th></tr></thead><tbody>
+    <tr><td><input class="in wide" data-fyt="unit" value="${esc(fy.unit)}" aria-label="Einheit Menge"></td>${yrs.map(i=>`<td>${numIn('qty.'+i,fy.qty[i],'1')}</td>`).join('')}<td class="calc" data-out="qtySum"></td><td class="note"><textarea class="in" rows="2" data-fyt="qtyNote">${esc(fy.qtyNote||'')}</textarea></td></tr>
+    <tr><td><input class="in wide" data-fyt="priceUnit" value="${esc(fy.priceUnit)}" aria-label="Bezeichnung Preis"> <span class="muted">${cu}</span></td>${yrs.map(i=>`<td>${numIn('price.'+i,fy.price[i])}</td>`).join('')}<td></td><td class="note"><textarea class="in" rows="2" data-fyt="priceNote">${esc(fy.priceNote||'')}</textarea></td></tr>
+    <tr><td>Umsatz (${cu})</td>${yrs.map(i=>`<td class="calc" data-out="rev.${i}"></td>`).join('')}<td class="calc" data-out="R"></td><td class="note">Menge × Preis</td></tr>
+    <tr class="sum"><td>Gewinn (${cu})</td>${yrs.map(i=>`<td class="calc" data-out="pro.${i}"></td>`).join('')}<td class="calc" data-out="P"></td><td class="note">Umsatz × Umsatzrendite</td></tr>
+    <tr class="key"><td>Gewinnanteil</td><td colspan="5" class="muted">Summe Gewinn (5 Jahre) ÷ Gewinn des Unternehmens im letzten Jahr</td><td class="calc" data-out="pShare"></td><td class="note">Bewertung „Wirtschaftlicher Nutzen“: <b data-out="pRating"></b></td></tr>
+   </tbody></table></div>
+  </section>
+  <section class="panel"><header><h2>Kostenrechnung F&amp;E</h2><span class="muted">Entwicklung und Kompetenzaufbau; laufender Betrieb zählt nicht dazu</span></header>
+   <div class="tablewrap"><table class="fy"><thead><tr><th>Position</th>${yrs.map(i=>`<th class="r">${i+1}</th>`).join('')}<th class="r">Summe</th><th>Kosten je FTE / Begründung</th></tr></thead><tbody>
+    ${fy.staff.map((s,k)=>`<tr><td><input class="in wide" data-fyt="staff.${k}.label" value="${esc(s.label)}" aria-label="Bezeichnung Personal"> <span class="muted">FTE</span></td>${yrs.map(i=>`<td>${numIn(`staff.${k}.fte.${i}`,s.fte[i])}</td>`).join('')}<td class="calc" data-out="fte.${k}"></td>
+      <td class="note"><span class="row">${numIn(`staff.${k}.cost`,s.cost)}<span class="muted">${cu}/Jahr</span><button class="btn small danger" data-act="rmstaff" data-k="${k}" aria-label="Zeile entfernen">✕</button></span><textarea class="in" rows="1" data-fyt="staff.${k}.note" style="margin-top:6px">${esc(s.note||'')}</textarea></td></tr>`).join('')}
+    <tr><td colspan="8"><button class="btn small" data-act="addstaff">+ Personalposition</button></td></tr>
+    <tr><td>Personalkosten (${cu})</td>${yrs.map(i=>`<td class="calc" data-out="stc.${i}"></td>`).join('')}<td class="calc" data-out="STC"></td><td class="note">FTE × Jahreskosten</td></tr>
+    <tr><td>Sachkosten (${cu})</td>${yrs.map(i=>`<td>${numIn('material.'+i,fy.material[i])}</td>`).join('')}<td class="calc" data-out="MAT"></td><td class="note"><textarea class="in" rows="2" data-fyt="materialNote">${esc(fy.materialNote||'')}</textarea></td></tr>
+    <tr class="sum"><td>Summe F&amp;E-Kosten (${cu})</td>${yrs.map(i=>`<td class="calc" data-out="rnd.${i}"></td>`).join('')}<td class="calc" data-out="C"></td><td class="note">Personal + Sachkosten</td></tr>
+    <tr class="key"><td>Kostenanteil</td><td colspan="5" class="muted">Kumulierte F&amp;E-Kosten ÷ F&amp;E-Kosten des Unternehmens im letzten Jahr</td><td class="calc" data-out="cShare"></td><td class="note">Bewertung „Investitionsaufwand F&amp;E“: <b data-out="cRating"></b></td></tr>
+   </tbody></table></div>
+  </section>
+  <div class="grid2">
+   <section class="panel"><header><h2>Übernahme in die Bewertung</h2></header>
+    <table><tbody>
+     <tr><td>Wirtschaftlicher Nutzen <span class="muted">· Gewinnanteil <span data-out="pShare"></span></span><div class="scale" data-out="pScale"></div></td><td class="r num" data-out="pRating"></td></tr>
+     <tr><td>Investitionsaufwand F&amp;E <span class="muted">· Kostenanteil <span data-out="cShare"></span></span><div class="scale" data-out="cScale"></div></td><td class="r num" data-out="cRating"></td></tr>
+    </tbody></table>
+    <p style="margin-top:12px" class="${a.link?'':'notice'}">${a.link?'Beide Werte fließen automatisch in die Bewertung ein.':'Die Übernahme ist ausgeschaltet. In „Bewerten“ den Haken setzen, damit die Werte einfließen.'}</p>
+   </section>
+   <section class="panel"><header><h2>Quellen</h2><button class="btn small" data-act="addsrc">+ Quelle</button></header>
+    <ol class="src">${(fy.sources||[]).map((s,k)=>`<li><span class="row" style="flex-wrap:nowrap;align-items:flex-start"><textarea class="in" rows="2" data-fyt="sources.${k}" aria-label="Quelle ${k+1}">${esc(s)}</textarea><button class="btn small danger" data-act="rmsrc" data-k="${k}" aria-label="Quelle entfernen">✕</button></span></li>`).join('')}</ol>
+   </section>
+  </div>`;
+}
+function fillFY(){
+  const a=cur();if(!a||!a.fy)return;const c=calcFY(a.fy,state.base);const set=(k,v)=>document.querySelectorAll(`[data-out="${k}"]`).forEach(e=>e.innerHTML=v);
+  set('margin',fPct(c.margin));set('qtySum',fInt(c.qtySum));
+  c.revenue.forEach((v,i)=>set('rev.'+i,fInt(v)));c.profit.forEach((v,i)=>set('pro.'+i,fInt(v)));
+  c.staffCost.forEach((v,i)=>set('stc.'+i,fInt(v)));c.rnd.forEach((v,i)=>set('rnd.'+i,fInt(v)));
+  a.fy.staff.forEach((s,k)=>set('fte.'+k,sum(s.fte).toLocaleString('de-DE')));
+  set('R',fInt(c.R));set('P',fInt(c.P));set('STC',fInt(sum(c.staffCost)));set('MAT',fInt(sum(a.fy.material)));set('C',fInt(c.C));
+  set('pShare',fPct(c.pShare));set('cShare',fPct(c.cShare));
+  set('pRating',c.pRating+' von 5');set('cRating',c.cRating+' von 5');
+  const pl=['0','≤3 %','≤5 %','≤20 %','≤30 %','>30 %'],cl=['0','≤10 %','≤20 %','≤50 %','≤100 %','>100 %'];
+  set('pScale',pl.map((t,i)=>`<span class="${i===c.pRating?'on':''}">${i}: ${t}</span>`).join(''));
+  set('cScale',cl.map((t,i)=>`<span class="${i===c.cRating?'on':''}">${i}: ${t}</span>`).join(''));
+}
+function vIdeas(){
+  const byCat={};IDEAS.forEach(i=>(byCat[i.c[1]]??=[]).push(i));
+  const cellList=k=>(byCat[k]||[]).map(i=>`<div>${i.id}. ${esc(i.name)} <span class="mono muted">M${i.m[1]}·O${i.o[1]}</span></div>`).join('');
+  return `<section class="panel"><header><div><h2>How-Wow-Now-Matrix</h2><p class="muted" style="font-size:.86rem">12 Geschäftsideen aus der Trendportfolioanalyse (je Trend die erste Idee plus 4 Open-Innovation-Ideen), Einschätzung der Gruppe. Grenze: ≥ 4.</p></div></header>
+   <div class="hwn">
+    <div class="ylab">Originalität ≥ 4</div><div class="cell how"><b>HOW?</b>${cellList('HOW')}</div><div class="cell wow"><b>WOW!</b>${cellList('WOW')}</div>
+    <div class="ylab">Originalität &lt; 4</div><div class="cell drop"><b>Verwerfen</b>${cellList('VERWERFEN')}</div><div class="cell now"><b>NOW!</b>${cellList('NOW')}</div>
+    <div></div><div class="xlab">Machbarkeit &lt; 4</div><div class="xlab">Machbarkeit ≥ 4</div>
+   </div></section>
+  <section class="ideas">${IDEAS.map(i=>{const ex=state.list.filter(a=>+a.idea===i.id);const cc={WOW:'ok',NOW:'mid',HOW:'neutral',VERWERFEN:'bad'}[i.c[1]];
+   return `<article class="idea"><div class="top"><div><div class="eyebrow">${i.id} · ${esc(i.trend)}</div><h3>${esc(i.name)}</h3></div><span class="chip ${cc}">${i.c[1]}</span></div>
+    <p>${esc(i.d)}</p><div class="mo"><span>Machbarkeit ${i.m[1]} <span title="KI">(KI ${i.m[0]})</span></span><span>Originalität ${i.o[1]} (KI ${i.o[0]})</span></div>
+    <div class="row">${ex.map(a=>{const r=calc(a);return `<button class="btn small" data-open="${a.id}">${esc(a.assessor)} · IR ${f2(r.IR)}</button>`}).join('')}<button class="btn small ${ex.length?'':'primary'}" data-newidea="${i.id}">+ Bewertung</button></div></article>`}).join('')}</section>`;
+}
+function vSettings(){
+  const b=state.base;
+  const wRow=(list,kind)=>list.map((c,i)=>`<tr><td>${esc(c.t)}</td><td class="r"><input class="in" style="width:80px;text-align:right" type="number" min="0" max="100" data-w="${kind}.${i}" value="${state.w[kind][i]}" aria-label="Gewicht ${esc(c.t)}"></td><td class="r num muted">${HUBE_W[kind][i]} %</td></tr>`).join('');
+  return `<div class="grid2">
+  <section class="panel"><header><h2>Gewichtung</h2><button class="btn small" data-act="hubew">Standard nach Hube</button></header>
+   <p class="muted" style="font-size:.85rem;margin-bottom:10px">Die Gewichte gelten für alle Bewertungen und müssen je Block 100 % ergeben.</p>
+   <div class="tablewrap"><table><thead><tr><th>Nutzen/Chancen</th><th class="r">Gewicht %</th><th class="r">Hube</th></tr></thead><tbody>${wRow(N_CRIT,'n')}
+    <tr><td><b>Summe</b></td><td class="r num"><b data-out="wsum-n"></b></td><td></td></tr></tbody></table></div>
+   <div class="tablewrap" style="margin-top:18px"><table><thead><tr><th>Aufwand/Risiko</th><th class="r">Gewicht %</th><th class="r">Hube</th></tr></thead><tbody>${wRow(A_CRIT,'a')}
+    <tr><td><b>Summe</b></td><td class="r num"><b data-out="wsum-a"></b></td><td></td></tr></tbody></table></div>
+  </section>
+  <div style="display:grid;gap:24px;align-content:start;min-width:0">
+  <section class="panel"><header><h2>Arbeitsmappe</h2></header><div class="fields">
+   <label class="f">Name<input id="s-wb" data-set="workbook" value="${esc(state.workbook)}"></label>
+   <label class="f">Verwendung als<select id="s-mode" data-set="mode"><option ${state.mode==='Multiprojekt'?'selected':''}>Multiprojekt</option><option ${state.mode==='Multibeurteilende'?'selected':''}>Multibeurteilende</option></select></label>
+   <label class="f">Zeithorizont<input id="s-hz" data-set="horizon" value="${esc(state.horizon)}"></label></div>
+   <p class="muted" style="font-size:.82rem;margin-top:10px">Multiprojekt: mehrere Ideen vergleichen. Multibeurteilende: eine Idee aus Sicht mehrerer Personen (z. B. F&amp;E, Marketing, Geschäftsführung).</p></section>
+  <section class="panel"><header><h2>Basisdaten Unternehmen</h2></header><div class="fields">
+   <label class="f">Unternehmen<input id="b-co" data-base="company" value="${esc(b.company)}"></label>
+   <label class="f">Währung<input id="b-cur" data-base="currency" value="${esc(b.currency)}"></label>
+   <label class="f">Umsatz letztes Jahr (Mio)<input id="b-rev" type="number" data-base="revenue" value="${b.revenue}"></label>
+   <label class="f">Gewinn letztes Jahr (Mio)<input id="b-pro" type="number" data-base="profit" value="${b.profit}"></label>
+   <label class="f">F&amp;E-Kosten letztes Jahr (Mio)<input id="b-rnd" type="number" data-base="rnd" value="${b.rnd}"></label></div>
+   <label class="f" style="margin-top:12px">Erläuterung<textarea id="b-note" class="in" rows="3" data-base="note">${esc(b.note)}</textarea></label></section>
+  <section class="panel"><header><h2>Teilen und sichern</h2></header>
+   <p class="muted" style="font-size:.85rem;margin-bottom:12px">Alle Eingaben liegen nur in diesem Browser. Zum Teilen exportieren und bei der Gruppe importieren.</p>
+   <div class="row"><button class="btn" data-act="export">JSON kopieren</button><button class="btn" data-act="download">JSON herunterladen</button><label class="btn" for="importFile">Datei importieren</label><input type="file" id="importFile" accept="application/json,.json" hidden></div>
+   <textarea id="io" class="in" rows="4" style="margin-top:12px;font-family:var(--f-mono);font-size:.78rem" placeholder="JSON hier einfügen und „Einfügen übernehmen“ klicken"></textarea>
+   <div class="row" style="margin-top:8px"><button class="btn small" data-act="import">Einfügen übernehmen</button>
+   ${ui.confirm==='reset'?`<span class="row"><span>Alle Eingaben durch die Beispieldaten ersetzen?</span><button class="btn small danger" data-act="reset-yes">Ersetzen</button><button class="btn small" data-act="reset-no">Abbrechen</button></span>`:`<button class="btn small danger" data-act="reset">Auf Beispieldaten zurücksetzen</button>`}
+   ${ui.confirm==='blank'?`<span class="row"><span>Leere Arbeitsmappe ohne Bewertungen starten?</span><button class="btn small danger" data-act="blank-yes">Leeren</button><button class="btn small" data-act="blank-no">Abbrechen</button></span>`:`<button class="btn small" data-act="blank">Leere Arbeitsmappe</button>`}</div>
+  </section></div></div>`;
+}
+function vMethod(){
+  return `<section class="panel method" style="display:grid;gap:16px">
+  <h2>So rechnet der Kalkulator</h2>
+  <p>Der Rechner bildet den Innovations-Rendite-Kalkulator von Prof. Dr. Gerhard Hube nach. Er ist ein Scoring-Modell: Quantitative und qualitative Kriterien werden in dimensionslose Punkte umgewandelt. Die Innovationsrendite ist ein Indikator, keine finanzielle Rendite.</p>
+  <ul>
+   <li><b>Bewertung:</b> Je sechs Kriterien für Nutzen/Chancen und Aufwand/Risiko auf der Skala 0 (nicht vorhanden) bis 5 (sehr hoch).</li>
+   <li><b>Gewichtete Bewertung:</b> Punkte × Gewicht ÷ 100. Die Gewichte je Block ergeben 100 %.</li>
+   <li><b>IN</b> = Summe der gewichteten Nutzen, <b>IA</b> = Summe der gewichteten Aufwände (jeweils 0–5).</li>
+   <li><b>Rendite IR = IN ÷ IA.</b> Über 1 ist die Idee „profitabel“. Ist IA = 0, geht die Rendite gegen unendlich.</li>
+   <li><b>Bilanz = IN − IA.</b></li>
+   <li><b>Kategorien:</b> unter 2 niedrig, 2 bis unter 3 mittel, ab 3 hoch. Daraus ergibt sich das Feld im Aufwand/Nutzen-Portfolio.</li>
+  </ul>
+  <h3>5-Jahres-Kalkulation</h3>
+  <ul>
+   <li>Umsatz = Menge × Preis je Jahr. Gewinn = Umsatz × Umsatzrendite des Unternehmens im letzten Jahr.</li>
+   <li>Gewinnanteil = Summe Gewinn über 5 Jahre ÷ Gewinn des Unternehmens im letzten Jahr. Skala: 0 kein Gewinn · 1 ≤ 3 % · 2 ≤ 5 % · 3 ≤ 20 % · 4 ≤ 30 % · 5 &gt; 30 %.</li>
+   <li>F&amp;E-Kosten = FTE × Jahreskosten + Sachkosten. Kostenanteil = kumulierte F&amp;E-Kosten ÷ F&amp;E-Kosten des Unternehmens im letzten Jahr. Skala: 0 keine · 1 ≤ 10 % · 2 ≤ 20 % · 3 ≤ 50 % · 4 ≤ 100 % · 5 &gt; 100 %.</li>
+  </ul>
+  <h3>Hinweis für die kritische Methodenbewertung</h3>
+  <p>Bei einem Konzern in der Größe von SpaceX (3,8 Mrd. USD Gewinn, 3 Mrd. USD F&amp;E im Kerngeschäft) landen fast alle neuen Geschäftsideen beim wirtschaftlichen Nutzen und beim F&amp;E-Aufwand auf Stufe 1. Die beiden quantitativen Kriterien unterscheiden die Ideen dann kaum; die Rangfolge entsteht vor allem über die qualitativen Kriterien. Das ist ein Ansatzpunkt für Teil 8 der Präsentation.</p>
+  <h3>Portfolio-Felder</h3>
+  <div class="tablewrap"><table><thead><tr><th>Aufwand ↓ / Nutzen →</th><th>niedrig</th><th>mittel</th><th>hoch</th></tr></thead><tbody>
+   ${[1,2,3].map(ca=>`<tr><td>${catName(ca)}</td>${[1,2,3].map(cn=>`<td>${esc(PF_LABELS[ca][cn][0])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+  <p class="muted" style="font-size:.85rem">Quelle der Methode: Hube, G.: Innovationsformel und Innovationsrendite, Vorlesung Innovationsmanagement / New Business Development, THWS Business School; Inno-Rendite-Kalkulator V3.1.</p>
+  </section>`;
+}
+
+/* ============================== Rendering & Events ============================== */
+const VIEWS={overview:vOverview,assess:vAssess,fy:vFY,ideas:vIdeas,settings:vSettings,method:vMethod};
+function render(keepScroll){
+  document.getElementById('workbookName').textContent=state.workbook;
+  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===ui.tab));
+  const y=window.scrollY;
+  document.getElementById('view').innerHTML=VIEWS[ui.tab]();
+  if(ui.tab==='fy')fillFY();
+  if(ui.tab==='settings')fillW();
+  document.querySelectorAll('textarea.in').forEach(autoGrow);
+  if(keepScroll)window.scrollTo(0,y);
+  save();
+}
+function fillW(){['n','a'].forEach(k=>{const s=sum(state.w[k]);document.querySelectorAll(`[data-out="wsum-${k}"]`).forEach(e=>{e.textContent=s+' %';e.style.color=s===100?'var(--gain)':'var(--bad)'})})}
+function autoGrow(t){t.style.height='auto';t.style.height=Math.min(t.scrollHeight+2,320)+'px'}
+function go(tab){ui.tab=tab;ui.confirm=null;try{history.replaceState(null,'','#'+tab)}catch(e){}render();window.scrollTo(0,0)}
+function newAssessment(ideaId){
+  const idea=IDEAS.find(i=>i.id===ideaId);
+  const a={id:'b'+Date.now().toString(36),project:idea?idea.name:'Neue Idee',assessor:state.mode==='Multibeurteilende'?'Beurteiler '+(state.list.length+1):'Gruppe 2',idea:idea?idea.id:'',link:false,n:[0,0,0,0,0,0],a:[0,0,0,0,0,0],why:{},fy:null};
+  state.list.push(a);ui.sel=a.id;return a;
+}
+function blankFY(){return {unit:'Stück',priceUnit:'Preis je Stück',qty:[0,0,0,0,0],price:[0,0,0,0,0],qtyNote:'',priceNote:'',staff:[{label:'F&E-Mitarbeiter',fte:[0,0,0,0,0],cost:150000,note:''}],material:[0,0,0,0,0],materialNote:'',sources:[]}}
+function setPath(obj,path,val){const p=path.split('.');let o=obj;for(let i=0;i<p.length-1;i++)o=o[p[i]];o[p[p.length-1]]=val}
+
+document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(b)go(b.dataset.tab)});
+document.getElementById('view').addEventListener('click',e=>{
+  const t=e.target.closest('button,[data-open]');if(!t)return;
+  if(t.dataset.open){ui.sel=t.dataset.open;go('assess');return}
+  if(t.dataset.sel){ui.sel=t.dataset.sel;ui.confirm=null;render(true);return}
+  if(t.dataset.tabgo){go(t.dataset.tabgo);return}
+  if(t.dataset.newidea){newAssessment(+t.dataset.newidea);go('assess');return}
+  if(t.dataset.score){const [k,i,s]=t.dataset.score.split(':');const a=cur();(k==='gain'?a.n:a.a)[+i]=+s;render(true);return}
+  const act=t.dataset.act,a=cur();
+  switch(act){
+   case 'new':newAssessment();render(true);break;
+   case 'dup':{const c=JSON.parse(JSON.stringify(a));c.id='b'+Date.now().toString(36);c.assessor=(c.assessor||'')+' (Kopie)';state.list.push(c);ui.sel=c.id;render(true);toast('Bewertung dupliziert');break}
+   case 'del':ui.confirm='del';render(true);break;
+   case 'del-no':ui.confirm=null;render(true);break;
+   case 'del-yes':{state.list=state.list.filter(x=>x!==a);ui.sel=(state.list[0]||{}).id;ui.confirm=null;render(true);toast('Bewertung gelöscht');break}
+   case 'addfy':a.fy=blankFY();a.link=true;go('fy');break;
+   case 'addstaff':a.fy.staff.push({label:'Neue Position',fte:[0,0,0,0,0],cost:150000,note:''});render(true);break;
+   case 'rmstaff':a.fy.staff.splice(+t.dataset.k,1);render(true);break;
+   case 'addsrc':(a.fy.sources??=[]).push('');render(true);break;
+   case 'rmsrc':a.fy.sources.splice(+t.dataset.k,1);render(true);break;
+   case 'hubew':state.w={n:HUBE_W.n.slice(),a:HUBE_W.a.slice()};render(true);toast('Gewichte nach Hube gesetzt');break;
+   case 'export':{const s=JSON.stringify(state,null,1);document.getElementById('io').value=s;
+     (navigator.clipboard?navigator.clipboard.writeText(s):Promise.reject()).then(()=>toast('JSON in die Zwischenablage kopiert')).catch(()=>{const io=document.getElementById('io');io.focus();io.select();toast('JSON markiert – mit Strg+C kopieren')});break}
+   case 'download':{try{const blob=new Blob([JSON.stringify(state,null,1)],{type:'application/json'});const u=URL.createObjectURL(blob);const l=document.createElement('a');l.href=u;l.download='innovationsrendite.json';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast('Download gestartet (falls blockiert: „JSON kopieren“)')}catch(err){toast('Download nicht möglich – „JSON kopieren“ nutzen')}break}
+   case 'import':tryImport(document.getElementById('io').value);break;
+   case 'reset':ui.confirm='reset';render(true);break;
+   case 'reset-no':case 'blank-no':ui.confirm=null;render(true);break;
+   case 'reset-yes':state=seed();ui.sel=state.list[2].id;ui.confirm=null;render(true);toast('Beispieldaten geladen');break;
+   case 'blank':ui.confirm='blank';render(true);break;
+   case 'blank-yes':{const s=seed();s.list=[];s.workbook='Neue Arbeitsmappe';state=s;ui.sel=null;ui.confirm=null;render(true);toast('Leere Arbeitsmappe');break}
+  }
+});
+function tryImport(txt){try{const s=JSON.parse(txt);if(!s||!Array.isArray(s.list)||!s.w||!s.base)throw 0;s.version=3;state=s;ui.sel=(s.list[0]||{}).id;render();toast(`${s.list.length} Bewertungen importiert`)}catch(e){toast('Import fehlgeschlagen: keine gültige Export-Datei')}}
+document.getElementById('view').addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='importFile'&&t.files[0]){const r=new FileReader();r.onload=()=>tryImport(r.result);r.readAsText(t.files[0]);return}
+  if(t.dataset.act==='link'){cur().link=t.checked;render(true);return}
+  if(t.dataset.field==='idea'){cur().idea=t.value?+t.value:'';save();return}
+  if(t.dataset.set==='mode'){state.mode=t.value;render(true);return}
+  if(t.dataset.w||t.dataset.base==='revenue'||t.dataset.base==='profit'||t.dataset.base==='rnd'){render(true)}
+});
+document.getElementById('view').addEventListener('input',e=>{
+  const t=e.target,a=cur();
+  if(t.tagName==='TEXTAREA')autoGrow(t);
+  if(t.dataset.why){a.why[t.dataset.why]=t.value;save();return}
+  if(t.dataset.field&&t.dataset.field!=='idea'){a[t.dataset.field]=t.value;save();return}
+  if(t.dataset.fy){setPath(a.fy,t.dataset.fy,t.value===''?0:+t.value);fillFY();save();return}
+  if(t.dataset.fyt){setPath(a.fy,t.dataset.fyt,t.value);save();return}
+  if(t.dataset.w){const [k,i]=t.dataset.w.split('.');state.w[k][+i]=t.value===''?0:+t.value;fillW();save();return}
+  if(t.dataset.base){const k=t.dataset.base;state.base[k]=['revenue','profit','rnd'].includes(k)?(+t.value||0):t.value;save();return}
+  if(t.dataset.set){state[t.dataset.set]=t.value;if(t.dataset.set==='workbook')document.getElementById('workbookName').textContent=t.value;save();return}
+});
+const h=(location.hash||'').slice(1);if(VIEWS[h])ui.tab=h;
+render();
+</script>
+</body></html>
