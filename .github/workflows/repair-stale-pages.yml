@@ -1,0 +1,89 @@
+name: Repair stale Pages deployment
+
+on:
+  workflow_dispatch:
+
+# Uses the same Pages permission as the existing publisher. No extra secrets.
+permissions:
+  pages: write
+
+concurrency:
+  group: repair-pages-d8395f5
+  cancel-in-progress: false
+
+jobs:
+  cancel-stale-deployment:
+    if: >-
+      github.repository == 'ia13400/InnovationCalculator' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Cancel only the identified stale deployment
+        uses: actions/github-script@v8
+        with:
+          debug: false
+          retries: 0
+          script: |
+            const target = {
+              owner: "ia13400",
+              repo: "InnovationCalculator",
+              deploymentId: "d8395f5307f90a864df3eb62c0c8082547251b41",
+              request: { timeout: 10000 }
+            };
+            const terminal = new Set([
+              "succeed",
+              "deployment_failed",
+              "deployment_content_failed",
+              "deployment_cancelled",
+              "deployment_lost"
+            ]);
+            const statusRoute =
+              "GET /repos/{owner}/{repo}/pages/deployments/{deploymentId}";
+            const cancelRoute =
+              "POST /repos/{owner}/{repo}/pages/deployments/{deploymentId}/cancel";
+
+            const before = await github.request(statusRoute, target);
+            const initial = before.data?.status;
+            core.info(`Pages status before cancellation: ${initial ?? "(missing)"}`);
+            if (terminal.has(initial)) {
+              core.notice("Deployment is already terminal; no cancellation sent.");
+              return;
+            }
+            if (typeof initial !== "string" || initial.length === 0) {
+              core.setFailed("Missing deployment status; no cancellation sent.");
+              return;
+            }
+
+            const response = await github.request(cancelRoute, target);
+            if (response.status !== 204) {
+              core.setFailed(`Unexpected cancel response: HTTP ${response.status}`);
+              return;
+            }
+            core.notice("Cancellation request returned HTTP 204.");
+            for (let attempt = 1; attempt <= 6; attempt++) {
+              await new Promise(resolve => setTimeout(resolve, 5000));
+              let after;
+              try {
+                after = await github.request(statusRoute, target);
+              } catch (error) {
+                if (error.status === 404) {
+                  core.notice(
+                    "Cancel returned 204; deployment status now returns 404. " +
+                    "A fresh deployment must verify that the block is cleared."
+                  );
+                  return;
+                }
+                throw error;
+              }
+              const status = after.data?.status;
+              core.info(`Readback ${attempt}/6: ${status ?? "(missing)"}`);
+              if (terminal.has(status)) {
+                core.notice(`Verified terminal Pages status: ${status}`);
+                return;
+              }
+            }
+            core.setFailed(
+              "Cancellation was accepted, but no terminal status was observed " +
+              "within 30 seconds. No further cancellation was attempted."
+            );
