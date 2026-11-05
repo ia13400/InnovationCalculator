@@ -3,7 +3,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Barlow:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: dark sticky launch bar, then one focused topic per page with big type; step pager at the bottom of every page. */
 :root{
@@ -266,6 +266,112 @@ svg .lab{fill:var(--ink);font-family:var(--f-body);font-size:16px;font-weight:60
 .method ul{margin:0;padding-left:22px;display:grid;gap:8px}
 footer{color:var(--muted);padding-block:8px 40px;font-size:.92rem;max-width:90ch}
 @media (prefers-reduced-motion:no-preference){.bar2 .fill{transition:width .3s ease}.opt,.card,.btn{transition:border-color .15s,background-color .15s}}
+
+/* ===== RocketLight Dinner: launch-site look (black, white, uppercase, wide tracking) ===== */
+body.dinner{--bg:#000;--surface:#0b0c0f;--surface-2:#16181d;--ink:#f2f2f2;--muted:#9a9ea8;--line:#26292f;--accent:#f2f2f2;--accent-ink:#000;--gold:#d8b46a;--shadow:none;color-scheme:dark}
+body.dinner .subnav button{background:transparent;border-color:var(--line);border-radius:0;box-shadow:none}
+body.dinner .subnav button .t,body.dinner .subnav button .n{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.14em}
+body.dinner .subnav button[aria-current="step"]{background:var(--ink);color:#000;border-color:var(--ink)}
+body.dinner .subnav button[aria-current="step"] .n{color:#000}
+body.dinner .pager button{background:transparent;border-radius:0;box-shadow:none;font-family:var(--f-x);text-transform:uppercase;letter-spacing:.12em}
+body.dinner .pager button.next{background:var(--ink);color:#000;border-color:var(--ink)}
+body.dinner footer{color:var(--muted)}
+:root{--f-x:"Barlow", "Arial Narrow", system-ui, sans-serif;--gold:#b08a3e}
+.x-up{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.16em}
+.xbtn{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.18em;font-weight:600;font-size:1rem;padding:16px 30px;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer;border-radius:0;display:inline-flex;gap:12px;align-items:center}
+.xbtn:hover,.xbtn.solid{background:var(--ink);color:#000}
+.xbtn.solid:hover{background:transparent;color:var(--ink)}
+.xbtn:disabled{opacity:.4;cursor:not-allowed}
+
+.xhero{position:relative;min-height:min(78vh,760px);display:grid;align-items:end;overflow:hidden;border:1px solid var(--line);background:#000}
+.xhero canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.xhero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.85) 100%)}
+.xhero .copy{position:relative;padding:clamp(24px,5vw,64px);display:grid;gap:18px;max-width:900px}
+.xhero h2{font-family:var(--f-x);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:clamp(2.6rem,8vw,6rem);line-height:.95;font-stretch:normal;color:#fff}
+.xhero p{font-size:clamp(1.1rem,2vw,1.4rem);color:#d6d6d6;max-width:46ch}
+.xstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.xstats div{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px;display:grid;gap:6px}
+.xstats b{font-family:var(--f-x);font-size:clamp(2.2rem,5vw,3.4rem);font-weight:700;line-height:1;color:var(--ink)}
+.xstats span{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.16em;color:var(--muted);font-size:.9rem}
+.xsec{display:grid;gap:22px}
+.xsec h2{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.08em;font-weight:700;font-stretch:normal;font-size:clamp(2rem,5vw,3.4rem)}
+.xsec .lead{font-size:1.2rem;color:var(--muted);max-width:60ch}
+.xsteps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.xsteps div{background:var(--bg);padding:26px;display:grid;gap:8px}
+.xsteps .k{font-family:var(--f-x);letter-spacing:.16em;color:var(--gold);font-size:.95rem}
+.xsteps h3{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.08em;font-stretch:normal;font-size:1.3rem}
+.xsteps p{color:var(--muted)}
+
+/* menu */
+.course{display:grid;grid-template-columns:150px minmax(0,1fr);gap:28px;padding:34px 0;border-bottom:1px solid var(--line)}
+@media (max-width:700px){.course{grid-template-columns:minmax(0,1fr);gap:10px}}
+.course .tm{font-family:var(--f-x);letter-spacing:.14em;color:var(--gold);font-size:1.05rem;text-transform:uppercase}
+.course .tm small{display:block;color:var(--muted);letter-spacing:.12em;font-size:.82rem;margin-top:4px}
+.course h3{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.1em;font-stretch:normal;font-size:clamp(1.5rem,3vw,2rem);font-weight:700}
+.course p{font-size:1.12rem;margin-top:8px;max-width:62ch}
+.course .pair{margin-top:12px;color:var(--muted);font-size:1rem}
+.course .pair b{color:var(--ink);font-weight:600}
+.course .veg{margin-top:8px;color:var(--muted);font-size:.98rem}
+.pricebar{display:flex;flex-wrap:wrap;gap:16px 40px;align-items:end;justify-content:space-between;border:1px solid var(--line);padding:28px}
+.pricebar b{font-family:var(--f-x);font-size:clamp(2.4rem,6vw,3.6rem);line-height:1}
+
+/* booking */
+.book{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:32px;align-items:start}
+@media (max-width:1000px){.book{grid-template-columns:minmax(0,1fr)}}
+.bgroup{display:grid;gap:14px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.bgroup h3{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.12em;font-stretch:normal;font-size:1.25rem}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+.choice{border:1px solid var(--line);background:transparent;color:var(--ink);padding:18px;text-align:left;cursor:pointer;display:grid;gap:4px;border-radius:0;min-width:0}
+.choice:hover{border-color:var(--muted)}
+.choice[aria-pressed="true"]{border-color:var(--ink);background:#14161b;box-shadow:inset 0 0 0 1px var(--ink)}
+.choice b{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.1em;font-size:1.05rem}
+.choice span{color:var(--muted)}
+.choice .p{color:var(--gold);font-family:var(--f-x);letter-spacing:.08em}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line)}
+.stepper button{width:56px;height:56px;background:transparent;border:0;color:var(--ink);font-size:1.6rem;cursor:pointer}
+.stepper output{min-width:70px;text-align:center;font-family:var(--f-x);font-size:2rem;font-weight:700}
+body.dinner label.f input,body.dinner label.f textarea{background:#0b0c0f;border-color:var(--line);border-radius:0}
+.summary{border:1px solid var(--ink);padding:26px;display:grid;gap:14px}
+.summary .line{display:flex;justify-content:space-between;gap:12px}
+.summary .tot{border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;align-items:end}
+.summary .tot b{font-family:var(--f-x);font-size:2.2rem;line-height:1}
+.fine{color:var(--muted);font-size:.9rem}
+.pass{border:1px solid var(--ink);display:grid;grid-template-columns:minmax(0,1fr) 230px;max-width:900px}
+@media (max-width:760px){.pass{grid-template-columns:minmax(0,1fr)}}
+.pass .main{padding:32px;display:grid;gap:18px}
+.pass .stub{border-left:2px dashed var(--line);padding:32px;display:grid;gap:10px;align-content:center;text-align:center}
+@media (max-width:760px){.pass .stub{border-left:0;border-top:2px dashed var(--line)}}
+.pass .kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:18px}
+.pass .kv span{display:block;font-family:var(--f-x);text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-size:.8rem}
+.pass .kv b{font-family:var(--f-x);font-size:1.3rem;letter-spacing:.04em}
+.pass .code{font-family:var(--f-x);font-size:2.4rem;font-weight:700;letter-spacing:.12em}
+
+/* launch window */
+.lwin{position:relative;aspect-ratio:16/9;max-width:100%;background:#000;border:1px solid var(--line);overflow:hidden}
+.lwin canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#launchOverlay{position:fixed;inset:0;z-index:60;background:#000;color:#fff}
+#launchOverlay canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hud{position:absolute;inset:0;pointer-events:none;display:grid;grid-template-rows:auto 1fr auto;padding:calc(18px + env(safe-area-inset-top,0px)) max(22px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(22px,env(safe-area-inset-left,0px))}
+.hud .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.hud .tag{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.2em;font-size:clamp(.8rem,1.4vw,1rem);color:#e6e6e6}
+.hud .tag b{display:block;font-size:clamp(1rem,2vw,1.4rem);letter-spacing:.12em;color:#fff}
+.hud .center{display:grid;place-items:center;text-align:center}
+.hud .clock{font-family:var(--f-x);font-weight:700;font-size:clamp(3rem,12vw,10rem);letter-spacing:.04em;line-height:1;text-shadow:0 0 30px rgba(0,0,0,.6);font-variant-numeric:tabular-nums}
+.hud .msg{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.3em;font-size:clamp(1rem,2.6vw,1.8rem);margin-top:12px;min-height:1.5em}
+.hud .bottom{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.tele{display:flex;gap:28px}
+.tele div{display:grid}
+.tele span{font-family:var(--f-x);letter-spacing:.2em;text-transform:uppercase;font-size:.8rem;color:#bfbfbf}
+.tele b{font-family:var(--f-x);font-size:clamp(1.4rem,3vw,2.2rem);font-variant-numeric:tabular-nums}
+.hud .ctrl{display:flex;gap:10px;flex-wrap:wrap;pointer-events:auto}
+.hud .ctrl .xbtn{padding:12px 20px;font-size:.9rem;border-color:#fff;color:#fff;background:rgba(0,0,0,.35)}
+.hud .ctrl .xbtn:hover,.hud .ctrl .xbtn.solid{background:#fff;color:#000}
+.events{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+.events span{font-family:var(--f-x);text-transform:uppercase;letter-spacing:.14em;font-size:.78rem;padding:6px 10px;border:1px solid rgba(255,255,255,.35);color:rgba(255,255,255,.55)}
+.events span.on{background:#fff;color:#000;border-color:#fff}
+.lopts{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.lopts .choice{padding:12px 18px}
+
 </style>
 </head><body>
 
@@ -275,6 +381,7 @@ footer{color:var(--muted);padding-block:8px 40px;font-size:.92rem;max-width:90ch
     <nav class="tabs" role="tablist" id="tabs">
       <button role="tab" data-ctx="user">Eigene Idee prüfen</button>
       <button role="tab" data-ctx="spacex">SpaceX-Case</button>
+      <button role="tab" data-ctx="dinner">RocketLight Dinner</button>
       <button role="tab" data-ctx="method">Methode &amp; Quellen</button>
     </nav>
   </div>
@@ -282,7 +389,7 @@ footer{color:var(--muted);padding-block:8px 40px;font-size:.92rem;max-width:90ch
 
 
 <div class="wrap"><main id="view"></main>
-<footer>Methode und Originalwerkzeug: Prof. Dr. Gerhard Hube, THWS Business School – Hube, G. (2024): Innovationsrendite-Formel und Innovationsrendite-Kalkulator, Wissenschaftsmanagement. Quellen, Videos und Material unter „Methode“. SpaceX-Case: Prüfungsleistung „Trend2Business“, Gruppe 2. Eingaben werden nur in diesem Browser gespeichert; zum Teilen unter „Einstellungen“ exportieren.</footer>
+<footer>Methode und Originalwerkzeug: Prof. Dr. Gerhard Hube, THWS Business School – Hube, G. (2024): Innovationsrendite-Formel und Innovationsrendite-Kalkulator, Wissenschaftsmanagement. Quellen, Videos und Material unter „Methode“. SpaceX-Case und RocketLight Dinner: studentisches Konzept der Prüfungsleistung „Trend2Business“, Gruppe 2, kein Angebot von SpaceX. Eingaben werden nur in diesem Browser gespeichert; zum Teilen unter „Einstellungen“ exportieren.</footer>
 </div>
 <div class="toast" id="toast" hidden></div>
 
@@ -460,12 +567,12 @@ const IDEAS=[
 /* ============================== Zustand ============================== */
 const KEY='innorendite.v4';
 let root=null, state;
-const ui={ctx:'user',wiz:0,edit:false,sub:{user:'wizard',spacex:'ideas'},sel:{user:'u1',spacex:'sli'},confirm:null};
+const ui={ctx:'user',wiz:0,edit:false,sub:{user:'wizard',spacex:'ideas',dinner:'exp'},sel:{user:'u1',spacex:'sli'},confirm:null};
 try{root=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
 if(!root||!root.user||!root.spacex){let old=null;try{old=JSON.parse(localStorage.getItem('innorendite.v3')||'null')}catch(e){}
   root={user:userSeed(),spacex:(old&&old.version===3&&Array.isArray(old.list))?old:seed()}}
 try{const u=JSON.parse(localStorage.getItem(KEY+'.ui')||'null');if(u){Object.assign(ui.sub,u.sub||{});Object.assign(ui.sel,u.sel||{})}}catch(e){}
-function useCtx(c){ui.ctx=c;if(c!=='method'){state=root[c];if(!state.list.find(a=>a.id===ui.sel[c]))ui.sel[c]=(state.list[0]||{}).id}}
+function useCtx(c){ui.ctx=c;document.body.classList.toggle('dinner',c==='dinner');if(!state)state=root.user;if(c!=='method'&&c!=='dinner'){state=root[c];if(!state.list.find(a=>a.id===ui.sel[c]))ui.sel[c]=(state.list[0]||{}).id}}
 let saveT;
 function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(root));localStorage.setItem(KEY+'.ui',JSON.stringify({sub:ui.sub,sel:ui.sel}))}catch(e){}},250)}
 const cur=()=>state.list.find(a=>a.id===ui.sel[ui.ctx]);
@@ -894,11 +1001,241 @@ function vMethod(){
 }
 
 /* ============================== Rendering & Events ============================== */
-const VIEWS={wizard:vWizard,ranking:vRanking,portfolio:vPortfolio,bars:vBars,top:vTop,detail:vDetail,assess:vAssess,fy:vFY,ideas:vIdeas,pool:vPool,settings:vSettings};
+/* ============================== RocketLight Dinner ============================== */
+const RL_PRICE=50000, RL_TABLE=200000;
+const RL_MISSIONS=[
+ {id:'RL-07',site:'Cape Canaveral, Florida',date:'Fr, 12. März 2027',time:'21:40 Uhr Ortszeit',note:'Nachtstart, Falcon 9'},
+ {id:'RL-08',site:'Starbase, Texas',date:'Sa, 24. April 2027',time:'20:15 Uhr Ortszeit',note:'Starship-Testflug, Blick vom Pavillon an der Küste'},
+ {id:'RL-09',site:'Cape Canaveral, Florida',date:'Fr, 21. Mai 2027',time:'22:05 Uhr Ortszeit',note:'Nachtstart, Falcon Heavy'},
+ {id:'RL-10',site:'Vandenberg, Kalifornien',date:'Sa, 19. Juni 2027',time:'21:30 Uhr Ortszeit',note:'Sonnenuntergangsstart über dem Pazifik'}];
+const RL_COURSES=[
+ {t:'T − 90 Min',ph:'Pre-Launch',name:'Ignition',d:'Kaviar Imperial Beluga auf Buchweizen-Blini, Crème fraîche aus der Normandie, serviert in einer Wolke aus flüssigem Stickstoff.',pair:'Krug Clos d’Ambonnay 2006',veg:'Vegetarisch: Kaviar aus Auberginen und Algen, Rauchsalz'},
+ {t:'T − 60 Min',ph:'Propellant Loading',name:'Liquid Oxygen',d:'Klare Consommé vom Wagyu, bei Tisch über Yuzu-Eiskristalle gegossen. Der aufsteigende Dampf erinnert an das Betanken der Rakete.',pair:'Dassai Beyond Sake',veg:'Vegetarisch: Consommé von gerösteten Steinpilzen'},
+ {t:'T − 30 Min',ph:'Stage Separation',name:'Zwei Stufen',d:'Hokkaido-Jakobsmuschel in zwei Stufen: roh mit Kombu und Limette, darunter gegrillt mit Beurre blanc und weißem Alba-Trüffel.',pair:'Domaine Leflaive Bâtard-Montrachet Grand Cru 2017',veg:'Vegetarisch: Königsausternpilz in zwei Texturen'},
+ {t:'T − 0',ph:'Liftoff',name:'Max Q',d:'A5-Kobe-Wagyu auf heißem Basaltstein, schwarzer Périgord-Trüffel, Sauce aus 30 Jahre altem Balsamico. Wird im Moment des Starts serviert.',pair:'Château Pétrus 2010',veg:'Vegetarisch: Sellerie aus dem Salzteig, Trüffeljus'},
+ {t:'T + 8 Min',ph:'Booster Landing',name:'Re-Entry',d:'Bretonischer Hummer, glasiert und bei Tisch flambiert, mit Safran-Sud und Fenchel. Glüht wie ein Booster beim Wiedereintritt.',pair:'Dom Pérignon P2 Rosé 2004',veg:'Vegetarisch: Karotte aus dem Holzofen, Safran, Orange'},
+ {t:'Orbit',ph:'Zero Gravity',name:'Schwerelos',d:'Schwebendes Dessert: Sphäre aus Valrhona-Grand-Cru-Schokolade über einem Magnetsockel, Blattgold, „Marssand“ aus Karamell.',pair:'Château d’Yquem 2001',veg:''},
+ {t:'Landung',ph:'Mission Complete',name:'Mission Patch',d:'Petits Fours in Form von Missions-Patches, Pralinen „Raptor“ mit flüssigem Kern, dazu der persönliche Missions-Patch zum Mitnehmen.',pair:'Hennessy Paradis Impérial',veg:''}];
+const RL_MENUS=[{k:'classic',t:'Mission Classic',s:'7 Gänge wie beschrieben'},{k:'veg',t:'Mission Green',s:'7 Gänge vegetarisch'},{k:'nofish',t:'Ohne Meeresfrüchte',s:'Gänge 1, 3 und 5 werden ersetzt'}];
+const RL_PAIR=[{k:'grand',t:'Grand-Cru-Begleitung',s:'Weine und Champagner wie im Menü',p:0},{k:'zero',t:'Alkoholfreie Begleitung',s:'Tees, Säfte, Fermente',p:0},{k:'petrus',t:'Upgrade Pétrus 1990',s:'Statt Pétrus 2010 zum Hauptgang',p:9500}];
+const RL_EXTRAS=[{k:'heli',t:'Helikopter-Transfer',s:'Vom Hotel oder Privatjet-Terminal',p:6500},{k:'brief',t:'Briefing mit Ingenieur',s:'30 Minuten am privaten Tisch',p:12000},{k:'caviar',t:'Kaviar-Upgrade',s:'125 g Imperial Beluga zusätzlich',p:4800},{k:'film',t:'Persönlicher Launch-Film',s:'4K-Film mit Ihrem Tisch und dem Start',p:3500}];
+let RO={mission:'RL-07',seats:2,menu:'classic',pair:'grand',extras:{heli:true},name:'',notes:'',done:null};
+const usd=v=>Math.round(v).toLocaleString('de-DE')+' USD';
+function rlTotal(){const tbl=RO.seats===4;const base=tbl?RL_TABLE:RO.seats*RL_PRICE;
+  const pair=(RL_PAIR.find(p=>p.k===RO.pair)||{p:0}).p*RO.seats;
+  const ex=RL_EXTRAS.filter(e=>RO.extras[e.k]&&!(tbl&&e.k==='heli')).reduce((s,e)=>s+e.p*(e.k==='brief'?1:RO.seats),0);
+  return {base,pair,ex,tot:base+pair+ex,tbl};}
+
+function vDinExp(){
+  return `<section class="xhero"><canvas id="heroCanvas" aria-hidden="true"></canvas><div class="shade"></div>
+   <div class="copy"><div class="x-up" style="color:var(--gold)">Dinner mit Raketenstart · 20 Plätze</div>
+    <h2>RocketLight<br>Dinner</h2>
+    <p>Sieben Gänge Sterneküche, ein echter Raketenstart vor der Glasfront. Das exklusivste Dinner der Welt.</p>
+    <div class="row" style="gap:14px"><button class="xbtn solid" data-sub="menu">Menü ansehen</button><button class="xbtn" data-sub="book">Platz reservieren</button><button class="xbtn" data-act="launchfull">Start erleben</button></div></div></section>
+  <section class="xstats">
+   <div><b>20</b><span>Plätze pro Abend</span></div><div><b>7</b><span>Gänge</span></div><div><b>1</b><span>Raketenstart</span></div><div><b>50.000</b><span>USD pro Platz</span></div></section>
+  <section class="xsec"><h2>Der Abend</h2><p class="lead">Die Gänge folgen dem Countdown. Wenn die Triebwerke zünden, steht der Hauptgang auf dem Tisch.</p>
+   <div class="xsteps">
+    <div><span class="k">18:30</span><h3>Ankunft</h3><p>Helikopter oder Limousine zum gläsernen Pavillon, Champagner auf der Terrasse.</p></div>
+    <div><span class="k">19:15</span><h3>Briefing</h3><p>Ein Ingenieur erklärt Rakete, Mission und Startfenster.</p></div>
+    <div><span class="k">T − 90</span><h3>Menü beginnt</h3><p>Sieben Gänge im Takt des Countdowns, Live-Kommentar aus der Startleitung.</p></div>
+    <div><span class="k">T − 0</span><h3>Liftoff</h3><p>Die Rakete steigt vor der Panoramafront auf. Die Nacht wird hell.</p></div></div></section>`;
+}
+function vDinMenu(){
+  return `<section class="xsec"><div class="x-up" style="color:var(--gold)">Menü · Mission Profile</div><h2>Sieben Gänge bis in den Orbit</h2>
+   <p class="lead">Jeder Gang gehört zu einer Phase der Mission. Weinbegleitung inklusive. Vegetarische Variante für jeden Gang.</p></section>
+  <section>${RL_COURSES.map((c,i)=>`<article class="course"><div class="tm">${esc(c.t)}<small>${esc(c.ph)}</small></div>
+    <div><h3>${i+1}. ${esc(c.name)}</h3><p>${esc(c.d)}</p><p class="pair">Begleitung: <b>${esc(c.pair)}</b></p>${c.veg?`<p class="veg">${esc(c.veg)}</p>`:''}</div></article>`).join('')}</section>
+  <section class="pricebar"><div><div class="x-up muted">Pro Platz, alles inklusive außer Anreise</div><b>50.000 USD</b></div>
+   <div><div class="x-up muted">Ganzer Tisch, 4 Plätze, inkl. Helikopter</div><b>200.000 USD</b></div>
+   <button class="xbtn solid" data-sub="book">Platz reservieren</button></section>`;
+}
+function vDinBook(){
+  if(RO.done)return vDinPass(RO.done);
+  const T=rlTotal(),m=RL_MISSIONS.find(x=>x.id===RO.mission);
+  const ch=(on,attrs,b,s,p)=>`<button class="choice" aria-pressed="${on}" ${attrs}><b>${esc(b)}</b><span>${esc(s)}</span>${p?`<span class="p">${p}</span>`:''}</button>`;
+  return `<section class="xsec"><div class="x-up" style="color:var(--gold)">Reservierung</div><h2>Ihr Platz am Startfenster</h2></section>
+  <div class="book"><div style="display:grid;gap:28px;min-width:0">
+   <div class="bgroup"><h3>1 · Mission wählen</h3><div class="choices">${RL_MISSIONS.map(x=>ch(x.id===RO.mission,`data-ro="mission:${x.id}"`,x.id+' · '+x.date,x.site+' · '+x.time,x.note)).join('')}</div></div>
+   <div class="bgroup"><h3>2 · Plätze</h3><div class="row" style="gap:20px"><div class="stepper"><button data-ro="seats:-1" aria-label="Weniger Plätze">−</button><output>${RO.seats}</output><button data-ro="seats:+1" aria-label="Mehr Plätze">+</button></div>
+    <span class="muted">${RO.seats===4?'Ganzer Tisch: 200.000 USD inklusive Helikopter-Transfer':'Ab 4 Plätzen buchen Sie den ganzen Tisch'}</span></div></div>
+   <div class="bgroup"><h3>3 · Menü</h3><div class="choices">${RL_MENUS.map(x=>ch(x.k===RO.menu,`data-ro="menu:${x.k}"`,x.t,x.s)).join('')}</div></div>
+   <div class="bgroup"><h3>4 · Begleitung</h3><div class="choices">${RL_PAIR.map(x=>ch(x.k===RO.pair,`data-ro="pair:${x.k}"`,x.t,x.s,x.p?'+ '+usd(x.p)+' p. P.':'inklusive')).join('')}</div></div>
+   <div class="bgroup"><h3>5 · Extras</h3><div class="choices">${RL_EXTRAS.map(x=>{const inc=x.k==='heli'&&RO.seats===4;return ch(!!RO.extras[x.k]||inc,`data-ro="extra:${x.k}" ${inc?'disabled':''}`,x.t,x.s,inc?'beim Tisch inklusive':'+ '+usd(x.p)+(x.k==='brief'?' pro Tisch':' p. P.'))}).join('')}</div></div>
+   <div class="bgroup" style="border:0"><h3>6 · Gastgeber</h3><div class="fields">
+    <label class="f">Name auf der Reservierung<input id="ro-name" data-rof="name" value="${esc(RO.name)}" placeholder="z. B. Daniel Meyer" autocomplete="off"></label>
+    <label class="f">Allergien und Wünsche<textarea id="ro-notes" class="in" rows="2" data-rof="notes" placeholder="z. B. keine Nüsse, Jahrestag">${esc(RO.notes)}</textarea></label></div></div>
+  </div>
+  <aside class="summary sticky"><div class="x-up muted">Ihre Reservierung</div>
+   <div><b class="x-up" style="font-size:1.2rem">${esc(m.id)} · ${esc(m.site)}</b><div class="muted">${esc(m.date)}, ${esc(m.time)}</div></div>
+   <div class="line"><span>${T.tbl?'Ganzer Tisch (4 Plätze)':RO.seats+' × Platz à 50.000 USD'}</span><b>${usd(T.base)}</b></div>
+   ${T.pair?`<div class="line"><span>Upgrade Pétrus 1990</span><b>${usd(T.pair)}</b></div>`:''}
+   ${T.ex?`<div class="line"><span>Extras</span><b>${usd(T.ex)}</b></div>`:''}
+   <div class="tot"><span class="x-up">Gesamt</span><b>${usd(T.tot)}</b></div>
+   <button class="xbtn solid" data-act="rlbook" style="justify-content:center">Reservierung anfragen</button>
+   <p class="fine">Startverschiebung? Kostenlose Umbuchung auf den nächsten Start (Launch-Garantie). Keine Zahlung auf dieser Seite.</p>
+  </aside></div>`;
+}
+function vDinPass(o){
+  const m=RL_MISSIONS.find(x=>x.id===o.mission);
+  return `<section class="xsec"><div class="x-up" style="color:var(--gold)">Reservierung angefragt</div><h2>Willkommen an Bord</h2>
+   <p class="lead">Ihr Boarding Pass für das RocketLight Dinner. Unser Concierge meldet sich mit allen Details zur Anreise.</p></section>
+  <section class="pass"><div class="main"><div class="x-up muted">RocketLight Dinner · Boarding Pass</div>
+    <div class="code">${esc(o.code)}</div>
+    <div class="kv"><div><span>Gast</span><b>${esc(o.name||'Gast')}</b></div><div><span>Mission</span><b>${esc(m.id)}</b></div><div><span>Datum</span><b>${esc(m.date)}</b></div>
+     <div><span>Startplatz</span><b>${esc(m.site)}</b></div><div><span>Plätze</span><b>${o.seats}</b></div><div><span>Menü</span><b>${esc((RL_MENUS.find(x=>x.k===o.menu)||{}).t)}</b></div></div>
+    <div class="x-up" style="font-size:1.4rem">Gesamt ${usd(o.total)}</div></div>
+   <div class="stub"><div class="x-up muted">Einlass</div><b class="x-up" style="font-size:2.4rem">18:30</b><div class="x-up muted">Gate</div><b class="x-up" style="font-size:2.4rem">LC-39A</b></div></section>
+  <div class="row" style="gap:14px"><button class="xbtn solid" data-act="launchfull">Countdown starten</button><button class="xbtn" data-act="rlnew">Weitere Reservierung</button></div>
+  <p class="fine">Konzept-Demo des Studienprojekts: Es wird nichts gebucht oder bezahlt, die Reservierung bleibt nur in diesem Browser gespeichert.</p>`;
+}
+function vDinLaunch(){
+  return `<section class="xsec"><div class="x-up" style="color:var(--gold)">Live vom Pavillon</div><h2>Countdown zum Liftoff</h2>
+   <p class="lead">So erleben die Gäste den Höhepunkt des Abends. Am besten im Vollbild mit Ton.</p></section>
+  <div class="lopts"><span class="x-up muted">Countdown</span>${[10,30,60].map(n=>`<button class="choice" aria-pressed="${LS.len===n}" data-cd="${n}"><b>${n} Sekunden</b></button>`).join('')}</div>
+  <div class="lwin"><canvas id="previewCanvas" aria-label="Animation eines Raketenstarts"></canvas></div>
+  <div class="row" style="gap:14px"><button class="xbtn solid" data-act="launchfull">Im Vollbild starten</button></div>`;
+}
+
+/* ---------- Launch scene (Canvas) ---------- */
+const LS={len:10,ov:null,sound:true};
+function makeScene(canvas,opts={}){
+  const ctx=canvas.getContext('2d');let W=0,H=0,dpr=1;
+  const stars=[...Array(260)].map(()=>({x:Math.random(),y:Math.random()*.8,r:Math.random()*1.4+.3,tw:Math.random()*6}));
+  const parts=[];let t0=null,last=null,started=false,shake=0;
+  const S={len:opts.len||10,idle:!!opts.idle,start(){started=true;t0=performance.now();parts.length=0},reset(){started=false;t0=null;parts.length=0},
+    clock:()=>started?(performance.now()-t0)/1000-S.len:-S.len,running:()=>started,stop:false};
+  function size(){const r=canvas.getBoundingClientRect();dpr=Math.min(2,window.devicePixelRatio||1);W=Math.max(1,r.width*dpr);H=Math.max(1,r.height*dpr);canvas.width=W;canvas.height=H}
+  size();const ro=new ResizeObserver(size);ro.observe(canvas);
+  function puff(x,y,vx,vy,r,life,c){if(parts.length<520)parts.push({x,y,vx,vy,r,g:r*.9,life,age:0,c})}
+  function frame(now){
+    if(S.stop||!canvas.isConnected){ro.disconnect();return}
+    const dt=Math.min(.05,last?(now-last)/1000:0);last=now;
+    const tr=S.clock(), ign=started?Math.max(0,Math.min(1,(tr+3)/2.2)):0, fl=.85+Math.random()*.3;
+    const u=H/900, baseY=H*.8, rh=H*.5, rw=rh*.075, cx=W*(opts.cx||.5);
+    const a=H*.034, rise=tr>0?.5*a*tr*tr:0, follow=Math.max(0,rise-H*.42), cam=follow;
+    const space=Math.min(1,cam/(H*3));
+    // sky
+    const g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,`rgb(${2*(1-space)|0},${4*(1-space)|0},${12*(1-space)|0})`);
+    g.addColorStop(.7,`rgb(${(8+60*ign*(1-space))|0},${(14+24*ign*(1-space))|0},${(30*(1-space)+6)|0})`);
+    g.addColorStop(1,`rgb(${(14+120*ign*(1-space))|0},${(16+50*ign*(1-space))|0},${(28*(1-space))|0})`);
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    // stars
+    const sa=.35+.65*space;
+    for(const s of stars){const y=(s.y*H+cam*.05)%H;ctx.globalAlpha=sa*(.55+.45*Math.sin(now/600+s.tw))*(1-ign*.6*(1-space));ctx.fillStyle='#fff';ctx.fillRect(s.x*W,y,s.r*dpr,s.r*dpr)}
+    ctx.globalAlpha=1;
+    ctx.save();
+    if(shake>0){ctx.translate((Math.random()-.5)*shake*u*14,(Math.random()-.5)*shake*u*14)}
+    ctx.translate(0,cam);
+    // ground & water
+    if(baseY-cam<H*1.3){
+      ctx.fillStyle='#050608';ctx.fillRect(0,baseY,W,H*2);
+      const wg=ctx.createLinearGradient(0,baseY+H*.06,0,baseY+H*.2);wg.addColorStop(0,`rgba(${120*ign|0},${60*ign|0},${20*ign|0},${.25+.4*ign})`);wg.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=wg;ctx.fillRect(0,baseY+H*.06,W,H*.2);
+      ctx.fillStyle='#0b0d11';ctx.fillRect(0,baseY,W,H*.06);
+      // distant lights
+      for(let i=0;i<40;i++){const x=(i*97.3%1)*W;ctx.fillStyle=i%5?'rgba(255,190,110,.6)':'rgba(255,60,60,.7)';ctx.fillRect((i*0.0251%1)*W,baseY-2*u-(i%3)*u,2*u,2*u)}
+      // tower
+      const tx=cx-rw*2.6,tw=rw*1.4,th=rh*1.05;
+      ctx.strokeStyle='#1d2027';ctx.lineWidth=2*u;ctx.fillStyle='#0d0f13';ctx.fillRect(tx-tw/2,baseY-th,tw,th);
+      ctx.beginPath();for(let y=baseY;y>baseY-th;y-=tw){ctx.moveTo(tx-tw/2,y);ctx.lineTo(tx+tw/2,y-tw);ctx.moveTo(tx+tw/2,y);ctx.lineTo(tx-tw/2,y-tw)}ctx.stroke();
+      ctx.fillStyle='rgba(255,40,40,'+(.5+.5*Math.sin(now/300))+')';ctx.beginPath();ctx.arc(tx,baseY-th-4*u,4*u,0,7);ctx.fill();
+      if(tr<0){ctx.fillStyle='#111419';ctx.fillRect(tx+tw/2,baseY-rh*.9,(cx-rw/2)-(tx+tw/2),5*u)}
+      ctx.fillStyle='#14171c';ctx.fillRect(cx-rw*2,baseY-6*u,rw*4,10*u);
+    }
+    // rocket world position
+    const sc=tr>14?Math.max(.08,1-(tr-14)*.07):1;
+    let rb=baseY-rise; // rocket bottom in world coords
+    const extra=(1-sc)*H*.35;rb-=extra;
+    // smoke & vapor emission
+    if(!S.idle||true){
+      if(started&&tr<0&&tr>-S.len+1&&Math.random()<.5)puff(cx+rw*.6,baseY-rh*.75,u*(20+Math.random()*30),-u*6,u*6,2.2,'v');
+      if(!started&&Math.random()<.35)puff(cx+rw*.6,baseY-rh*.75,u*(18+Math.random()*25),-u*5,u*5,2.4,'v');
+      if(ign>0&&rise<H*1.2){const n=Math.floor(60*dt*ign*5);for(let i=0;i<n;i++){const dir=Math.random()<.5?-1:1;
+        if(tr<1.5)puff(cx+dir*rw*(.5+Math.random()),baseY-4*u,dir*u*(120+Math.random()*260),-u*(10+Math.random()*40),u*(14+Math.random()*16),3+Math.random()*2.5,'s');
+        else puff(cx+(Math.random()-.5)*rw,rb+rh*.02*sc,(Math.random()-.5)*u*60,u*(80+Math.random()*80),u*(10+Math.random()*12)*sc,2.5+Math.random()*2,'s')}}
+    }
+    // draw particles (behind rocket)
+    for(let i=parts.length-1;i>=0;i--){const p=parts[i];p.age+=dt;if(p.age>p.life){parts.splice(i,1);continue}
+      p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=.985;p.vy*=.985;p.r+=p.g*dt*1.4;const k=1-p.age/p.life;
+      if(p.c==='v'){ctx.fillStyle=`rgba(230,235,245,${.18*k})`}else{const l=Math.max(0,1-Math.abs(p.y-baseY)/(H*.35))*ign;ctx.fillStyle=`rgba(${(150+100*l)|0},${(140+50*l)|0},${(130+10*l)|0},${.32*k})`}
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill()}
+    // flame
+    if(ign>0){const len=(tr>0?rh*(.55+Math.min(.9,tr*.08)):rh*.25*ign)*sc*fl, w=rw*1.05*sc;
+      const fx=cx,fy=rb;
+      const glow=ctx.createRadialGradient(fx,fy,0,fx,fy,rh*.9*sc+H*.2*ign);glow.addColorStop(0,`rgba(255,200,120,${.55*ign})`);glow.addColorStop(1,'rgba(255,120,40,0)');
+      ctx.fillStyle=glow;ctx.fillRect(fx-W,fy-H,W*2,H*2);
+      const fg=ctx.createLinearGradient(0,fy,0,fy+len);fg.addColorStop(0,'rgba(255,255,255,1)');fg.addColorStop(.25,'rgba(255,235,170,.95)');fg.addColorStop(.6,'rgba(255,150,60,.7)');fg.addColorStop(1,'rgba(255,90,20,0)');
+      ctx.fillStyle=fg;ctx.beginPath();ctx.moveTo(fx-w*.5,fy);ctx.quadraticCurveTo(fx-w*.9,fy+len*.35,fx,fy+len);ctx.quadraticCurveTo(fx+w*.9,fy+len*.35,fx+w*.5,fy);ctx.closePath();ctx.fill();
+      ctx.fillStyle='rgba(255,255,255,.9)';ctx.beginPath();ctx.ellipse(fx,fy+len*.12,w*.32,len*.13,0,0,7);ctx.fill()}
+    // rocket
+    drawRocket(ctx,cx,rb,rh*sc,rw*sc,ign);
+    ctx.restore();
+    shake=tr>-2&&tr<10?Math.max(0,(ign*(tr<3?1:1-(tr-3)/7))):0;
+    if(opts.loop&&started&&tr>30)S.start();
+    if(opts.onFrame)opts.onFrame(tr,started);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  return S;
+}
+function drawRocket(ctx,cx,bottom,h,w,ign){
+  const top=bottom-h, x=cx-w/2;
+  const bg=ctx.createLinearGradient(x,0,x+w,0);bg.addColorStop(0,'#9aa0a8');bg.addColorStop(.35,'#f4f5f7');bg.addColorStop(.7,'#dfe2e6');bg.addColorStop(1,'#7e848c');
+  ctx.fillStyle=bg;ctx.fillRect(x,top+h*.08,w,h*.92);
+  ctx.beginPath();ctx.moveTo(x,top+h*.08);ctx.quadraticCurveTo(x,top+h*.01,cx,top);ctx.quadraticCurveTo(x+w,top+h*.01,x+w,top+h*.08);ctx.fill();
+  ctx.fillStyle='#14161a';ctx.fillRect(x,top+h*.2,w,h*.05);ctx.fillRect(x,bottom-h*.05,w,h*.05);
+  ctx.fillStyle='#2a2d33';ctx.fillRect(x-w*.18,top+h*.27,w*.18,h*.015);ctx.fillRect(x+w,top+h*.27,w*.18,h*.015);
+  ctx.strokeStyle='#30343b';ctx.lineWidth=Math.max(1,w*.06);ctx.beginPath();ctx.moveTo(x,bottom-h*.06);ctx.lineTo(x-w*.35,bottom);ctx.moveTo(x+w,bottom-h*.06);ctx.lineTo(x+w*1.35,bottom);ctx.stroke();
+  if(ign>0){ctx.fillStyle='rgba(255,170,80,'+(.35*ign)+')';ctx.fillRect(x,bottom-h*.3,w,h*.3)}
+}
+function hud(){return `<div class="hud"><div class="top"><div class="tag">RocketLight Dinner · Live<b id="hudMission">Mission RL-07 · Cape Canaveral</b></div><div class="ctrl"><button class="xbtn" data-lx="sound">${LS.sound?'Ton an':'Ton aus'}</button><button class="xbtn" data-lx="fs">Vollbild</button><button class="xbtn" data-lx="close">Schließen ✕</button></div></div>
+  <div class="center"><div><div class="clock" id="hudClock">T − 00:00:${String(LS.len).padStart(2,'0')}</div><div class="msg" id="hudMsg">Startfreigabe erteilt</div>
+   <div class="events" id="hudEv"><span data-e="-3">Zündung</span><span data-e="0">Liftoff</span><span data-e="12">Max Q</span><span data-e="20">Überschall</span><span data-e="28">Guten Appetit</span></div></div></div>
+  <div class="bottom"><div class="tele"><div><span>Geschwindigkeit</span><b id="hudV">0 km/h</b></div><div><span>Höhe</span><b id="hudH">0,0 km</b></div></div>
+   <div class="ctrl"><button class="xbtn solid" data-lx="go">Countdown starten</button><button class="xbtn" data-lx="reset">Zurücksetzen</button></div></div></div>`}
+function fmtT(tr){const neg=tr<0;let s=Math.abs(tr);s=neg?Math.ceil(s):Math.floor(s);const mm=String(Math.floor(s/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');return `T ${neg?'−':'+'} 00:${mm}:${ss}`}
+let AUD=null;
+function audio(){if(AUD)return AUD;try{const ac=new (window.AudioContext||window.webkitAudioContext)();const n=ac.createBufferSource();const b=ac.createBuffer(1,ac.sampleRate*4,ac.sampleRate);const d=b.getChannelData(0);let l=0;for(let i=0;i<d.length;i++){const w=Math.random()*2-1;l=(l+.02*w)/1.02;d[i]=l*3.5}n.buffer=b;n.loop=true;
+  const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=180;const g=ac.createGain();g.gain.value=0;n.connect(f).connect(g).connect(ac.destination);n.start();AUD={ac,g};}catch(e){AUD={ac:null,g:null}}return AUD}
+function beep(){const A=audio();if(!A.ac||!LS.sound)return;const o=A.ac.createOscillator(),g=A.ac.createGain();o.frequency.value=880;g.gain.value=.08;o.connect(g).connect(A.ac.destination);o.start();o.stop(A.ac.currentTime+.09)}
+function openLaunch(){
+  closeLaunch();const m=RO.done?RL_MISSIONS.find(x=>x.id===RO.done.mission):RL_MISSIONS[0];
+  const el=document.createElement('div');el.id='launchOverlay';el.setAttribute('role','dialog');el.setAttribute('aria-label','Raketenstart im Vollbild');
+  el.innerHTML=`<canvas></canvas>${hud()}`;document.body.appendChild(el);document.body.style.overflow='hidden';
+  el.querySelector('#hudMission').textContent=`Mission ${m.id} · ${m.site}`;
+  let lastS=null;
+  const sc=makeScene(el.querySelector('canvas'),{len:LS.len,onFrame:(tr,st)=>{
+    const c=el.querySelector('#hudClock');if(!c)return;c.textContent=fmtT(tr);
+    const msg=!st?'Startfreigabe erteilt':tr<-3?'Countdown läuft':tr<0?'Triebwerke zünden':tr<4?'Liftoff!':tr<12?'Steigflug':tr<20?'Max Q · maximale Belastung':tr<28?'Überschall':'Guten Appetit. Ihr Dessert wird serviert.';
+    el.querySelector('#hudMsg').textContent=msg;
+    const t=Math.max(0,tr),v=1.9*t*t,hk=1.9*t*t*t/10800;el.querySelector('#hudV').textContent=Math.round(v).toLocaleString('de-DE')+' km/h';el.querySelector('#hudH').textContent=hk.toLocaleString('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1})+' km';
+    el.querySelectorAll('#hudEv span').forEach(s=>s.classList.toggle('on',st&&tr>=+s.dataset.e));
+    const A=AUD;if(A&&A.g){const target=st&&LS.sound?Math.max(0,Math.min(1,(tr+3)/3))*(tr>15?Math.max(.15,1-(tr-15)/20):1):0;A.g.gain.value+= (target*0.9-A.g.gain.value)*.05}
+    if(st&&tr<0&&tr>-11){const s=Math.ceil(-tr);if(s!==lastS){lastS=s;beep()}}}});
+  LS.ov={el,sc};
+}
+function closeLaunch(){if(!LS.ov)return;LS.ov.sc.stop=true;LS.ov.el.remove();LS.ov=null;document.body.style.overflow='';if(AUD&&AUD.g)AUD.g.gain.value=0;try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-lx]');if(!b||!LS.ov)return;const k=b.dataset.lx,o=LS.ov;
+  if(k==='close')closeLaunch();
+  if(k==='go'){const A=audio();try{A.ac&&A.ac.resume()}catch(_){}o.sc.start()}
+  if(k==='reset'){o.sc.reset()}
+  if(k==='sound'){LS.sound=!LS.sound;b.textContent=LS.sound?'Ton an':'Ton aus'}
+  if(k==='fs'){try{document.fullscreenElement?document.exitFullscreen():o.el.requestFullscreen().catch(()=>toast('Vollbild ist hier nicht möglich'))}catch(_){toast('Vollbild ist hier nicht möglich')}}});
+document.addEventListener('keydown',e=>{if(LS.ov&&e.key==='Escape'&&!document.fullscreenElement)closeLaunch()});
+function mountDinnerCanvases(){
+  const h=document.getElementById('heroCanvas');if(h)makeScene(h,{idle:true,len:10,cx:innerWidth>800?.78:.5});
+  const p=document.getElementById('previewCanvas');if(p){const s=makeScene(p,{len:LS.len,loop:true});setTimeout(()=>{if(p.isConnected)s.start()},600);}
+}
+
+const VIEWS={exp:vDinExp,menu:vDinMenu,book:vDinBook,launch:vDinLaunch,wizard:vWizard,ranking:vRanking,portfolio:vPortfolio,bars:vBars,top:vTop,detail:vDetail,assess:vAssess,fy:vFY,ideas:vIdeas,pool:vPool,settings:vSettings};
 const STEPS={
  user:[['wizard','1','Ideen-Check'],['ranking','2','Meine Ideen'],['portfolio','3','Portfolio & Netz'],['bars','4','Rendite & Bilanz'],['assess','Extra','Feintuning'],['fy','Extra','5-Jahres-Kalkulation'],['settings','Extra','Einstellungen']],
+ dinner:[['exp','01','Das Erlebnis'],['menu','02','Menü'],['book','03','Reservieren'],['launch','04','Countdown']],
  spacex:[['ideas','Schritt 1','Vom Trend zur Idee'],['pool','Schritt 2','Die 12 Ideen'],['top','Schritt 3','Die Finalisten'],['detail','Schritt 4','Bewertung im Detail'],['fy','Schritt 5','5-Jahres-Kalkulation'],['ranking','Schritt 6','Ranking'],['portfolio','Schritt 7','Portfolio & Netz'],['bars','Schritt 8','Rendite & Bilanz'],['settings','Extra','Einstellungen']]};
 const INTRO={
+ dinner:{exp:null,menu:null,book:null,launch:null},
  user:{wizard:null,
   ranking:['Vergleich','Meine Ideen im Ranking','Alle Ideen, die du geprüft hast, sortiert nach Innovationsrendite.'],
   portfolio:['Vergleich','Wo landen deine Ideen?','Das Aufwand/Nutzen-Portfolio zeigt auf einen Blick, welche Idee ein Quick win ist und welche du abbrechen solltest.'],
@@ -928,8 +1265,9 @@ function render(keepScroll){
     html=subnav()+(it?`<section class="intro"><div class="eyebrow">${esc(it[0])}</div><h2 style="font-size:clamp(2.2rem,5vw,3.4rem)">${esc(it[1])}</h2><p>${esc(it[2])}</p></section>`:'')+VIEWS[sub]()+(sub==='wizard'&&ui.wiz>0&&ui.wiz<13?'':pager());}
   document.getElementById('view').innerHTML=html;
   const sub=ui.sub[ui.ctx];
-  if(ui.ctx!=='method'&&sub==='fy')fillFY();
-  if(ui.ctx!=='method'&&sub==='settings')fillW();
+  if(ui.ctx==='dinner')mountDinnerCanvases();
+  if(ui.ctx!=='method'&&ui.ctx!=='dinner'&&sub==='fy')fillFY();
+  if(ui.ctx!=='method'&&ui.ctx!=='dinner'&&sub==='settings')fillW();
   document.querySelectorAll('textarea.in').forEach(autoGrow);
   if(keepScroll)window.scrollTo(0,y);
   save();
@@ -937,7 +1275,7 @@ function render(keepScroll){
 function fillW(){['n','a'].forEach(k=>{const s=sum(state.w[k]);document.querySelectorAll(`[data-out="wsum-${k}"]`).forEach(e=>{e.textContent=s+' %';e.style.color=s===100?'var(--gain)':'var(--bad)'})})}
 function autoGrow(t){t.style.height='auto';t.style.height=Math.min(t.scrollHeight+2,320)+'px'}
 function go(sub){ui.sub[ui.ctx]=sub;ui.confirm=null;render();window.scrollTo(0,0)}
-function goCtx(c){useCtx(c);ui.confirm=null;try{history.replaceState(null,'','#'+({user:'idee',spacex:'spacex',method:'methode'}[c]))}catch(e){}render();window.scrollTo(0,0)}
+function goCtx(c){useCtx(c);ui.confirm=null;try{history.replaceState(null,'','#'+({user:'idee',spacex:'spacex',dinner:'dinner',method:'methode'}[c]))}catch(e){}render();window.scrollTo(0,0)}
 function newAssessment(ideaId){
   const idea=IDEAS.find(i=>i.id===ideaId);
   const a={id:'b'+Date.now().toString(36),project:idea?idea.name:'Neue Idee '+(state.list.length+1),assessor:state.mode==='Multibeurteilende'?'Beurteiler '+(state.list.length+1):(isX()?'Gruppe 2':''),idea:idea?idea.id:'',link:false,n:isX()?[0,0,0,0,0,0]:[3,3,3,3,3,3],a:isX()?[0,0,0,0,0,0]:[3,3,3,3,3,3],why:{},fy:null};
@@ -960,6 +1298,8 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='Backspace'||e.key==='ArrowLeft'){wizSet(ui.wiz-1)}});
 document.getElementById('view').addEventListener('click',e=>{
   const t=e.target.closest('button,[data-open]');if(!t)return;
+  if(t.dataset.ro){const [k,v]=t.dataset.ro.split(':');if(k==='seats')RO.seats=Math.max(1,Math.min(4,RO.seats+(+v)));else if(k==='extra')RO.extras[v]=!RO.extras[v];else RO[k]=v;render(true);return}
+  if(t.dataset.cd){LS.len=+t.dataset.cd;render(true);return}
   if(t.dataset.opt!==undefined){const a=cur(),c=ALLC[ui.wiz-1];(c.g==='n'?a.n:a.a)[c.i]=+t.dataset.opt;render();return}
   if(t.dataset.wizgo){wizSet(+t.dataset.wizgo);return}
   if(t.dataset.wizopen){ui.sel.user=t.dataset.wizopen;const a=cur();const k=ALLC.findIndex((_,j)=>!answered(a,j));wizSet(k<0?13:k+1);return}
@@ -972,6 +1312,9 @@ document.getElementById('view').addEventListener('click',e=>{
   if(t.dataset.score){const [k,i,s]=t.dataset.score.split(':');const a=cur();(k==='gain'?a.n:a.a)[+i]=+s;render(true);return}
   const act=t.dataset.act,a=cur();
   switch(act){
+   case 'launchfull':openLaunch();break;
+   case 'rlnew':RO.done=null;render(true);break;
+   case 'rlbook':{const T=rlTotal();const code='RL-'+Math.random().toString(36).slice(2,6).toUpperCase();RO.done={code,mission:RO.mission,seats:RO.seats,menu:RO.menu,name:RO.name,total:T.tot,at:Date.now()};(root.orders??=[]).push(RO.done);save();render();window.scrollTo(0,0);toast('Reservierung angefragt');break}
    case 'new':if(!isX()){ui.sub.user='wizard';wizSet(0);break}newAssessment();ui.edit=true;render(true);break;
    case 'editmode':ui.edit=true;render(true);break;
    case 'readmode':ui.edit=false;render(true);break;
@@ -1008,6 +1351,7 @@ document.getElementById('view').addEventListener('change',e=>{
 document.getElementById('view').addEventListener('input',e=>{
   const t=e.target,a=cur();
   if(t.tagName==='TEXTAREA')autoGrow(t);
+  if(t.dataset.rof){RO[t.dataset.rof]=t.value;return}
   if(t.dataset.why){a.why[t.dataset.why]=t.value;save();return}
   if(t.dataset.field&&t.dataset.field!=='idea'){a[t.dataset.field]=t.value;save();return}
   if(t.dataset.fy){setPath(a.fy,t.dataset.fy,t.value===''?0:+t.value);fillFY();save();return}
@@ -1016,7 +1360,7 @@ document.getElementById('view').addEventListener('input',e=>{
   if(t.dataset.base){const k=t.dataset.base;state.base[k]=['revenue','profit','rnd'].includes(k)?(+t.value||0):t.value;save();return}
   if(t.dataset.set){state[t.dataset.set]=t.value;save();return}
 });
-const h=(location.hash||'').slice(1);useCtx({spacex:'spacex',methode:'method',method:'method'}[h]||'user');
+const h=(location.hash||'').slice(1);useCtx({spacex:'spacex',dinner:'dinner',launch:'dinner',methode:'method',method:'method'}[h]||'user');if(h==='launch')ui.sub.dinner='launch';
 render();
 </script>
 </body></html>
