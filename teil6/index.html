@@ -8,11 +8,11 @@
   <title>RocketLight — Eine Idee nimmt Gestalt an</title>
   <link rel="preload" href="scene.webp" as="image" fetchpriority="high">
   <link rel="stylesheet" href="style.css?v=b1ea155af5fd">
-  <link rel="stylesheet" href="cinema.css?v=e25efd41bf64">
+  <link rel="stylesheet" href="cinema.css?v=aeaa86f8de2e">
   <script defer src="data.js?v=6f8fac073f5e"></script>
   <script defer src="details.js?v=6fcb2028d300"></script>
   <script defer src="story.js?v=6e4825814bf6"></script>
-  <script defer src="cinema.js?v=e7557365210f"></script>
+  <script defer src="cinema.js?v=501512f00861"></script>
 </head>
 <body class="cinematic-page">
   <a class="skip-link" id="story-skiplink" href="#plan">Zum vollständigen Maßnahmenplan</a>
@@ -56,20 +56,78 @@
               <img class="building-ghost" data-building="B" src="lounge-cutout.webp" alt="" width="1846" height="852">
               <img class="building-image is-active" data-building="A" src="pavilion-cutout.webp" alt="" width="1774" height="887" loading="eager">
               <img class="building-image" data-building="B" src="lounge-cutout.webp" alt="" width="1846" height="852" loading="eager">
-              <svg class="building-draft" viewBox="0 0 720 440" fill="none" aria-hidden="true">
-                <defs><linearGradient id="draft-stroke" x1="60" y1="400" x2="650" y2="60"><stop stop-color="#a0dce5"/><stop offset=".5" stop-color="#f3f4e9"/><stop offset="1" stop-color="#f0be91"/></linearGradient><linearGradient id="draft-glass" x1="0" y1="150" x2="0" y2="400"><stop stop-color="#9bcbd8" stop-opacity=".06"/><stop offset="1" stop-color="#9bcbd8" stop-opacity=".16"/></linearGradient></defs>
-                <g class="draft-grid"><path d="M30 405h480l185-108H210L30 405ZM70 405l180-108M160 405l180-108M250 405l180-108M340 405l180-108M430 405l180-108M90 369h480M150 333h480"/><path d="M50 430h460M520 410l170-98M45 413v27M511 413v27M511 402l18 17M682 300l18 17"/><text x="265" y="427">KONZEPT · NICHT MASSSTABSGETREU</text></g>
-                <g data-blueprint="A" class="is-active">
-                  <path class="draft-fill" d="M70 245h425v150H70zM495 245l155-90v150l-155 90Z" fill="url(#draft-glass)"/>
-                  <path class="draft-trace" d="M70 395V245h425v150H70ZM70 245l155-90h425l-155 90M495 395l155-90V155M225 155v150M70 395l155-90h425M140 245v150M210 245v150M280 245v150M350 245v150M420 245v150M545 216v150M598 185v150M70 260h425l155-90"/>
-                  <path class="draft-detail" d="M90 348h385M110 348v37M455 348v37M130 347v-20h35v20M200 347v-20h35v20M270 347v-20h35v20M340 347v-20h35v20M410 347v-20h35v20"/>
-                </g>
-                <g data-blueprint="B">
-                  <path class="draft-fill" d="M70 145h425v250H70zM495 145l155-90v250l-155 90Z" fill="url(#draft-glass)"/>
-                  <path class="draft-trace" d="M70 395V145h425v250H70ZM70 145l155-90h425l-155 90M495 395l155-90V55M225 55v250M70 395l155-90h425M70 270h425l155-90M70 280h425l155-90M140 145v250M210 145v250M280 145v250M350 145v250M420 145v250M545 116v250M598 85v250M70 160h425l155-90"/>
-                  <path class="draft-detail" d="M86 348h390M110 348v37M455 348v37M95 232h380M118 232v26M450 232v26M480 282l-60 100h-50l60-100M438 290h38M432 300h38M426 310h38M420 320h38M414 330h38M408 340h38M402 350h38M396 360h38M390 370h38"/>
-                </g>
-              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" class="building-draft is-active" data-blueprint="A" viewBox="0 0 1774 887" width="1774" height="887" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <!-- Coordinates trace pavilion-cutout.webp at its original 1774 × 887 size. -->
+  <polygon class="draft-fill draft-fill-front" points="145,416 1446,354 1446,773 145,750" fill="currentColor" fill-opacity="0.035" stroke="none"/>
+  <polygon class="draft-fill draft-fill-right" points="1458,358 1659,415 1659,744 1458,773" fill="currentColor" fill-opacity="0.022" stroke="none"/>
+  <!-- Roof: overhang, narrow fascia and the recessed glazing line. -->
+  <path class="draft-trace" pathLength="1" d="M40 390 L1491 302 L1737 394"/>
+  <path class="draft-trace" pathLength="1" d="M40 402 L1501 326 L1737 405"/>
+  <path class="draft-trace" pathLength="1" d="M40 390 L40 402"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1491 302 L1501 326"/>
+  <path class="draft-trace" pathLength="1" d="M1737 394 L1737 405"/>
+  <path class="draft-trace" pathLength="1" d="M140 416 L1446 354 L1659 415"/>
+  <!-- Front and right-hand glass facades. -->
+  <path class="draft-trace" pathLength="1" d="M145 416 L145 750 L1446 773 L1446 354"/>
+  <path class="draft-trace" pathLength="1" d="M1659 415 L1659 744 L1458 773"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M178 414 L178 747"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M328 407 L328 750"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M339 407 L339 748"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M509 397 L509 755"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M727 387 L727 760"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M982 375 L982 766"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1297 360 L1297 771"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1528 377 L1528 761"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1606 399 L1606 749"/>
+  <!-- Thin, photographed platform; no invented foundation or site grid. -->
+  <path class="draft-trace" pathLength="1" d="M94 753 L1477 779 L1670 744"/>
+  <path class="draft-trace" pathLength="1" d="M94 767 L1477 791 L1670 755"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M94 753 L94 767"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1477 779 L1477 791"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1670 744 L1670 755"/>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" class="building-draft" data-blueprint="B" viewBox="0 0 1846 852" width="1846" height="852" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+  <!-- Coordinates trace lounge-cutout.webp at its original 1846 × 852 size. -->
+  <polygon class="draft-fill draft-fill-front" points="609,222 1526,160 1526,409 609,429" fill="currentColor" fill-opacity="0.035" stroke="none"/>
+  <polygon class="draft-fill draft-fill-front" points="127,479 1554,451 1554,764 127,745" fill="currentColor" fill-opacity="0.035" stroke="none"/>
+  <polygon class="draft-fill draft-fill-right" points="1535,163 1737,261 1737,443 1535,410" fill="currentColor" fill-opacity="0.022" stroke="none"/>
+  <polygon class="draft-fill draft-fill-right" points="1568,453 1759,492 1759,740 1568,762" fill="currentColor" fill-opacity="0.022" stroke="none"/>
+  <polygon class="draft-fill draft-fill-terrace" points="117,359 609,341 609,429 117,441" fill="currentColor" fill-opacity="0.025" stroke="none"/>
+  <!-- Upper roof and its thin fascia follow the actual asymmetric overhang. -->
+  <path class="draft-trace" pathLength="1" d="M348 188 L1556 90 L1798 232"/>
+  <path class="draft-trace" pathLength="1" d="M348 216 L1557 124 L1798 262"/>
+  <!-- The upper lounge is set back from the terrace and ground-floor edge. -->
+  <path class="draft-trace" pathLength="1" d="M609 429 L609 222 L1526 160 L1737 261"/>
+  <path class="draft-trace" pathLength="1" d="M1526 160 L1526 409"/>
+  <path class="draft-trace" pathLength="1" d="M1737 261 L1737 443"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M656 221 L656 427"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M838 211 L838 423"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M978 201 L978 419"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1163 186 L1163 416"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1388 170 L1388 410"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1599 194 L1599 423"/>
+  <!-- Existing glass terrace balustrade; no gable, crane or imagined structure. -->
+  <path class="draft-trace" pathLength="1" d="M117 441 L117 359 L714 337 L786 350"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M373 350 L373 434"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M512 345 L512 431"/>
+  <!-- Horizontal floor band connects the terrace, front and right return. -->
+  <path class="draft-trace" pathLength="1" d="M57 448 L1558 408 L1782 458"/>
+  <path class="draft-trace" pathLength="1" d="M57 476 L1558 448 L1782 490"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1558 408 L1558 448"/>
+  <!-- Ground-floor structural corners and the photographed glazing rhythm. -->
+  <path class="draft-trace" pathLength="1" d="M127 479 L127 745 L1554 764 L1554 451"/>
+  <path class="draft-trace" pathLength="1" d="M1759 492 L1759 740 L1568 762"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M291 477 L291 747"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M611 469 L611 752"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M793 465 L793 754"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M978 462 L978 756"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1138 458 L1138 759"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1295 454 L1295 760"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1616 469 L1616 755"/>
+  <path class="draft-trace draft-detail" pathLength="1" d="M1679 483 L1679 748"/>
+  <!-- Low platform aligns with the real cutout's ground-contact line. -->
+  <path class="draft-trace" pathLength="1" d="M69 747 L1576 772 L1791 739"/>
+</svg>
               <svg class="construction-crane" viewBox="0 0 600 440" fill="none" aria-hidden="true"><path d="M130 410V95h16v315M130 100l16 25-16 25 16 25-16 25 16 25-16 25 16 25-16 25 16 25-16 25 16 25M62 95h420M62 110h420M140 95l80-64 230 64M220 31v64M205 95l35 15 35-15 35 15 35-15 35 15 35-15M60 95v15M480 95v15"/><path class="crane-cable" d="M420 110v170h-8v10h16v-10h-8"/><path d="M94 410h80"/></svg>
             </div>
             <div class="permit-seal" id="permit-seal"><span class="permit-check">✓</span><span>FREIGABE<small>DER NÄCHSTE SCHRITT</small></span></div>

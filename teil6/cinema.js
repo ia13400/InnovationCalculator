@@ -45,7 +45,9 @@
   const params = new URLSearchParams(location.search);
   let variant = (params.get('variante') || read('rocketlight:variant')) === 'B' ? 'B' : 'A';
   const motionPreference = read('rocketlight:motion');
-  let reduced = motionPreference === 'reduced' || (motionPreference !== 'full' && media.matches);
+  let preferredReduced = motionPreference === 'reduced' || (motionPreference !== 'full' && media.matches);
+  let compact = window.innerHeight < 560;
+  let reduced = preferredReduced || compact;
   let destroyed = false;
   let raf = 0;
   let dirty = true;
@@ -450,26 +452,32 @@
   function setMotion(next, persist = true) {
     const position = currentPosition();
     const previousReduced = reduced;
-    reduced = Boolean(next);
+    const previousCompact = compact;
+    const previousPhase = activePhase;
+    preferredReduced = Boolean(next);
+    compact = window.innerHeight < 560;
+    reduced = preferredReduced || compact;
     root.classList.toggle('reduced-motion', reduced);
     root.classList.toggle('motion-ready', !reduced);
     cinema.classList.toggle('is-reduced', reduced);
+    cinema.classList.toggle('is-compact', compact);
     staticStory.hidden = !reduced;
     const toggle = $('#motion-toggle');
     if (toggle) {
       toggle.setAttribute('aria-pressed', String(reduced));
-      toggle.textContent = reduced ? 'Bewegung aktivieren' : 'Bewegung reduzieren';
+      toggle.disabled = compact;
+      toggle.textContent = compact ? 'Statische Ansicht' : reduced ? 'Bewegung aktivieren' : 'Bewegung reduzieren';
     }
-    if (persist) write('rocketlight:motion', reduced ? 'reduced' : 'full');
+    if (persist) write('rocketlight:motion', preferredReduced ? 'reduced' : 'full');
     variantAnimations.forEach(animation => animation.cancel());
     variantAnimations = [];
     stopFrame();
     if (reduced) clearAmbient();
     measure();
-    if (previousReduced !== reduced) {
+    if (previousReduced !== reduced || previousCompact !== compact) {
       if (position?.id?.startsWith('chapter-') && !reduced) {
-        const index = PHASES.indexOf(position.id.slice(8));
-        restorePosition({ cinema: true, progress: STARTS[Math.max(0, index)] + .002 });
+        const index = previousCompact ? Math.max(0, previousPhase) : Math.max(0, PHASES.indexOf(position.id.slice(8)));
+        restorePosition({ cinema: true, progress: index === 0 ? 0 : STARTS[index] + .002 });
       } else restorePosition(position);
     }
     requestFrame();
@@ -585,7 +593,7 @@
     goChapter(next, false, true);
     $(`#chapter-dots [data-chapter="${next}"]`)?.focus();
   }, { signal });
-  $('#motion-toggle')?.addEventListener('click', () => setMotion(!reduced), { signal });
+  $('#motion-toggle')?.addEventListener('click', () => { if (!compact) setMotion(!preferredReduced); }, { signal });
   $('#menu-toggle')?.addEventListener('click', () => {
     const menu = $('#mobile-menu'), button = $('#menu-toggle');
     if (!menu) return;
@@ -594,7 +602,10 @@
   }, { signal });
   disclosure.addEventListener('toggle', () => requestFrame(true), { signal });
   window.addEventListener('scroll', () => requestFrame(), { passive: true, signal });
-  window.addEventListener('resize', () => requestFrame(true), { passive: true, signal });
+  window.addEventListener('resize', () => {
+    if ((window.innerHeight < 560) !== compact) setMotion(preferredReduced, false);
+    else requestFrame(true);
+  }, { passive: true, signal });
   window.addEventListener('pageshow', () => requestFrame(true), { signal });
   window.addEventListener('pagehide', stopFrame, { signal });
   window.addEventListener('hashchange', () => followHash(location.hash, false, true), { signal });
@@ -615,9 +626,10 @@
   root.classList.toggle('reduced-motion', reduced);
   root.classList.toggle('motion-ready', !reduced);
   cinema.classList.toggle('is-reduced', reduced);
+  cinema.classList.toggle('is-compact', compact);
   renderVariant();
   syncVariantURL();
-  setMotion(reduced, false);
+  setMotion(preferredReduced, false);
   if ('ResizeObserver' in window) {
     resizeObserver = new ResizeObserver(() => requestFrame(true));
     for (const node of [stage, landscape, world, laneList, $('#chef-panel'), disclosure]) if (node) resizeObserver.observe(node);
@@ -625,7 +637,11 @@
   if ('IntersectionObserver' in window) {
     visibilityObserver = new IntersectionObserver(entries => {
       inView = entries[0]?.isIntersecting ?? true;
-      if (!inView) stopFrame();
+      if (!inView) {
+        stopFrame();
+        // Static chapters still need one scroll update after the scene leaves view.
+        if (dirty) requestFrame();
+      }
       else { connectionRefreshPending = true; requestFrame(); }
     }, { threshold: 0 });
     visibilityObserver.observe(stage);
@@ -633,7 +649,7 @@
   if (document.fonts?.ready) document.fonts.ready.then(() => { if (!destroyed) requestFrame(true); });
   requestAnimationFrame(() => { if (!destroyed) { measure(); if (location.hash) followHash(location.hash, false, true); requestFrame(); } });
   window.RocketCinema = Object.freeze({
-    getState: () => ({ variant, reduced, progress, phase: PHASES[activePhase], inView }),
+    getState: () => ({ variant, reduced, preferredReduced, compact, progress, phase: PHASES[activePhase], inView }),
     destroy() {
       destroyed = true;
       stopFrame();
