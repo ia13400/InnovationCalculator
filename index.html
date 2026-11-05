@@ -1785,7 +1785,11 @@ function render(keepScroll){
 }
 function fillW(){['n','a'].forEach(k=>{const s=sum(state.w[k]);document.querySelectorAll(`[data-out="wsum-${k}"]`).forEach(e=>{e.textContent=s+' %';e.style.color=s===100?'var(--gain)':'var(--bad)'})})}
 function autoGrow(t){t.style.height='auto';t.style.height=Math.min(t.scrollHeight+2,320)+'px'}
-function go(sub){ui.sub[ui.ctx]=sub;ui.confirm=null;render();window.scrollTo(0,0)}
+function go(sub){
+  const part6={rmover:'vision',rm4w:'mission',rmtp:'projects',rmbud:'budget',rmmap:'timeline',rmsrc:'sources'};
+  if(ui.ctx==='dinner'&&typeof part6[sub]==='string'){location.assign(`./teil6/#${part6[sub]}`);return}
+  ui.sub[ui.ctx]=sub;ui.confirm=null;render();window.scrollTo(0,0)
+}
 function goCtx(c){useCtx(c);ui.confirm=null;try{history.replaceState(null,'','#'+({user:'idee',spacex:'spacex',dinner:'dinner',method:'methode'}[c]))}catch(e){}render();window.scrollTo(0,0)}
 function newAssessment(ideaId){
   const idea=IDEAS.find(i=>i.id===ideaId);
@@ -1877,7 +1881,13 @@ document.getElementById('view').addEventListener('input',e=>{
   if(t.dataset.base){const k=t.dataset.base;state.base[k]=['revenue','profit','rnd'].includes(k)?(+t.value||0):t.value;save();return}
   if(t.dataset.set){state[t.dataset.set]=t.value;save();return}
 });
-const h=(location.hash||'').slice(1);useCtx({spacex:'spacex',dinner:'dinner',launch:'dinner',roadmap:'dinner',teil6:'dinner',methode:'method',method:'method'}[h]||'user');if(h==='launch')ui.sub.dinner='launch';if(h==='roadmap'||h==='teil6')ui.sub.dinner='rmover';
-render();
+const h=(location.hash||'').slice(1);
+if(h==='roadmap'||h==='teil6'){
+  location.replace('./teil6/');
+}else{
+  useCtx({spacex:'spacex',dinner:'dinner',launch:'dinner',methode:'method',method:'method'}[h]||'user');
+  if(h==='launch')ui.sub.dinner='launch';
+  render();
+}
 </script>
 </body></html>
