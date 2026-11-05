@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#08090b">
+  <meta name="description" content="Vom Konzept zum Liftoff: die interaktive Mission Roadmap für RocketLight Dinner. Zwei Varianten, sechs Teilprojekte und ein klarer Weg zur Umsetzung.">
+  <title>RocketLight Dinner — Mission Roadmap</title>
+  <link rel="preload" href="pavilion.webp" as="image" fetchpriority="high">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="data.js"></script>
+  <script defer src="details.js"></script>
+  <script defer src="main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#mission">Zum Maßnahmenplan</a>
+  <header class="site-header" id="site-header">
+    <a class="brand" href="../#dinner" aria-label="Zurück zum RocketLight Dinner">
+      <svg class="brand-mark" viewBox="0 0 32 36" fill="none" aria-hidden="true"><path d="M5 30V5h11c8 0 11 12 3 15l8 10M5 20h12" stroke="currentColor" stroke-width="2.5"/><path d="M12 30 26 5" stroke="currentColor" stroke-width="1.2"/></svg>
+      <span>RocketLight<span class="brand-sub">DINNER / MISSION ROADMAP</span></span>
+    </a>
+    <nav class="chapter-nav" aria-label="Kapitel">
+      <a href="#vision" data-nav="vision" aria-current="location">Vision</a>
+      <a href="#mission" data-nav="mission">Mission</a>
+      <a href="#path" data-nav="path">Flugplan</a>
+      <a href="#timeline" data-nav="timeline">Roadmap</a>
+      <a href="#budget" data-nav="budget">Budget</a>
+    </nav>
+    <div class="header-actions">
+      <div class="mini-variants" role="group" aria-label="Konzeptvariante">
+        <button type="button" data-variant="A" aria-pressed="true" aria-label="Variante A: Mobiler Pavillon">A</button>
+        <button type="button" data-variant="B" aria-pressed="false" aria-label="Variante B: Lounge Titusville">B</button>
+      </div>
+      <button class="menu-button" type="button" aria-label="Kapitelnavigation öffnen" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
+    </div>
+    <div class="scroll-meter" aria-hidden="true"><span id="scroll-meter-fill"></span></div>
+  </header>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile Kapitelnavigation" hidden>
+    <a href="#vision"><span>01</span>Die Vision</a><a href="#mission"><span>02</span>Die Mission</a><a href="#path"><span>03</span>Der Flugplan</a><a href="#projects"><span>04</span>Teilprojekte</a><a href="#budget"><span>05</span>Das Budget</a><a href="#timeline"><span>06</span>Die Roadmap</a><a href="#sources"><span>07</span>Quellen & Folien</a>
+  </nav>
+  <main id="main">
+    <section class="hero" id="vision" aria-labelledby="hero-title">
+      <div class="hero-stage">
+        <div class="hero-art" aria-hidden="true">
+          <img class="hero-image is-active" data-scene="A" src="pavilion.webp" alt="" width="1920" height="1080" fetchpriority="high">
+          <img class="hero-image" data-scene="B" src="lounge.webp" alt="" width="1920" height="1080" loading="lazy">
+          <div class="hero-shade"></div><div class="hero-grain"></div>
+          <div class="hero-orbit"></div>
+        </div>
+        <div class="hero-copy">
+          <div class="eyebrow hero-kicker"><span class="live-dot"></span> ROCKETLIGHT DINNER <span class="eyebrow-divider"></span> TEIL 06</div>
+          <h1 id="hero-title"><span>Von der Vision.</span><em>Zum Liftoff.</em></h1>
+          <p>Ein Tisch für 20. Ein Moment, der bleibt.<br>Und ein Plan, der ihn möglich macht.</p>
+          <a class="hero-cta" href="#concept">Die Mission entdecken <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="hero-bridge" aria-hidden="true"><span class="eyebrow">DER NÄCHSTE GROSSE SCHRITT</span><p>Außergewöhnliche Ideen.<br><em>Konsequent zu Ende gedacht.</em></p></div>
+        <div class="hero-bottom"><a href="#concept" class="scroll-cue"><span class="scroll-cue-line" aria-hidden="true"></span> WEITER ENTDECKEN</a><span class="scene-caption">KONZEPTVISUALISIERUNG <span>/</span> <span data-scene-caption>MOBILER PAVILLON</span></span></div>
+      </div>
+    </section>
+
+    <section class="concept-section section-pad" id="concept" aria-labelledby="concept-title">
+      <div class="page-wrap">
+        <div class="section-topline" data-reveal><span class="eyebrow">01 / DIE VISION</span><span class="quiet-label">ZWEI VARIANTEN. EIN ANSPRUCH.</span></div>
+        <div class="concept-heading"><h2 class="display-heading" id="concept-title" data-reveal>Ein Erlebnis.<br><span>Zwei Wege dorthin.</span></h2><p class="section-lead" data-reveal>Ein Dinner mit Blick auf den Raketenstart. Mobil an zwei Standorten oder als feste Adresse in Titusville. Du entscheidest, welchen Weg wir durchspielen.</p></div>
+        <div class="concept-options" role="group" aria-label="Planungsvariante wählen" data-reveal>
+          <button type="button" class="concept-option" data-variant="A" aria-pressed="true"><span class="option-code">A</span><span><strong>Der mobile Pavillon</strong><small>Flexibel. Nah am Horizont.</small></span><span class="option-check" aria-hidden="true">↗</span></button>
+          <button type="button" class="concept-option" data-variant="B" aria-pressed="false"><span class="option-code">B</span><span><strong>Die Lounge in Titusville</strong><small>Ein fester Ort für große Momente.</small></span><span class="option-check" aria-hidden="true">↗</span></button>
+        </div>
+        <div class="concept-image-frame" data-reveal>
+          <img class="concept-image is-active" data-concept-scene="A" src="pavilion.webp" alt="Konzeptvisualisierung des mobilen Glas-Pavillons am Wasser mit einem fernen Raketenstart." width="1920" height="1080" loading="lazy" decoding="async">
+          <img class="concept-image" data-concept-scene="B" src="lounge.webp" alt="Konzeptvisualisierung der zweigeschossigen Lounge am Indian River mit einem fernen Raketenstart." width="1920" height="1080" loading="lazy" decoding="async" aria-hidden="true">
+          <div class="concept-image-label"><span class="small-dot"></span><span data-concept-label>VARIANTE A / MOBILER PAVILLON</span><span>KONZEPT</span></div>
+        </div>
+        <div class="metric-strip" id="metric-strip" aria-live="polite"></div>
+        <p class="data-note">Planungsannahmen der Gruppe. Stand 05.11.2026. Alle Zahlen, Grundlagen und Quellen unten im Detail.</p>
+      </div>
+    </section>
+
+    <section class="mission-section section-pad" id="mission" aria-labelledby="mission-title">
+      <div class="page-wrap mission-layout">
+        <div class="mission-intro">
+          <span class="eyebrow" data-reveal>02 / DIE MISSION</span>
+          <h2 class="display-heading" id="mission-title" data-reveal>Vier Fragen.<br><span>Eine Richtung.</span></h2>
+          <p class="section-lead" data-reveal>Aus einer großen Idee wird ein konkreter Auftrag. Was wir schaffen, wer es möglich macht und wie wir dorthin kommen.</p>
+          <div class="mission-orbit" aria-hidden="true"><svg viewBox="0 0 320 320" fill="none"><circle cx="160" cy="160" r="122" stroke="currentColor" stroke-width=".5"/><circle cx="160" cy="160" r="86" stroke="currentColor" stroke-width=".5" stroke-dasharray="2 8"/><ellipse cx="160" cy="160" rx="148" ry="48" stroke="currentColor" stroke-width=".7" transform="rotate(-32 160 160)"/><path d="M160 119v82m-41-41h82" stroke="currentColor" stroke-width=".5"/><circle cx="280" cy="104" r="4" fill="currentColor"/><circle cx="160" cy="160" r="4" fill="currentColor"/></svg><span>MISSION<br><strong>R/06</strong></span></div>
+        </div>
+        <div class="mission-questions" id="mission-questions"></div>
+      </div>
+    </section>
+
+    <section class="flight-section" id="path" aria-labelledby="flight-title">
+      <div class="flight-stage">
+        <div class="page-wrap">
+          <div class="section-topline"><span class="eyebrow">03 / DER FLUGPLAN</span><span class="quiet-label">FÜNF GATES. KLARE ENTSCHEIDUNGEN.</span></div>
+          <h2 class="display-heading flight-title" id="flight-title">Große Vision.<br><span>Kontrollierter Start.</span></h2>
+          <div class="flight-layout"><div class="flight-visual" aria-hidden="true"><svg class="flight-orbit" viewBox="0 0 620 460" fill="none"><defs><linearGradient id="flight-gradient" x1="80" y1="400" x2="500" y2="60"><stop stop-color="#44382f"/><stop offset=".6" stop-color="#efad83"/><stop offset="1" stop-color="#ffe5d2"/></linearGradient></defs><ellipse cx="310" cy="242" rx="275" ry="138" stroke="#b8a99e" stroke-opacity=".15" transform="rotate(-25 310 242)"/><ellipse cx="310" cy="242" rx="220" ry="105" stroke="#b8a99e" stroke-opacity=".1" transform="rotate(-25 310 242)"/><path class="flight-arc" d="M80 385C100 255 290 105 540 75" stroke="url(#flight-gradient)" stroke-width="2" pathLength="1"/><circle cx="80" cy="385" r="5" fill="#f4b38b"/><circle cx="540" cy="75" r="5" fill="#f4b38b"/><path d="m534 65 17 7-13 14" stroke="#f4b38b" stroke-width="1.5"/></svg><div class="flight-year" id="flight-year">2026</div><div class="flight-coordinate"><span>PROJEKTZEIT</span><span id="flight-date">30.11.2026</span></div></div><div class="gate-deck" id="gate-deck"></div></div>
+          <div class="flight-footer"><div class="gate-jumps" id="gate-jumps" role="group" aria-label="Stage-Gate auswählen"></div><a href="#timeline" class="text-link">Die gesamte Roadmap <span aria-hidden="true">↗</span></a></div>
+          <div class="flight-progress" aria-hidden="true"><span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <div id="detail-sections"></div>
+
+    <section class="closing-section section-pad" aria-labelledby="closing-title"><div class="page-wrap"><div class="eyebrow" data-reveal>VON DER PLANUNG IN DIE PRÄSENTATION</div><h2 id="closing-title" data-reveal>Der nächste Schritt<br>beginnt <em>hier.</em></h2><div class="closing-actions" data-reveal><a class="primary-button" id="presentation-link" href="../praesentation/Part6_Roadmap_RocketLightDinner_A_Mobiler-Pavillon.pptx" download>Präsentation herunterladen <span aria-hidden="true">↓</span></a><a class="text-link" href="../#dinner">Zurück zum Dinner <span aria-hidden="true">↗</span></a></div><p class="closing-note">6 Folien mit Sprechernotizen. Passend zur ausgewählten Variante.</p><div class="closing-orbit" aria-hidden="true"></div></div></section>
+  </main>
+  <footer class="site-footer"><div class="page-wrap"><div class="footer-line"><a class="footer-brand" href="#vision">RocketLight<span> / MISSION ROADMAP</span></a><button type="button" class="motion-toggle" id="motion-toggle" aria-pressed="false">Bewegung reduzieren <span aria-hidden="true">◐</span></button></div><p>Studentisches Konzept · Trend2Business · Gruppe 2. Kein Angebot von SpaceX. Roadmap nach Prof. Dr. Gerhard Hube. Termine, Budgets und Visualisierungen dienen der Konzeptplanung.</p><div class="footer-bottom"><span>TEIL 06 — ROADMAP & MASSNAHMENPLAN</span><a href="#vision">Zurück nach oben ↑</a></div></div></footer>
+  <div class="sr-only" id="variant-announcement" role="status" aria-live="polite"></div>
+  <noscript><div class="noscript-note">Die interaktive Roadmap benötigt JavaScript. Die vollständigen Inhalte findest du auch in den <a href="../praesentation/Part6_Roadmap_RocketLightDinner_A_Mobiler-Pavillon.pptx">Folien für Variante A</a> und <a href="../praesentation/Part6_Roadmap_RocketLightDinner_B_Lounge-Titusville.pptx">Variante B</a>.</div></noscript>
+</body>
+</html>
