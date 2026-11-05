@@ -55,7 +55,7 @@
 
   function projects(data) {
     return '<section class="rd-section rd-projects-section" id="projects" aria-labelledby="rd-projects-title"><div class="rd-wrap">' +
-      sectionHead('03 / Verantwortung', '<span id="rd-projects-title">Sechs Teilprojekte.<br>Ein gemeinsames Ziel.</span>', data.titles.t1) +
+      sectionHead('04 / Verantwortung', '<span id="rd-projects-title">Sechs Teilprojekte.<br>Ein gemeinsames Ziel.</span>', data.titles.t1) +
       '<div class="rd-project-list">' + data.t1.map((project, index) =>
         '<details class="rd-project" data-reveal><summary><span class="rd-project-number">' +
         String(index + 1).padStart(2, '0') + '</span><h3>' + escape(project.name) + '</h3>' +
@@ -95,7 +95,7 @@
       escape(sum.pot) + '</td><td class="rd-table-number">' + escape(sum.bud) + '</td></tr></tbody></table></div>';
 
     return '<section class="rd-section rd-budget-section" id="budget" aria-labelledby="rd-budget-title"><div class="rd-wrap">' +
-      sectionHead('04 / Investition', '<span id="rd-budget-title">Der Plan hinter<br>jedem Dollar.</span>', data.titles.t2) +
+      sectionHead('05 / Investition', '<span id="rd-budget-title">Der Plan hinter<br>jedem Dollar.</span>', data.titles.t2) +
       '<div class="rd-budget-layout"><div class="rd-budget-figure" data-reveal><p class="rd-budget-total">' +
       escape(meta.budget) + '<span class="rd-budget-unit">Mio USD</span></p><p class="rd-budget-label">' +
       escape(meta.budgetLabel.replace(/^Mio USD\s*/, '')) + '</p><div class="rd-budget-potential"><span>' +
@@ -379,7 +379,7 @@
 
   function timeline(data, meta) {
     return '<section class="rd-section rd-timeline-section" id="timeline" aria-labelledby="rd-timeline-title"><div class="rd-wrap">' +
-      sectionHead('05 / Roadmap', '<span id="rd-timeline-title">Eine Roadmap.<br>Das ganze Bild.</span>', data.titles.rm) +
+      sectionHead('06 / Roadmap', '<span id="rd-timeline-title">Eine Roadmap.<br>Das ganze Bild.</span>', data.titles.rm) +
       '<div class="rd-timeline-shell" data-reveal><div class="rd-timeline-toolbar"><div><p class="rd-kicker">2026 — 2031</p><p class="rd-timeline-variant">' +
       escape(data.short) + '</p></div>' + tools(false) + '</div>' + viewport(data, 'inline') +
       '<p class="rd-timeline-hint">Eine Zeile wählen, um den Plan zu vertiefen. Vergrößern für einzelne Termine. Bis Ende 2028 Quartalsraster, danach Jahresraster.</p>' +
@@ -396,7 +396,7 @@
 
   function sources(data) {
     return '<section class="rd-section rd-sources-section" id="sources" aria-labelledby="rd-sources-title"><div class="rd-wrap">' +
-      sectionHead('06 / Transparenz', '<span id="rd-sources-title">Nachvollziehbar.<br>Bis zur Quelle.</span>', data.titles.src) +
+      sectionHead('07 / Transparenz', '<span id="rd-sources-title">Nachvollziehbar.<br>Bis zur Quelle.</span>', data.titles.src) +
       '<div class="rd-sources-layout"><div class="rd-source-disclosures"><details class="rd-accordion" data-reveal><summary>' +
       '<span>Recherche zur Durchführung</span><span class="rd-accordion-meta">' + data.sources.length +
       ' Belege</span><span class="rd-plus" aria-hidden="true">+</span></summary><ol class="rd-sources-list">' +
