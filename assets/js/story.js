@@ -1,11 +1,11 @@
 /* ============================== SpaceX-Case als Scroll-Erzählung ==============================
-   Zwölf Ideen bleiben über alle Kapitel dieselben Punkte: Sterne → Trendkonstellation → How-Wow-Now-Matrix →
-   drei Finalisten → Bewertung → 5-Jahres-Zahlen → Portfolio → Ranking. Alle Werte kommen live aus root.spacex
-   und calc(); die Kapiteltexte stehen zusätzlich als lesbares HTML bereit (reduzierte Bewegung, flache Fenster). */
+   Zwölf Ideen bleiben über die ganze Seite dieselben Punkte: Sterne → Trendkonstellation → How-Wow-Now-Matrix →
+   drei Finalisten → Bewertung → 5-Jahres-Zahlen → Portfolio → Ranking. Die Szenen stehen zwischen den Kapiteln
+   mit den vollständigen Diagrammen. Alle Werte kommen live aus root.spacex und calc(); die Szenentexte sind
+   lesbares HTML, bei reduzierter Bewegung oder flachen Fenstern als ruhige Kapitelansicht. */
 (() => {
   'use strict';
-  const story = document.getElementById('case');
-  if (!story || typeof root === 'undefined' || !root.spacex) return;
+  if (typeof root === 'undefined' || !root.spacex) return;
   const NS = 'http://www.w3.org/2000/svg';
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
@@ -58,7 +58,7 @@
       { eye: 'Schritt 2 · How-Wow-Now', title: 'Machbar – und originell?',
         text: 'Gruppe und KI haben jede Idee nach Machbarkeit und Originalität eingeordnet. Erst ab 4 Punkten auf beiden Achsen wird aus einer Idee ein WOW.' },
       { eye: 'Schritt 3 · Finalisten', title: `${M.finalists.length} Ideen bleiben im Licht.`,
-        text: `${list} erreichen das WOW-Feld. Alle anderen Ideen bleiben im Ideenpool und lassen sich weiter unten im Detail ansehen.` },
+        text: `${list} erreichen das WOW-Feld. Alle zwölf Ideen mit Beschreibung stehen oben im Ideenpool.` },
       { eye: 'Schritt 4 · Inno-Rendite-Kalkulator', title: 'Zwölf Kriterien, zwei Blickwinkel.',
         text: 'Team und KI (Claude) bewerten jede Idee getrennt nach der Methode von Prof. Hube. Rendite = Nutzen ÷ Aufwand; über 1 lohnt sich die Idee.',
         facts: M.finalists.flatMap(f => [row(f, f.rt), row(f, f.rk)]).filter(Boolean) },
@@ -69,8 +69,8 @@
         text: 'Im Aufwand/Nutzen-Portfolio nach Prof. Hube zeigt jeder Punkt eine Bewertung: gefüllt die KI, als Ring das Team. Je weiter rechts und oben, desto besser.',
         facts: M.finalists.flatMap(f => [f.rt && `${f.name} · Team: ${f.rt.pf[0]}`, f.rk && `${f.name} · KI: ${f.rk.pf[0]}`]).filter(Boolean) },
       { eye: 'Ergebnis', title: best ? `${best.name} liefert die höchste Rendite.` : 'Das Ranking',
-        text: 'Rangfolge nach mittlerer Innovationsrendite aus Team- und KI-Bewertung. Alle Zahlen, Begründungen und Quellen lassen sich im Rechner prüfen und ändern.',
-        facts: M.ranking.map((f, i) => `${i + 1}. ${f.name}: Rendite ${fmt(f.mean)} (Team ${f.rt ? fmt(f.rt.IR) : '–'} · KI ${f.rk ? fmt(f.rk.IR) : '–'})`), cta: true }
+        text: 'Rangfolge nach mittlerer Innovationsrendite aus Team- und KI-Bewertung. Darunter folgen Rendite und Bilanz jeder einzelnen Bewertung; alle Werte lassen sich in den Kapiteln oben ändern.',
+        facts: M.ranking.map((f, i) => `${i + 1}. ${f.name}: Rendite ${fmt(f.mean)} (Team ${f.rt ? fmt(f.rt.IR) : '–'} · KI ${f.rk ? fmt(f.rk.IR) : '–'})`) }
     ];
   }
 
@@ -296,93 +296,94 @@
     return { update };
   }
 
-  /* ---------- Aufbau DOM ---------- */
-  const scroller = $('#case-scroll'), stage = $('#case-stage'), svg = $('#case-svg'), steps = $('#case-steps'),
-    rail = $('#case-rail'), staticBox = $('#case-static'), motionBtn = $('#case-motion');
-  let M, CH, scene, layoutKey = '', progress = -1, raf = 0, active = -1;
-  const pref = read(MOTION_KEY);
-  let preferredReduced = pref === 'reduced' || (pref !== 'full' && media.matches);
-  let reduced = preferredReduced || innerHeight < 560;
+  /* ---------- Szenen zwischen den Kapiteln ----------
+     render() setzt im Reiter SpaceX-Case Platzhalter <div class="case-seg" data-phase="k"> vor die passenden Kapitel.
+     Jede Szene k beginnt im Endzustand von Szene k−1 und verwandelt sich beim Scrollen in Zustand k –
+     so bleiben die zwölf Punkte über die ganze Seite dieselben, während dazwischen die vollständigen Diagramme stehen. */
+  const pref0 = read(MOTION_KEY);
+  let preferredReduced = pref0 === 'reduced' || (pref0 !== 'full' && media.matches);
+  const isReduced = () => preferredReduced || innerHeight < 560;
+  let segs = [], M = null, CH = null, raf = 0;
 
   const esc2 = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  function stepHTML(c, i) {
+  function stepHTML(c) {
     return `<p class="case-eye">${esc2(c.eye)}</p><h2 class="case-title">${esc2(c.title)}</h2><p class="case-text">${esc2(c.text)}</p>` +
-      (c.facts && c.facts.length ? `<ul class="case-facts">${c.facts.map(f => `<li>${esc2(f)}</li>`).join('')}</ul>` : '') +
-      (c.cta ? `<div class="case-cta"><a class="case-btn primary" href="#spacex" data-case-go="top">Bewertungen im Detail</a><a class="case-btn" href="#idee" data-case-go="user">Eigene Idee prüfen</a><a class="case-btn" href="#dinner" data-case-go="dinner">RocketLight Dinner</a></div>` : '');
+      (c.facts && c.facts.length ? `<ul class="case-facts">${c.facts.map(f => `<li>${esc2(f)}</li>`).join('')}</ul>` : '');
   }
   function layoutFor(box) {
     const W = Math.max(300, Math.round(box.clientWidth)), H = Math.max(260, Math.round(box.clientHeight));
-    const narrow = box.classList.contains('case-mini') ? W < 700 : !(innerWidth >= 900 && innerWidth / innerHeight > 1.05);
-    if (box.classList.contains('case-mini')) return { w: W, h: H, narrow, region: { x: narrow ? 40 : 80, y: 40, w: W - (narrow ? 60 : 160), h: H - 84 } };
+    const mini = box.classList.contains('case-mini');
+    const narrow = mini ? W < 700 : !(innerWidth >= 900 && innerWidth / innerHeight > 1.05);
+    if (mini) return { w: W, h: H, narrow, region: { x: narrow ? 40 : 80, y: 40, w: W - (narrow ? 60 : 160), h: H - 84 } };
     if (narrow) return { w: W, h: H, narrow, region: { x: 40, y: 28, w: W - 58, h: H - 62 } };
     const x0 = Math.max(W * .43, 450);
     return { w: W, h: H, narrow, region: { x: x0, y: 64, w: W - 96 - x0, h: H - 64 - 100 } };
   }
-  function build() {
+  const motionLabel = () => preferredReduced ? 'Bewegung zulassen ◑' : 'Bewegung reduzieren ◐';
+
+  function mount() {
+    const view = document.getElementById('view');
+    const holders = view ? $$('.case-seg[data-phase]', view) : [];
+    segs = [];
+    if (!holders.length) return;
     M = model(); CH = chapters(M);
-    steps.innerHTML = CH.map((c, i) => `<article class="case-step" data-step="${i}" aria-hidden="true" inert>${stepHTML(c, i)}</article>`).join('');
-    rail.innerHTML = CH.map((c, i) => `<button type="button" data-case-jump="${i}" aria-label="Kapitel ${i + 1}: ${esc2(c.title)}"><span></span></button>`).join('');
-    const keep = $('.case-tools', staticBox); if (keep) stage.appendChild(keep);
-    staticBox.innerHTML = CH.map((c, i) => `<article class="case-chapter" id="case-${PHASES[i]}">${stepHTML(c, i)}${i ? '<svg class="case-mini" aria-hidden="true" focusable="false"></svg>' : ''}</article>`).join('');
-    layoutKey = ''; progress = -1; active = -1; applyMode();
-    if (reduced) $$('.case-mini', staticBox).forEach(s => { const i = PHASES.indexOf(s.closest('.case-chapter').id.slice(5)); makeScene(s, layoutFor(s), M).update(i, 0); });
+    document.documentElement.style.setProperty('--sbw', (innerWidth - document.documentElement.clientWidth) + 'px');
+    const red = isReduced();
+    const hdr = document.querySelector('header.top'), hh = hdr ? hdr.offsetHeight : 0;
+    holders.forEach(el => {
+      const k = +el.dataset.phase, c = CH[k];
+      el.style.setProperty('--case-hdr', hh + 'px');
+      el.classList.toggle('is-static', red);
+      el.classList.toggle('is-intro', k === 0);
+      const tools = k === 0 ? `<div class="case-tools"><button type="button" class="case-motion" aria-pressed="${preferredReduced}">${motionLabel()}</button><button type="button" class="case-skip">Zu den Schritten ↓</button></div>` : '';
+      if (red) {
+        el.innerHTML = `<div class="case-static"><article class="case-chapter">${stepHTML(c)}</article>${k ? '<svg class="case-mini" aria-hidden="true" focusable="false"></svg>' : ''}${tools}</div>`;
+        const mini = $('.case-mini', el); if (mini) makeScene(mini, layoutFor(mini), M).update(k, 0);
+        return;
+      }
+      el.innerHTML = `<div class="case-scroll"><div class="case-stage"><svg class="case-svg" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid meet"></svg>` +
+        `<div class="case-steps"><article class="case-step">${stepHTML(c)}</article></div><div class="case-bar" aria-hidden="true"></div>${tools}</div></div>`;
+      const svg = $('.case-svg', el);
+      segs.push({ el, k, svg, scroll: $('.case-scroll', el), stage: $('.case-stage', el), step: $('.case-step', el), scene: null, key: '', start: 0, range: 1, last: -1 });
+    });
     measure();
   }
-  function applyMode() {
-    story.classList.toggle('is-static', reduced);
-    scroller.hidden = reduced; staticBox.hidden = !reduced;
-    const tools = $('.case-tools', story); // Bewegungsschalter bleibt in beiden Ansichten erreichbar
-    if (reduced) staticBox.prepend(tools); else stage.appendChild(tools);
-    motionBtn.setAttribute('aria-pressed', String(preferredReduced));
-    motionBtn.textContent = preferredReduced ? 'Bewegung zulassen ◑' : 'Bewegung reduzieren ◐';
-  }
-  let start = 0, range = 1;
   function measure() {
-    if (reduced || story.hidden) return;
-    const L = layoutFor(svg), key = L.w + 'x' + L.h + L.narrow;
-    if (key !== layoutKey) { layoutKey = key; scene = makeScene(svg, L, M); progress = -1; }
-    const hdr = document.querySelector('header.top');
-    story.style.setProperty('--case-hdr', (hdr ? hdr.offsetHeight : 0) + 'px');
-    start = scroller.getBoundingClientRect().top + scrollY - (hdr ? hdr.offsetHeight : 0);
-    range = Math.max(1, scroller.offsetHeight - stage.offsetHeight);
+    segs.forEach(s => {
+      const L = layoutFor(s.svg), key = L.w + 'x' + L.h + L.narrow;
+      if (key !== s.key) { s.key = key; s.scene = makeScene(s.svg, L, M); s.last = -1; }
+      s.start = s.scroll.getBoundingClientRect().top + scrollY - (parseFloat(s.el.style.getPropertyValue('--case-hdr')) || 0);
+      s.range = Math.max(1, s.scroll.offsetHeight - s.stage.offsetHeight);
+    });
     tick();
   }
   function tick() {
-    raf = 0; if (reduced || !scene) return;
-    const p = clamp((scrollY - start) / range);
-    if (p === progress) return; progress = p;
-    const n = PHASES.length - 1, pos = p * n, k = Math.min(Math.floor(pos), n), local = pos - k;
-    const t = k >= n ? 0 : clamp((local - .5) / .5); // erst halten (Lesezeit), dann überblenden
-    scene.update(k, t);
-    const now = t > .5 ? Math.min(k + 1, n) : k;
-    if (now !== active) {
-      active = now;
-      $$('.case-step', steps).forEach((s, i) => { const on = i === now; s.classList.toggle('is-active', on); s.toggleAttribute('inert', !on); s.setAttribute('aria-hidden', String(!on)); });
-      $$('button', rail).forEach((b, i) => b.toggleAttribute('aria-current', i === now));
+    raf = 0;
+    const vh = innerHeight;
+    for (const s of segs) {
+      const r = s.scroll.getBoundingClientRect();
+      if (r.bottom < -50 || r.top > vh + 50) continue; // nur sichtbare Szenen rechnen
+      const p = clamp((scrollY - s.start) / s.range);
+      if (Math.abs(p - s.last) < 1e-4) continue; s.last = p;
+      if (s.k === 0) s.scene.update(0, 0);
+      else if (p < .6) s.scene.update(s.k - 1, p / .6); // Verwandlung aus dem vorigen Zustand
+      else s.scene.update(s.k, 0);                       // Halten: Lesezeit für den Text
+      s.step.classList.toggle('is-active', s.k === 0 || p > .3);
+      s.el.style.setProperty('--case-p', p.toFixed(4));
     }
-    story.style.setProperty('--case-p', p.toFixed(4));
   }
-  const onScroll = () => { if (!raf) raf = requestAnimationFrame(tick); };
-  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('scroll', () => { if (!raf && segs.length) raf = requestAnimationFrame(tick); }, { passive: true });
   let rT; addEventListener('resize', () => { clearTimeout(rT); rT = setTimeout(() => {
-    const was = reduced; reduced = preferredReduced || innerHeight < 560;
-    if (was !== reduced) build(); else measure(); }, 150); });
-  rail.addEventListener('click', e => { const b = e.target.closest('[data-case-jump]'); if (!b) return;
-    const i = +b.dataset.caseJump, n = PHASES.length - 1;
-    scrollTo({ top: start + range * (i / n) + (i ? 2 : 0), behavior: preferredReduced ? 'instant' : 'smooth' }); });
-  motionBtn.addEventListener('click', () => { preferredReduced = !preferredReduced; write(MOTION_KEY, preferredReduced ? 'reduced' : 'full');
-    reduced = preferredReduced || innerHeight < 560; build(); });
-  story.addEventListener('click', e => {
-    if (e.target.closest('#case-skip')) { toTool('smooth'); return; }
-    const a = e.target.closest('[data-case-go]'); if (!a) return;
-    e.preventDefault();
-    if (a.dataset.caseGo === 'top') go('top');
-    else goCtx(a.dataset.caseGo);
+    const view = document.getElementById('view'); if (!view || !$('.case-seg', view)) return;
+    const wasStatic = !!$('.case-seg.is-static', view);
+    if (wasStatic !== isReduced()) mount(); else measure(); }, 150); });
+  document.addEventListener('click', e => {
+    const seg = e.target.closest('.case-seg'); if (!seg) return;
+    if (e.target.closest('.case-skip')) { const n = document.querySelector('#view .subnav'); if (n) { const hd = document.querySelector('header.top');
+      scrollTo({ top: n.getBoundingClientRect().top + scrollY - (hd ? hd.offsetHeight : 0) - 12, behavior: preferredReduced ? 'instant' : 'smooth' }); } return; }
+    if (e.target.closest('.case-motion')) { preferredReduced = !preferredReduced; write(MOTION_KEY, preferredReduced ? 'reduced' : 'full');
+      if (typeof render === 'function') render(true); }
   });
-  /* Wenn die Arbeitsmappe im Rechner geändert wird, zieht die Erzählung beim Zurückscrollen nach. */
-  let sig = '';
-  const signature = () => { try { return JSON.stringify([root.spacex.list.map(a => [a.id, a.n, a.a, a.link, a.fy && a.fy.qty, a.fy && a.fy.price]), root.spacex.w, root.spacex.base]); } catch (_) { return ''; } };
-  new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) { const s = signature(); if (s !== sig) { sig = s; build(); } } }).observe(story);
-  sig = signature(); if (!story.hidden) build();
-  window.caseStory = { refresh: build };
+  window.caseStory = { mount, refresh: mount };
+  mount(); // erster Aufbau: render() lief bereits, bevor diese Datei geladen war
 })();

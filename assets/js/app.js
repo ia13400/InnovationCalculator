@@ -39,16 +39,15 @@ function render(keepScroll){
   else{if(!STEPS[ui.ctx].some(x=>x[0]===ui.sub[ui.ctx]))ui.sub[ui.ctx]=STEPS[ui.ctx][0][0];
     const sub=ui.sub[ui.ctx];const it=INTRO[ui.ctx][sub];
     const intro=x=>x?`<section class="intro"><div class="eyebrow">${esc(x[0])}</div><h2 style="font-size:clamp(2.2rem,5vw,3.4rem)">${esc(x[1])}</h2><p>${esc(x[2])}</p></section>`:'';
-    if(FLOW[ui.ctx])html=subnav()+flowSteps(ui.ctx).map(([k])=>`<section class="chapter" id="ch-${k}" data-ch="${k}" aria-label="${esc((STEPS[ui.ctx].find(s=>s[0]===k)||[])[2]||k)}">${intro(INTRO[ui.ctx][k])}${VIEWS[k]()}</section>`).join('');
+    if(FLOW[ui.ctx]){const seg=n=>`<div class="case-seg" data-phase="${n}"></div>`,X=ui.ctx==='spacex';
+      html=(X?seg(0):'')+subnav()+flowSteps(ui.ctx).map(([k])=>(X?(CASE_SCENES[k]||[]).map(seg).join(''):'')+`<section class="chapter" id="ch-${k}" data-ch="${k}" aria-label="${esc((STEPS[ui.ctx].find(s=>s[0]===k)||[])[2]||k)}">${intro(INTRO[ui.ctx][k])}${VIEWS[k]()}</section>`).join('');}
     else html=subnav()+intro(it)+VIEWS[sub]()+(sub==='wizard'&&ui.wiz>0&&ui.wiz<13?'':pager());}
-  /* Die Scroll-Erzählung gehört zum Reiter „SpaceX-Case“ und steht dort über den Schritten. */
-  const cs=document.getElementById('case');
-  if(cs){const show=ui.ctx==='spacex';if(cs.hidden===show){cs.hidden=!show;if(show&&window.caseStory)requestAnimationFrame(()=>window.caseStory.refresh())}}
   document.getElementById('view').innerHTML=html;
   const sub=ui.sub[ui.ctx];
   if(ui.ctx==='dinner')mountDinnerCanvases();
   if(ui.ctx!=='method'&&ui.ctx!=='dinner'&&(sub==='fy'||document.getElementById('ch-fy')))fillFY();
   if(ui.ctx!=='method'&&ui.ctx!=='dinner'&&(sub==='settings'||document.getElementById('ch-settings')))fillW();
+  if(window.caseStory)window.caseStory.mount();
   if(window.flowFx)window.flowFx.mount(FLOW[ui.ctx]?ui.ctx:null);
   document.querySelectorAll('textarea.in').forEach(autoGrow);
   if(keepScroll)window.scrollTo(0,y);
@@ -63,6 +62,8 @@ function go(sub){
 }
 /* SpaceX-Case und RocketLight Dinner laufen als eine durchgehende Seite: alle Schritte untereinander, die Schrittleiste springt zum Kapitel. */
 const FLOW={spacex:true,dinner:true};
+/* Szenen der SpaceX-Erzählung, die vor dem jeweiligen Kapitel stehen (Phasen siehe story.js). */
+const CASE_SCENES={ideas:[1,2],top:[3],detail:[4],fy:[5],portfolio:[6],bars:[7]};
 const flowSteps=c=>STEPS[c].filter(x=>!/^rm/.test(x[0]));
 function toChapter(sub,behavior){const el=document.getElementById('ch-'+sub);if(!el){toTool();return}
   const hd=document.querySelector('header.top');const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
