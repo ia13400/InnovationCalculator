@@ -38,15 +38,18 @@ function render(keepScroll){
   if(ui.ctx==='method'){html=vMethod();}
   else{if(!STEPS[ui.ctx].some(x=>x[0]===ui.sub[ui.ctx]))ui.sub[ui.ctx]=STEPS[ui.ctx][0][0];
     const sub=ui.sub[ui.ctx];const it=INTRO[ui.ctx][sub];
-    html=subnav()+(it?`<section class="intro"><div class="eyebrow">${esc(it[0])}</div><h2 style="font-size:clamp(2.2rem,5vw,3.4rem)">${esc(it[1])}</h2><p>${esc(it[2])}</p></section>`:'')+VIEWS[sub]()+(sub==='wizard'&&ui.wiz>0&&ui.wiz<13?'':pager());}
+    const intro=x=>x?`<section class="intro"><div class="eyebrow">${esc(x[0])}</div><h2 style="font-size:clamp(2.2rem,5vw,3.4rem)">${esc(x[1])}</h2><p>${esc(x[2])}</p></section>`:'';
+    if(FLOW[ui.ctx])html=subnav()+flowSteps(ui.ctx).map(([k])=>`<section class="chapter" id="ch-${k}" data-ch="${k}" aria-label="${esc((STEPS[ui.ctx].find(s=>s[0]===k)||[])[2]||k)}">${intro(INTRO[ui.ctx][k])}${VIEWS[k]()}</section>`).join('');
+    else html=subnav()+intro(it)+VIEWS[sub]()+(sub==='wizard'&&ui.wiz>0&&ui.wiz<13?'':pager());}
   /* Die Scroll-Erzählung gehört zum Reiter „SpaceX-Case“ und steht dort über den Schritten. */
   const cs=document.getElementById('case');
   if(cs){const show=ui.ctx==='spacex';if(cs.hidden===show){cs.hidden=!show;if(show&&window.caseStory)requestAnimationFrame(()=>window.caseStory.refresh())}}
   document.getElementById('view').innerHTML=html;
   const sub=ui.sub[ui.ctx];
   if(ui.ctx==='dinner')mountDinnerCanvases();
-  if(ui.ctx!=='method'&&ui.ctx!=='dinner'&&sub==='fy')fillFY();
-  if(ui.ctx!=='method'&&ui.ctx!=='dinner'&&sub==='settings')fillW();
+  if(ui.ctx!=='method'&&ui.ctx!=='dinner'&&(sub==='fy'||document.getElementById('ch-fy')))fillFY();
+  if(ui.ctx!=='method'&&ui.ctx!=='dinner'&&(sub==='settings'||document.getElementById('ch-settings')))fillW();
+  if(window.flowFx)window.flowFx.mount(FLOW[ui.ctx]?ui.ctx:null);
   document.querySelectorAll('textarea.in').forEach(autoGrow);
   if(keepScroll)window.scrollTo(0,y);
   save();
@@ -56,8 +59,14 @@ function autoGrow(t){t.style.height='auto';t.style.height=Math.min(t.scrollHeigh
 function go(sub){
   const part6={rmover:'vision',rm4w:'mission',rmtp:'projects',rmbud:'budget',rmmap:'timeline',rmsrc:'sources'};
   if(ui.ctx==='dinner'&&typeof part6[sub]==='string'){location.assign(`./teil6/#${part6[sub]}`);return}
-  ui.sub[ui.ctx]=sub;ui.confirm=null;render();toTool()
+  ui.sub[ui.ctx]=sub;ui.confirm=null;render();if(FLOW[ui.ctx])toChapter(sub);else toTool()
 }
+/* SpaceX-Case und RocketLight Dinner laufen als eine durchgehende Seite: alle Schritte untereinander, die Schrittleiste springt zum Kapitel. */
+const FLOW={spacex:true,dinner:true};
+const flowSteps=c=>STEPS[c].filter(x=>!/^rm/.test(x[0]));
+function toChapter(sub,behavior){const el=document.getElementById('ch-'+sub);if(!el){toTool();return}
+  const hd=document.querySelector('header.top');const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.scrollTo({top:Math.max(0,el.getBoundingClientRect().top+scrollY-(hd?hd.offsetHeight:0)-12),behavior:behavior||(reduce?'instant':'smooth')})}
 function goCtx(c){useCtx(c);ui.confirm=null;try{history.replaceState(null,'','#'+({user:'idee',spacex:'spacex',dinner:'dinner',method:'methode'}[c]))}catch(e){}render();if(c==='spacex')window.scrollTo(0,0);else toTool()}
 function newAssessment(ideaId){
   const idea=IDEAS.find(i=>i.id===ideaId);
@@ -102,7 +111,7 @@ document.getElementById('view').addEventListener('click',e=>{
   switch(act){
    case 'launchfull':openLaunch();break;
    case 'rlnew':RO.done=null;render(true);break;
-   case 'rlbook':{const T=rlTotal();const code='RL-'+Math.random().toString(36).slice(2,6).toUpperCase();RO.pick=null;RO.done={code,mission:RO.mission,seats:RO.seats,guests:JSON.parse(JSON.stringify(RO.guests)),total:T.tot,at:Date.now()};(root.orders??=[]).push(RO.done);save();render();toTool();toast('Reservierung angefragt');break}
+   case 'rlbook':{const T=rlTotal();const code='RL-'+Math.random().toString(36).slice(2,6).toUpperCase();RO.pick=null;RO.done={code,mission:RO.mission,seats:RO.seats,guests:JSON.parse(JSON.stringify(RO.guests)),total:T.tot,at:Date.now()};(root.orders??=[]).push(RO.done);save();render();toChapter('book','instant');toast('Reservierung angefragt');break}
    case 'new':if(!isX()){ui.sub.user='wizard';wizSet(0);break}newAssessment();ui.edit=true;render(true);break;
    case 'editmode':ui.edit=true;render(true);break;
    case 'readmode':ui.edit=false;render(true);break;

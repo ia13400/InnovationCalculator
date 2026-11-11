@@ -19,6 +19,7 @@ Diese Anweisungen gelten für das gesamte Repository `InnovationCalculator`, una
 | `index.html` | Einstieg der Hauptseite: Kopfnavigation, Scroll-Erzählung `#case`, Werkzeugbereich `#werkzeug` und die Reihenfolge der eingebundenen Dateien mit `?v=`-Versionen |
 | `assets/css/base.css`, `dinner.css`, `roadmap.css` | Gestaltung von Rechner und Hell-/Dunkel-Darstellung, Dinner-Bereich und Roadmap-Ansichten im Dinner-Reiter |
 | `assets/css/story.css`, `assets/js/story.js` | SpaceX-Case als Scroll-Erzählung: zwölf Ideen als dieselben Punkte durch acht Kapitel, Werte live aus der SpaceX-Arbeitsmappe und `calc()`; statische Kapitelansicht bei reduzierter Bewegung oder unter 560 px Fensterhöhe |
+| `assets/css/flow.css`, `assets/js/flow.js` | Durchgehende Seite für die Reiter „SpaceX-Case“ und „RocketLight Dinner“: alle Schritte als Kapitel `#ch-<schritt>` untereinander, Blöcke erscheinen beim Scrollen, Diagramme wachsen, Kennzahlen zählen hoch; Schrittleiste springt zum Kapitel. „Eigene Idee prüfen“ bleibt schrittweise |
 | `assets/js/model.js`, `data.js`, `state.js` | Rechenlogik nach Hube, Startdaten (`seed()`, `IDEAS`, Quellen) sowie gespeicherter Zustand und Migrationen |
 | `assets/js/helpers.js`, `views.js`, `app.js` | Hilfen und SVG-Diagramme, Ansichten des Rechners, Rendering, Ereignisse und Hash-Navigation |
 | `assets/js/dinner.js`, `roadmap.js` | RocketLight-Dinner-Erlebnis und Roadmap-Daten des Dinner-Reiters |

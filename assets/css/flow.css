@@ -1,0 +1,32 @@
+/* ===== Durchgehende Seite für SpaceX-Case und RocketLight Dinner: Kapitel bauen sich beim Scrollen auf ===== */
+#view.flow .chapter{scroll-margin-top:150px;display:grid;gap:inherit;min-width:0}
+#view.flow .chapter>*{min-width:0}
+#view.flow .chapter+.chapter{margin-top:clamp(56px,9vw,128px);padding-top:clamp(32px,5vw,56px);border-top:1px solid var(--line)}
+body.dinner #view.flow .chapter+.chapter{border-top-color:var(--line)}
+
+@media (prefers-reduced-motion:no-preference){
+  #view.flow:not(.flow-calm) [data-fx]{opacity:0;transform:translateY(36px);
+    transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+  #view.flow:not(.flow-calm) [data-fx].is-in{opacity:1;transform:none}
+
+  /* Kacheln, Karten, Portfolio-Felder und Listen erscheinen nacheinander */
+  #view.flow:not(.flow-calm) [data-fx] :is(.tiles>*,.cards>*,.ideas>*,.pf>.cell,.pf .item,.hwn>*,.legend>*,.fields>*,.src>li,.course,.gpass,.xstats>div){
+    opacity:0;transform:translateY(18px) scale(.97);
+    transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);
+    transition-delay:calc(var(--k,0) * 70ms + 120ms)}
+  #view.flow:not(.flow-calm) [data-fx].is-in :is(.tiles>*,.cards>*,.ideas>*,.pf>.cell,.pf .item,.hwn>*,.legend>*,.fields>*,.src>li,.course,.gpass,.xstats>div){opacity:1;transform:none}
+
+  /* Balkendiagramme wachsen aus der Nulllinie */
+  #view.flow:not(.flow-calm) [data-fx] svg rect[rx="5"]{transform-box:fill-box;transform-origin:0 50%;transform:scaleX(0);
+    transition:transform 1.1s cubic-bezier(.16,1,.3,1);transition-delay:calc(var(--k,0) * 90ms + 250ms)}
+  #view.flow:not(.flow-calm) [data-fx].is-in svg rect[rx="5"]{transform:none}
+  /* Netzgrafik öffnet sich aus der Mitte, danach erscheinen die Messpunkte */
+  #view.flow:not(.flow-calm) [data-fx] svg polygon[stroke-width="3"]{transform-box:view-box;transform-origin:50% 50%;transform:scale(.04);opacity:0;
+    transition:transform 1.2s cubic-bezier(.16,1,.3,1),opacity .6s;transition-delay:calc(var(--k,0) * 150ms + 200ms)}
+  #view.flow:not(.flow-calm) [data-fx].is-in svg polygon[stroke-width="3"]{transform:none;opacity:1}
+  #view.flow:not(.flow-calm) [data-fx] svg circle[r="5"]{opacity:0;transition:opacity .4s;transition-delay:calc(var(--k,0) * 25ms + 900ms)}
+  #view.flow:not(.flow-calm) [data-fx].is-in svg circle[r="5"]{opacity:1}
+  /* Fortschrittsbalken der Bewertungen */
+  #view.flow:not(.flow-calm) [data-fx] .bar2 .fill{transform-origin:0 50%;transform:scaleX(0);transition:transform 1s cubic-bezier(.16,1,.3,1) .3s}
+  #view.flow:not(.flow-calm) [data-fx].is-in .bar2 .fill{transform:none}
+}

@@ -376,7 +376,7 @@
     if (e.target.closest('#case-skip')) { toTool('smooth'); return; }
     const a = e.target.closest('[data-case-go]'); if (!a) return;
     e.preventDefault();
-    if (a.dataset.caseGo === 'top') { ui.sub.spacex = 'top'; ui.confirm = null; render(); toTool('smooth'); }
+    if (a.dataset.caseGo === 'top') go('top');
     else goCtx(a.dataset.caseGo);
   });
   /* Wenn die Arbeitsmappe im Rechner geändert wird, zieht die Erzählung beim Zurückscrollen nach. */

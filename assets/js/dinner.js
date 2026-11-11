@@ -254,9 +254,12 @@ function makeScene(canvas,opts={}){
     clock:()=>started?(performance.now()-t0)/1000-S.len:-S.len,running:()=>started,stop:false};
   function size(){const r=canvas.getBoundingClientRect();dpr=Math.min(2,window.devicePixelRatio||1);W=Math.max(1,r.width*dpr);H=Math.max(1,r.height*dpr);canvas.width=W;canvas.height=H}
   size();const ro=new ResizeObserver(size);ro.observe(canvas);
+  /* Außerhalb des sichtbaren Bereichs oder bei verborgenem Tab nicht zeichnen (mehrere Szenen auf einer Seite). */
+  let vis=true;const io=new IntersectionObserver(es=>{vis=es[es.length-1].isIntersecting});io.observe(canvas);
   function emit(kind,x,y,vx,vy,r,life){if(parts.length<800)parts.push({k:kind,x,y,vx,vy,r,g:r*(.6+Math.random()*.6),life,age:0,s:(Math.random()*3)|0})}
   function frame(now){
-    if(S.stop||!canvas.isConnected){ro.disconnect();return}
+    if(S.stop||!canvas.isConnected){ro.disconnect();io.disconnect();return}
+    if((!vis||document.hidden)&&!started){last=now;requestAnimationFrame(frame);return}
     const dt=Math.min(.05,last?(now-last)/1000:0);last=now;
     const tr=S.clock(), core=started?Math.max(0,Math.min(1,(tr+6.4)/1.6)):0, srb=started&&tr>0?Math.min(1,tr/.35):0, fl=.9+Math.random()*.2;
     const u=H/900, baseY=H*.8, rh=H*.62, cw=rh*.074, cx=W*(opts.cx||.5);
@@ -424,5 +427,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-lx]');if(!
 document.addEventListener('keydown',e=>{if(LS.ov&&e.key==='Escape'&&!document.fullscreenElement)closeLaunch()});
 function mountDinnerCanvases(){
   const h=document.getElementById('heroCanvas');if(h)makeScene(h,{idle:true,len:10,cx:innerWidth>800?.78:.5});
-  const p=document.getElementById('previewCanvas');if(p){const s=makeScene(p,{len:LS.len,loop:true});setTimeout(()=>{if(p.isConnected)s.start()},600);}
+  const p=document.getElementById('previewCanvas');if(p){const s=makeScene(p,{len:LS.len,loop:true});
+    /* Vorschau startet erst, wenn sie ins Bild kommt (auf der durchgehenden Seite liegt sie weiter unten). */
+    const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();setTimeout(()=>{if(p.isConnected)s.start()},600)}});io.observe(p);}
 }
