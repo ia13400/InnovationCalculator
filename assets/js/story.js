@@ -308,7 +308,7 @@
   function stepHTML(c, i) {
     return `<p class="case-eye">${esc2(c.eye)}</p><h2 class="case-title">${esc2(c.title)}</h2><p class="case-text">${esc2(c.text)}</p>` +
       (c.facts && c.facts.length ? `<ul class="case-facts">${c.facts.map(f => `<li>${esc2(f)}</li>`).join('')}</ul>` : '') +
-      (c.cta ? `<div class="case-cta"><a class="case-btn primary" href="#spacex" data-case-go="spacex">Bewertungen im Detail</a><a class="case-btn" href="#idee" data-case-go="user">Eigene Idee prüfen</a><a class="case-btn" href="#dinner" data-case-go="dinner">RocketLight Dinner</a></div>` : '');
+      (c.cta ? `<div class="case-cta"><a class="case-btn primary" href="#spacex" data-case-go="top">Bewertungen im Detail</a><a class="case-btn" href="#idee" data-case-go="user">Eigene Idee prüfen</a><a class="case-btn" href="#dinner" data-case-go="dinner">RocketLight Dinner</a></div>` : '');
   }
   function layoutFor(box) {
     const W = Math.max(300, Math.round(box.clientWidth)), H = Math.max(260, Math.round(box.clientHeight));
@@ -338,7 +338,7 @@
   }
   let start = 0, range = 1;
   function measure() {
-    if (reduced) return;
+    if (reduced || story.hidden) return;
     const L = layoutFor(svg), key = L.w + 'x' + L.h + L.narrow;
     if (key !== layoutKey) { layoutKey = key; scene = makeScene(svg, L, M); progress = -1; }
     const hdr = document.querySelector('header.top');
@@ -372,12 +372,17 @@
     scrollTo({ top: start + range * (i / n) + (i ? 2 : 0), behavior: preferredReduced ? 'instant' : 'smooth' }); });
   motionBtn.addEventListener('click', () => { preferredReduced = !preferredReduced; write(MOTION_KEY, preferredReduced ? 'reduced' : 'full');
     reduced = preferredReduced || innerHeight < 560; build(); });
-  story.addEventListener('click', e => { const a = e.target.closest('[data-case-go]'); if (!a || typeof goCtx !== 'function') return;
-    e.preventDefault(); goCtx(a.dataset.caseGo); });
+  story.addEventListener('click', e => {
+    if (e.target.closest('#case-skip')) { toTool('smooth'); return; }
+    const a = e.target.closest('[data-case-go]'); if (!a) return;
+    e.preventDefault();
+    if (a.dataset.caseGo === 'top') { ui.sub.spacex = 'top'; ui.confirm = null; render(); toTool('smooth'); }
+    else goCtx(a.dataset.caseGo);
+  });
   /* Wenn die Arbeitsmappe im Rechner geändert wird, zieht die Erzählung beim Zurückscrollen nach. */
   let sig = '';
   const signature = () => { try { return JSON.stringify([root.spacex.list.map(a => [a.id, a.n, a.a, a.link, a.fy && a.fy.qty, a.fy && a.fy.price]), root.spacex.w, root.spacex.base]); } catch (_) { return ''; } };
   new IntersectionObserver(es => { if (es.some(x => x.isIntersecting)) { const s = signature(); if (s !== sig) { sig = s; build(); } } }).observe(story);
-  sig = signature(); build();
+  sig = signature(); if (!story.hidden) build();
   window.caseStory = { refresh: build };
 })();

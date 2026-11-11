@@ -93,17 +93,10 @@
   #case .case-rail button{width:20px;height:44px}
   #case .case-tools{justify-self:start;padding-left:20px;gap:12px}
   #case .case-motion{font-size:.66rem;letter-spacing:.05em}
-  #case .case-skip{display:none}
+  #case .case-rail{display:none}
+  #case .case-skip,#case .case-motion{font-size:.66rem;letter-spacing:.05em}
 }
-@media (max-width:640px){
-  header.top .bar{padding-block:8px;gap:6px}
-  header.top .brand span{display:none}
-  header.top .brand b{font-size:1.3rem}
-  header.top .navrow{flex-wrap:nowrap;overflow-x:auto;width:100%;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .navrow::-webkit-scrollbar{display:none}
-  .navrow nav.tabs{flex-wrap:nowrap}
-  header.top .tab-link,.navrow nav.tabs button{padding:7px 14px;font-size:.9rem}
-}
+
 /* Statische Kapitelansicht: reduzierte Bewegung oder sehr flache Fenster */
 #case .case-static{padding:clamp(48px,8vw,96px) clamp(24px,5vw,88px) 32px;max-width:1280px;margin:0 auto;display:grid;gap:clamp(56px,8vw,96px)}
 #case .case-chapter{display:grid;gap:8px;max-width:72rem}
@@ -112,11 +105,8 @@
 #case .case-chapter .case-step{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){#case .case-step{transition:none}}
 /* Übergang von der Erzählung zum Werkzeug */
-.navrow{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 
 .tool-anchor{scroll-margin-top:80px}
-header.top a.tab-link{display:inline-flex;align-items:center;border:1px solid var(--band-line);color:var(--band-muted);border-radius:99px;padding:9px 18px;font-weight:600;font-size:1rem;white-space:nowrap;text-decoration:none}
-header.top a.tab-link:hover{color:var(--band-ink);border-color:var(--band-muted)}
 .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media (max-width:700px){#case .case-mini{aspect-ratio:4/5}}
 #case{scroll-margin-top:0}

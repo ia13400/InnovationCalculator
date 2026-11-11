@@ -39,6 +39,9 @@ function render(keepScroll){
   else{if(!STEPS[ui.ctx].some(x=>x[0]===ui.sub[ui.ctx]))ui.sub[ui.ctx]=STEPS[ui.ctx][0][0];
     const sub=ui.sub[ui.ctx];const it=INTRO[ui.ctx][sub];
     html=subnav()+(it?`<section class="intro"><div class="eyebrow">${esc(it[0])}</div><h2 style="font-size:clamp(2.2rem,5vw,3.4rem)">${esc(it[1])}</h2><p>${esc(it[2])}</p></section>`:'')+VIEWS[sub]()+(sub==='wizard'&&ui.wiz>0&&ui.wiz<13?'':pager());}
+  /* Die Scroll-Erzählung gehört zum Reiter „SpaceX-Case“ und steht dort über den Schritten. */
+  const cs=document.getElementById('case');
+  if(cs){const show=ui.ctx==='spacex';if(cs.hidden===show){cs.hidden=!show;if(show&&window.caseStory)requestAnimationFrame(()=>window.caseStory.refresh())}}
   document.getElementById('view').innerHTML=html;
   const sub=ui.sub[ui.ctx];
   if(ui.ctx==='dinner')mountDinnerCanvases();
@@ -55,7 +58,7 @@ function go(sub){
   if(ui.ctx==='dinner'&&typeof part6[sub]==='string'){location.assign(`./teil6/#${part6[sub]}`);return}
   ui.sub[ui.ctx]=sub;ui.confirm=null;render();toTool()
 }
-function goCtx(c){useCtx(c);ui.confirm=null;try{history.replaceState(null,'','#'+({user:'idee',spacex:'spacex',dinner:'dinner',method:'methode'}[c]))}catch(e){}render();toTool()}
+function goCtx(c){useCtx(c);ui.confirm=null;try{history.replaceState(null,'','#'+({user:'idee',spacex:'spacex',dinner:'dinner',method:'methode'}[c]))}catch(e){}render();if(c==='spacex')window.scrollTo(0,0);else toTool()}
 function newAssessment(ideaId){
   const idea=IDEAS.find(i=>i.id===ideaId);
   const a={id:'b'+Date.now().toString(36),project:idea?idea.name:'Neue Idee '+(state.list.length+1),assessor:state.mode==='Multibeurteilende'?'Beurteiler '+(state.list.length+1):(isX()?'Gruppe 2':''),idea:idea?idea.id:'',link:false,n:isX()?[0,0,0,0,0,0]:[3,3,3,3,3,3],a:isX()?[0,0,0,0,0,0]:[3,3,3,3,3,3],why:{},fy:null};
@@ -150,13 +153,12 @@ const h=(location.hash||'').slice(1);
 if(h==='roadmap'||h==='teil6'){
   location.replace('./teil6/');
 }else{
-  useCtx({spacex:'spacex',dinner:'dinner',launch:'dinner',methode:'method',method:'method'}[h]||'user');
+  useCtx({spacex:'spacex',case:'spacex',dinner:'dinner',launch:'dinner',methode:'method',method:'method'}[h]||'user');
   if(h==='launch')ui.sub.dinner='launch';
   render();
-  if(h&&h!=='case')requestAnimationFrame(()=>toTool());
 }
 /* Zurück/Vor und Sprunglinks innerhalb der einen Seite */
 addEventListener('hashchange',()=>{const k=(location.hash||'').slice(1);
   if(k==='roadmap'||k==='teil6'){location.replace('./teil6/');return}
-  const c={idee:'user',spacex:'spacex',dinner:'dinner',launch:'dinner',methode:'method',method:'method'}[k];
-  if(c){useCtx(c);if(k==='launch')ui.sub.dinner='launch';ui.confirm=null;render();toTool()}});
+  const c={idee:'user',spacex:'spacex',case:'spacex',dinner:'dinner',launch:'dinner',methode:'method',method:'method'}[k];
+  if(c){useCtx(c);if(k==='launch')ui.sub.dinner='launch';ui.confirm=null;render();if(c==='spacex')window.scrollTo(0,0);else toTool()}});

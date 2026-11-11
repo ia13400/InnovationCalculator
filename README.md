@@ -2,7 +2,7 @@
 
 Innovationsrendite-Rechner nach dem Inno-Rendite-Kalkulator von Prof. Dr. Gerhard Hube (THWS) – Trend2Business-Projekt SpaceX, Gruppe 2.
 
-- Statische Website ohne Build-Schritt oder eigenes Backend. Die Hauptseite ist eine durchgehende Seite: oben erzählt `#case` den SpaceX-Case beim Scrollen (Trends → zwölf Ideen → How-Wow-Now → drei Finalisten → Bewertung → 5-Jahres-Zahlen → Portfolio → Ranking), darunter liegt unter `#werkzeug` der Rechner mit den Reitern „Eigene Idee prüfen“, „SpaceX-Case“, „RocketLight Dinner“ und „Methode & Quellen“. Die Teil-6-Seite liegt in `teil6/`.
+- Statische Website ohne Build-Schritt oder eigenes Backend. Die Hauptseite hat die Reiter „Eigene Idee prüfen“, „SpaceX-Case“, „RocketLight Dinner“ und „Methode & Quellen“. Im Reiter „SpaceX-Case“ steht oben die Scroll-Erzählung `#case` (Trends → zwölf Ideen → How-Wow-Now → drei Finalisten → Bewertung → 5-Jahres-Zahlen → Portfolio → Ranking), darunter unter `#werkzeug` die Schritte mit allen Details. Die Teil-6-Seite liegt in `teil6/`.
 - Dateien: `index.html` bindet `assets/css/*.css` und `assets/js/*.js` ein (Aufteilung siehe [AGENTS.md](AGENTS.md)). Bei Änderungen an CSS/JS die `?v=`-Version in `index.html` erneuern (erste zwölf Hex-Zeichen des SHA-256 der Datei).
 - Finalisten des SpaceX-Case: RocketLight Dinner, Starlink Insights und SpaceX Launch Engineering Cloud – jeweils als Team-Bewertung und als KI-Bewertung (Claude) mit 5-Jahres-Kalkulation. Gespeicherte Arbeitsmappen erhalten die beiden neuen KI-Bewertungen einmalig per Migration.
 - Hosting: GitHub → Settings → Pages → Branch `main`, Ordner `/ (root)`. Jeder Push auf `main` startet automatisch einen GitHub-Pages-Veröffentlichungslauf; `.nojekyll` kennzeichnet die Dateien für die direkte statische Auslieferung.

@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Barlow:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="assets/css/base.css?v=c32282a92ff2">
 <link rel="stylesheet" href="assets/css/dinner.css?v=72fb1f44a8c3">
-<link rel="stylesheet" href="assets/css/story.css?v=d6aef6cc1632">
+<link rel="stylesheet" href="assets/css/story.css?v=736d3e52df11">
 <link rel="stylesheet" href="assets/css/roadmap.css?v=31252eead4cf">
 </head>
 <body>
@@ -18,18 +18,17 @@
 <header class="top">
   <div class="wrap bar">
     <div class="brand"><b>Innovations<i>rendite</i></b><span>nach Prof. Dr. Gerhard Hube</span></div>
-    <div class="navrow"><a class="tab-link" href="#case">Überblick</a>
     <nav class="tabs" role="tablist" id="tabs">
       <button role="tab" data-ctx="user">Eigene Idee prüfen</button>
       <button role="tab" data-ctx="spacex">SpaceX-Case</button>
       <button role="tab" data-ctx="dinner">RocketLight Dinner</button>
       <button role="tab" data-ctx="method">Methode &amp; Quellen</button>
-    </nav></div>
+    </nav>
   </div>
 </header>
 
 
-<section id="case" aria-labelledby="case-h">
+<section id="case" aria-labelledby="case-h" hidden>
   <h1 class="sr-only" id="case-h">SpaceX-Case: Vom Trend zur Empfehlung</h1>
   <div class="case-scroll" id="case-scroll">
     <div class="case-stage" id="case-stage">
@@ -37,7 +36,7 @@
       <div class="case-steps" id="case-steps" aria-live="polite"></div>
       <nav class="case-rail" id="case-rail" aria-label="Kapitel der Erzählung"></nav>
       <div class="case-bar" aria-hidden="true"></div>
-      <div class="case-tools"><button type="button" class="case-motion" id="case-motion" aria-pressed="false">Bewegung reduzieren ◐</button><a class="case-skip" href="#werkzeug">Direkt zum Rechner ↓</a></div>
+      <div class="case-tools"><button type="button" class="case-motion" id="case-motion" aria-pressed="false">Bewegung reduzieren ◐</button><button type="button" class="case-skip" id="case-skip">Zu den Schritten ↓</button></div>
     </div>
   </div>
   <div class="case-static" id="case-static" hidden></div>
@@ -55,7 +54,7 @@
 <script src="assets/js/views.js?v=c74257a7312c"></script>
 <script src="assets/js/dinner.js?v=bde221642e77"></script>
 <script src="assets/js/roadmap.js?v=21b31aee9a5e"></script>
-<script src="assets/js/app.js?v=2f1b63d623e2"></script>
-<script src="assets/js/story.js?v=cd66d09197dd"></script>
+<script src="assets/js/app.js?v=7b91c26f08cc"></script>
+<script src="assets/js/story.js?v=ea18b7abcc40"></script>
 </body>
 </html>
