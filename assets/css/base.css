@@ -43,7 +43,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:#060b10e8;border-bottom:1px solid #ffffff0b;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:12px 28px;flex-wrap:wrap;min-height:var(--header-height);padding-block:12px}
 .brand{display:inline-flex;align-items:center;gap:12px}
-.brand svg{width:26px;height:32px;color:var(--copper);flex:none}
+.brand svg{width:30px;height:30px;color:var(--copper);flex:none;overflow:visible}
 .brand>span{display:grid;font-size:1.3rem;line-height:1.1;letter-spacing:-.025em}
 .brand b{font-weight:500}
 .brand b i{font-style:normal;color:var(--copper)}
