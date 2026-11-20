@@ -20,6 +20,8 @@ Diese Anweisungen gelten für das gesamte Repository `InnovationCalculator`, una
 | `assets/css/base.css` | Gesamte Gestaltung (dunkle Pitch-Palette, Typografie, Rechner, Diagramme) |
 | `assets/js/model.js`, `data.js`, `state.js` | Rechenlogik nach Hube, Startdaten (`userSeed()`) sowie gespeicherter Zustand |
 | `assets/js/helpers.js`, `views.js`, `app.js` | Hilfen und SVG-Diagramme, Ansichten des Rechners und der Methode, Rendering, Ereignisse und Hash-Navigation |
+| `assets/js/ai.js` | KI-Bewertung („Zweite Meinung“): Anfrage an den Worker (`AI_ENDPOINT`), Speicherung als eigene Bewertung mit `aiOf`, Vergleichsansicht |
+| `worker/` | Cloudflare Worker mit dem gemeinsamen Gemini-Schlüssel (Secret) und Einrichtungsanleitung |
 | `teil6/index.html` | Nur noch Weiterleitung früherer Links auf den Rechner |
 
 Die Skripte sind klassische Skripte ohne Module (funktionieren auch per `file://`); ihre Reihenfolge in `index.html` ist Teil der Logik.
@@ -30,7 +32,7 @@ Die Skripte sind klassische Skripte ohne Module (funktionieren auch per `file://
 2. **Navigation:** Die Fragmente `#idee` und `#methode` erhalten. Frühere Fragmente (`#spacex`, `#case`, `#dinner`, `#launch`, `#roadmap`, `#teil6`) und `teil6/` leiten auf den Rechner weiter. Links müssen relativ zum Projektpfad `/InnovationCalculator/` funktionieren.
 3. **Gespeicherter Zustand:** Bestehende Browserdaten (`innorendite.v4`) und JSON-Import/Export erhalten. Bei Formatänderungen eine kompatible Migration vorsehen; Nutzereingaben nicht löschen.
 4. **Bewegung:** Native Scroll- und Tastaturbedienung und `prefers-reduced-motion` erhalten. Keine benötigte Information ausschließlich in Hover oder einer Animation verstecken.
-5. **Statische Auslieferung:** HTML, CSS, JavaScript und lokale Assets funktionieren ohne Build-Schritt oder Backend. Keine externen Schrift- oder Animationsdienste ohne sachlichen Grund.
+5. **Statische Auslieferung:** HTML, CSS, JavaScript und lokale Assets funktionieren ohne Build-Schritt oder Backend. Einzige Ausnahme ist der Worker in `worker/` für die KI-Bewertung; ohne ihn bleibt der Rechner voll nutzbar. Niemals API-Schlüssel in Website-Dateien eintragen. Keine externen Schrift- oder Animationsdienste ohne sachlichen Grund.
 6. **CSS:** Globale Selektoren und gemeinsam genutzte Funktionen auf Nebenwirkungen prüfen. Fremde Änderungen nicht überschreiben.
 
 ## Prüfen und veröffentlichen

@@ -48,6 +48,9 @@ function blankFY(){return {unit:'Stück',priceUnit:'Preis je Stück',qty:[0,0,0,
 function setPath(obj,path,val){const p=path.split('.');let o=obj;for(let i=0;i<p.length-1;i++)o=o[p[i]];o[p[p.length-1]]=val}
 
 document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-ctx]');if(b)goCtx(b.dataset.ctx)});
+async function runAI(a){if(!a||ui.aiBusy)return;ui.aiBusy=a.id;ui.aiErr=null;render(true);
+  try{await requestAI(a);toast('KI-Bewertung erstellt')}catch(e){ui.aiErr={id:a.id,msg:e.message||String(e)}}
+  ui.aiBusy=null;render(true)}
 function wizSet(n){ui.wiz=Math.max(0,Math.min(13,n));render();toTool()}
 document.getElementById('view').addEventListener('submit',e=>{if(e.target.id!=='wizStart')return;e.preventDefault();
   const name=(document.getElementById('wiz-name').value||'').trim()||'Meine Idee '+(state.list.length+1);
@@ -73,6 +76,7 @@ document.getElementById('view').addEventListener('click',e=>{
   const act=t.dataset.act,a=cur();
   switch(act){
    case 'new':ui.sub.user='wizard';wizSet(0);break;
+   case 'ai':runAI(a);break;
    case 'editmode':ui.edit=true;render(true);break;
    case 'readmode':ui.edit=false;render(true);break;
    case 'dup':{const c=JSON.parse(JSON.stringify(a));c.id='b'+Date.now().toString(36);c.assessor=(c.assessor||'')+' (Kopie)';state.list.push(c);ui.sel[ui.ctx]=c.id;render(true);toast('Bewertung dupliziert');break}

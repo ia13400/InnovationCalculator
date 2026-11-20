@@ -240,6 +240,21 @@ svg .lab{fill:var(--ink);font-family:var(--f-body);font-size:15px;font-weight:50
 .legend span{display:inline-flex;gap:8px;align-items:center;font-weight:500;font-size:.9rem;color:var(--muted)}
 .toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));right:max(20px,env(safe-area-inset-right,0px));background:var(--ink);color:var(--accent-ink);padding:13px 18px;border-radius:6px;z-index:20;font-size:.9rem}
 
+/* KI-Bewertung */
+.panel.ai{border-color:rgba(169,217,217,.28);background:linear-gradient(180deg,#121d22,#0f171c)}
+.panel.ai h2 em{color:var(--ice);font-style:normal}
+.ai-start{display:grid;gap:16px;max-width:72ch}
+.ai-start>p:first-child{font-size:1.05rem}
+.fine{font-size:.8rem;color:var(--muted);line-height:1.6;margin-top:14px;max-width:80ch}
+.ai-summary{font-size:1.1rem;color:var(--ink);margin-bottom:18px;max-width:70ch;padding-left:16px;border-left:2px solid var(--ice)}
+table.cmp td{vertical-align:top}
+table.cmp td:first-child{min-width:200px;font-weight:500}
+table.cmp .why-ai{color:var(--muted);font-size:.88rem;min-width:280px}
+table.cmp tr.grp td{font-size:.62rem;letter-spacing:.17em;text-transform:uppercase;color:var(--copper);padding-top:20px;font-weight:500}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;display:inline-block;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation-duration:2.4s}}
+
 /* Methode & Quellen */
 .method{gap:20px}
 .method h2{font-size:clamp(1.9rem,3.6vw,2.6rem)}

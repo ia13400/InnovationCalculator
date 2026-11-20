@@ -1,0 +1,10 @@
+# Optional: Bereitstellung per Kommandozeile (npx wrangler deploy).
+# Den Schlüssel als Secret setzen: npx wrangler secret put GEMINI_API_KEY
+name = "innovationsrendite-ki"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://ia13400.github.io"
+MODELS = "gemini-3.5-flash-lite,gemini-3.8-flash"
+HOURLY_LIMIT = "10"

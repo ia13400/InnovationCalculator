@@ -1,7 +1,7 @@
 /* ============================== Zustand ============================== */
 const KEY='innorendite.v4';
 let root=null, state;
-const ui={ctx:'user',wiz:0,edit:false,sub:{user:'wizard'},sel:{user:'u1'},confirm:null};
+const ui={ctx:'user',wiz:0,edit:false,sub:{user:'wizard'},sel:{user:'u1'},confirm:null,aiBusy:null,aiErr:null};
 try{root=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
 /* Gespeicherte Arbeitsmappen bleiben erhalten; ältere Einträge anderer Bereiche werden nur nicht mehr angezeigt. */
 if(!root||!root.user||!Array.isArray(root.user.list)){root=Object.assign(root&&typeof root==='object'?root:{},{user:userSeed()})}
