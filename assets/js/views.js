@@ -1,6 +1,6 @@
 /* ============================== Views ============================== */
 function ranked(){return state.list.map(a=>({a,r:calc(a)})).sort((p,q)=>(q.r.IR===Infinity?1e9:q.r.IR)-(p.r.IR===Infinity?1e9:p.r.IR))}
-const emptyMsg=()=>`<section class="panel"><p style="font-size:1.15rem">${isX()?'Noch keine Bewertungen.':'Noch keine Idee geprüft. Starte mit dem Ideen-Check.'}</p>${isX()?'':'<div class="row" style="margin-top:16px"><button class="btn primary" data-tabgo="wizard">Zum Ideen-Check</button></div>'}</section>`;
+const emptyMsg=()=>`<section class="panel"><p style="font-size:1.15rem">Noch keine Idee geprüft. Starte mit dem Ideen-Check.</p><div class="row" style="margin-top:16px"><button class="btn primary" data-tabgo="wizard">Zum Ideen-Check</button></div></section>`;
 function wNotice(){const ok=sum(state.w.n)===100&&sum(state.w.a)===100;return ok?'':`<div class="notice">Die Gewichte ergeben nicht je 100 % (Nutzen ${sum(state.w.n)} %, Aufwand ${sum(state.w.a)} %). Unter „Einstellungen“ korrigieren.</div>`}
 function vRanking(){
   const L=state.list;if(!L.length)return emptyMsg();
@@ -29,35 +29,9 @@ function vBars(){
   return `<section class="panel"><header><h2>Rendite</h2><span class="muted">Nutzen ÷ Aufwand · gestrichelte Linie = 1</span></header>${barChart(R,{key:'IR',ref:1,title:'Rendite je Bewertung'})}</section>
   <section class="panel"><header><h2>Bilanz</h2><span class="muted">Nutzen − Aufwand</span></header>${barChart(R,{key:'bil',title:'Bilanz je Bewertung'})}</section>`;
 }
-function vTop(){
-  const R=ranked();
-  return `<section class="cards">${R.map(({a,r})=>{const vc=r.IR>=1.5?'ok':r.IR>=1?'mid':'bad';return `<button class="card" style="--c:${colorOf(a)}" data-open="${a.id}">
-    <div><div class="eyebrow">${esc(a.assessor||'')}</div><h3>${esc(a.project)}</h3></div>
-    <div class="ir giant ${vc}" style="font-size:4.2rem">${f2(r.IR)}</div>
-    <div class="bar2"><div class="t"><span>Nutzen</span><b class="num" style="color:var(--gain)">${f2(r.IN)}</b></div><div class="track"><div class="fill" style="width:${r.IN/5*100}%;background:var(--gain)"></div></div></div>
-    <div class="bar2"><div class="t"><span>Aufwand</span><b class="num" style="color:var(--cost)">${f2(r.IA)}</b></div><div class="track"><div class="fill" style="width:${r.IA/5*100}%;background:var(--cost)"></div></div></div>
-    <div>${pfChip(r)}</div></button>`}).join('')}</section>`;
-}
-function vDetail(){
-  const a=cur();if(!a)return emptyMsg();
-  if(ui.edit)return `<div class="row"><button class="btn primary" data-act="readmode">✓ Fertig bearbeitet</button></div>`+vAssess();
-  const r=calc(a),vc=r.IR>=1.5?'ok':r.IR>=1?'mid':'bad';
-  const rows=(list,g)=>list.map((c,i)=>{const sc=(g==='n'?r.n:r.x)[i],w=state.w[g][i];const locked=c.quant&&a.link&&a.fy;
-    return `<div class="rrow"><div class="score ${g==='n'?'g':'c'}">${sc??'–'}</div><div><h4>${esc(c.t)}</h4><div class="w">Gewicht ${w} % · gewichtet ${f2((+sc||0)*w/100)}</div>
-     <p>${locked?esc(quantWhy(a,g==='n'?'gain':'cost')):''} ${esc(a.why[c.k]||'')}</p></div></div>`}).join('');
-  return `<section class="panel">${picker(false)}</section>
-  <section class="panel"><div class="res-hero"><div class="giant ${vc}">${f2(r.IR)}</div>
-    <div style="display:grid;gap:12px"><div class="eyebrow">${esc(a.assessor||'')}</div><h2>${esc(a.project)}</h2><div>${pfChip(r).replace('class="chip','class="chip big')}</div>
-    <p class="verdict-line">Nutzen <b class="num" style="color:var(--gain)">${f2(r.IN)}</b> · Aufwand <b class="num" style="color:var(--cost)">${f2(r.IA)}</b> · Bilanz <b class="num">${r.bil>=0?'+':''}${f2(r.bil)}</b></p>
-    <div class="row"><button class="btn" data-act="editmode">Bewertung bearbeiten</button>${a.fy?'<button class="btn" data-tabgo="fy">Zur 5-Jahres-Kalkulation</button>':''}</div></div></div></section>
-  <div class="grid2">
-   <section class="panel"><div class="block-title gain"><h3>Nutzen/Chancen</h3><span class="num" style="font-size:1.3rem">${f2(r.IN)}</span></div>${rows(N_CRIT,'n')}</section>
-   <section class="panel"><div class="block-title cost"><h3>Aufwand/Risiko</h3><span class="num" style="font-size:1.3rem">${f2(r.IA)}</span></div>${rows(A_CRIT,'a')}</section>
-  </div>`;
-}
 function picker(withAdd=true){
   return `<div class="picker" role="group" aria-label="Bewertung wählen">${state.list.map(a=>`<button aria-pressed="${a.id===ui.sel[ui.ctx]}" data-sel="${a.id}"><i class="dot" style="background:${colorOf(a)}"></i>${esc(label(a))}</button>`).join('')}
-  ${withAdd?`<button data-act="new">${isX()?'+ Neue Bewertung':'+ Neue Idee'}</button>`:''}</div>`;
+  ${withAdd?`<button data-act="new">+ Neue Idee</button>`:''}</div>`;
 }
 function critBlock(list,arr,scoresEff,kind,a){
   return list.map((c,i)=>{
@@ -182,7 +156,6 @@ function vAssess(){
     <section class="panel"><div class="fields">
       <label class="f">Projekt / Idee<input id="f-project" data-field="project" value="${esc(a.project)}"></label>
       <label class="f">${state.mode==='Multibeurteilende'?'Beurteiler (Name, Funktion)':'Beurteilt von (optional)'}<input id="f-assessor" data-field="assessor" value="${esc(a.assessor)}"></label>
-      ${isX()?`<label class="f">Idee aus dem Ideenpool<select id="f-idea" data-field="idea"><option value="">–</option>${IDEAS.map(i=>`<option value="${i.id}" ${a.idea==i.id?'selected':''}>${i.id}. ${esc(i.name)}</option>`).join('')}</select></label>`:''}
      </div>
      <div class="row" style="margin-top:14px;justify-content:space-between">
       <label class="row"><input type="checkbox" style="width:22px;height:22px" id="f-link" data-act="link" ${a.link&&a.fy?'checked':''} ${a.fy?'':'disabled'}> Wirtschaftlichen Nutzen und F&amp;E-Aufwand aus der 5-Jahres-Kalkulation übernehmen</label>
@@ -259,22 +232,6 @@ function fillFY(){
   set('pScale',pl.map((t,i)=>`<span class="${i===c.pRating?'on':''}"><b>${i}</b><br>${t}</span>`).join(''));
   set('cScale',cl.map((t,i)=>`<span class="${i===c.cRating?'on':''}"><b>${i}</b><br>${t}</span>`).join(''));
 }
-function vIdeas(){
-  const byCat={};IDEAS.forEach(i=>(byCat[i.c[1]]??=[]).push(i));
-  const cellList=k=>(byCat[k]||[]).map(i=>`<div><b style="font-family:var(--f-body);font-size:1.05rem;display:inline;margin:0">${esc(i.name)}</b> <span class="mono muted" style="font-size:.85rem">M${i.m[1]} · O${i.o[1]}</span></div>`).join('');
-  return `<section class="panel"><header><h2>How-Wow-Now-Matrix</h2><span class="muted">M = Machbarkeit · O = Originalität · Grenze ≥ 4</span></header>
-   <div class="hwn">
-    <div class="ylab">Originalität ≥ 4</div><div class="cell how"><b>HOW?</b>${cellList('HOW')}</div><div class="cell wow"><b>WOW!</b>${cellList('WOW')}</div>
-    <div class="ylab">Originalität &lt; 4</div><div class="cell drop"><b>Verwerfen</b>${cellList('VERWERFEN')}</div><div class="cell now"><b>NOW!</b>${cellList('NOW')}</div>
-    <div></div><div class="xlab">Machbarkeit &lt; 4</div><div class="xlab">Machbarkeit ≥ 4</div>
-   </div></section>
-`;}
-function vPool(){
-  return `<section class="ideas">${IDEAS.map(i=>{const ex=state.list.filter(a=>+a.idea===i.id);const cc={WOW:'ok',NOW:'mid',HOW:'neutral',VERWERFEN:'bad'}[i.c[1]];
-   return `<article class="idea"><div class="top"><div><div class="eyebrow">${i.id} · ${esc(i.trend)}</div><h3>${esc(i.name)}</h3></div><span class="chip ${cc}">${i.c[1]}</span></div>
-    <p>${esc(i.d)}</p><div class="mo"><span>Machbarkeit ${i.m[1]} <span title="KI">(KI ${i.m[0]})</span></span><span>Originalität ${i.o[1]} (KI ${i.o[0]})</span></div>
-    <div class="row">${ex.map(a=>{const r=calc(a);return `<button class="btn small" data-open="${a.id}">IR ${f2(r.IR)} · ${esc(a.assessor)}</button>`}).join('')}${ex.length?'':`<button class="btn small" data-newidea="${i.id}">+ Bewerten</button>`}</div></article>`}).join('')}</section>`;
-}
 function vSettings(){
   const b=state.base;
   const wRow=(list,kind)=>list.map((c,i)=>`<tr><td>${esc(c.t)}</td><td class="r"><input class="in" style="width:96px;text-align:right" type="number" min="0" max="100" data-w="${kind}.${i}" value="${state.w[kind][i]}" aria-label="Gewicht ${esc(c.t)}"></td><td class="r num muted">${HUBE_W[kind][i]} %</td></tr>`).join('');
@@ -304,8 +261,7 @@ function vSettings(){
    <div class="row"><button class="btn" data-act="export">JSON kopieren</button><button class="btn" data-act="download">JSON herunterladen</button><label class="btn" for="importFile">Datei importieren</label><input type="file" id="importFile" accept="application/json,.json" hidden></div>
    <textarea id="io" class="in" rows="4" style="margin-top:12px;font-family:var(--f-mono);font-size:.78rem" placeholder="JSON hier einfügen und „Einfügen übernehmen“ klicken"></textarea>
    <div class="row" style="margin-top:8px"><button class="btn small" data-act="import">Einfügen übernehmen</button>
-   ${ui.confirm==='reset'?`<span class="row"><span>${isX()?'Alle Änderungen durch die Daten der Gruppe ersetzen?':'Alle eigenen Ideen löschen und neu beginnen?'}</span><button class="btn small danger" data-act="reset-yes">Ersetzen</button><button class="btn small" data-act="reset-no">Abbrechen</button></span>`:`<button class="btn small danger" data-act="reset">${isX()?'SpaceX-Daten der Gruppe wiederherstellen':'Zurücksetzen'}</button>`}
-   ${!isX()?'':ui.confirm==='blank'?`<span class="row"><span>Leere Arbeitsmappe ohne Bewertungen starten?</span><button class="btn small danger" data-act="blank-yes">Leeren</button><button class="btn small" data-act="blank-no">Abbrechen</button></span>`:`<button class="btn small" data-act="blank">Leere Arbeitsmappe</button>`}</div>
+   ${ui.confirm==='reset'?`<span class="row"><span>Alle eigenen Ideen löschen und neu beginnen?</span><button class="btn small danger" data-act="reset-yes">Ersetzen</button><button class="btn small" data-act="reset-no">Abbrechen</button></span>`:`<button class="btn small danger" data-act="reset">Zurücksetzen</button>`}</div>
   </section></div></div>`;
 }
 function vMethod(){
@@ -326,8 +282,6 @@ function vMethod(){
    <li>Gewinnanteil = Summe Gewinn über 5 Jahre ÷ Gewinn des Unternehmens im letzten Jahr. Skala: 0 kein Gewinn · 1 ≤ 3 % · 2 ≤ 5 % · 3 ≤ 20 % · 4 ≤ 30 % · 5 &gt; 30 %.</li>
    <li>F&amp;E-Kosten = FTE × Jahreskosten + Sachkosten. Kostenanteil = kumulierte F&amp;E-Kosten ÷ F&amp;E-Kosten des Unternehmens im letzten Jahr. Skala: 0 keine · 1 ≤ 10 % · 2 ≤ 20 % · 3 ≤ 50 % · 4 ≤ 100 % · 5 &gt; 100 %.</li>
   </ul>
-  <h3>Hinweis für die kritische Methodenbewertung</h3>
-  <p>Bei einem Konzern in der Größe von SpaceX (3,8 Mrd. USD Gewinn, 3 Mrd. USD F&amp;E im Kerngeschäft) landen fast alle neuen Geschäftsideen beim wirtschaftlichen Nutzen und beim F&amp;E-Aufwand auf Stufe 1. Die beiden quantitativen Kriterien unterscheiden die Ideen dann kaum; die Rangfolge entsteht vor allem über die qualitativen Kriterien. Das ist ein Ansatzpunkt für Teil 8 der Präsentation.</p>
   <h3>Portfolio-Felder</h3>
   <div class="tablewrap"><table><thead><tr><th>Aufwand ↓ / Nutzen →</th><th>niedrig</th><th>mittel</th><th>hoch</th></tr></thead><tbody>
    ${[1,2,3].map(ca=>`<tr><td>${catName(ca)}</td>${[1,2,3].map(cn=>`<td>${esc(PF_LABELS[ca][cn][0])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
