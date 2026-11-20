@@ -2,17 +2,16 @@
 /* Wechsel im Werkzeug führen an dessen Anfang, nicht an den Seitenanfang. */
 function toTool(behavior){const w=document.getElementById('werkzeug');if(!w){window.scrollTo(0,0);return}const hd=document.querySelector('header.top');window.scrollTo({top:Math.max(0,w.getBoundingClientRect().top+scrollY-(hd?hd.offsetHeight:0)),behavior:behavior||'instant'})}
 
-const VIEWS={wizard:vWizard,ranking:vRanking,portfolio:vPortfolio,bars:vBars,assess:vAssess,fy:vFY,settings:vSettings};
+const VIEWS={wizard:vWizard,ranking:vRanking,portfolio:vPortfolio,bars:vBars,assess:vAssess,fy:vFY};
 const STEPS={
- user:[['wizard','1','Ideen-Check'],['ranking','2','Meine Ideen'],['portfolio','3','Portfolio & Netz'],['bars','4','Rendite & Bilanz'],['assess','Extra','Feintuning'],['fy','Extra','5-Jahres-Kalkulation'],['settings','Extra','Einstellungen']]};
+ user:[['wizard','1','Ideen-Check'],['ranking','2','Meine Ideen'],['portfolio','3','Portfolio & Netz'],['bars','4','Rendite & Bilanz'],['assess','Extra','Feintuning'],['fy','Extra','5-Jahres-Kalkulation']]};
 const INTRO={
  user:{wizard:null,
-  ranking:['Vergleich','Meine Ideen im Ranking','Alle Ideen, die du geprüft hast, sortiert nach Innovationsrendite.'],
+  ranking:['Vergleich','Meine Ideen im Ranking','Alle Ideen, die du geprüft hast, sortiert nach Innovationsrendite. Unten kannst du die Ideen exportieren und importieren.'],
   portfolio:['Vergleich','Wo landen deine Ideen?','Das Aufwand/Nutzen-Portfolio zeigt auf einen Blick, welche Idee ein Quick win ist und welche du abbrechen solltest.'],
   bars:['Vergleich','Rendite und Bilanz','Rendite = Nutzen ÷ Aufwand. Über 1 ist die Idee „profitabel“.'],
-  assess:['Extra','Feintuning','Alle zwölf Kriterien auf einer Seite: Punkte anpassen und Begründungen ergänzen.'],
-  fy:['Extra','5-Jahres-Kalkulation','Berechne Gewinn und Entwicklungskosten über fünf Jahre. Daraus ergeben sich zwei der zwölf Bewertungen automatisch.'],
-  settings:['Extra','Einstellungen','Gewichte der Kriterien und Kennzahlen deines Unternehmens.']}};
+  assess:['Extra','Feintuning','Alle zwölf Kriterien auf einer Seite: Punkte anpassen und Begründungen ergänzen. Darunter die Gewichtung der Kriterien.'],
+  fy:['Extra','5-Jahres-Kalkulation','Lege die Kennzahlen deines Unternehmens fest und berechne Gewinn und Entwicklungskosten über fünf Jahre. Daraus ergeben sich zwei der zwölf Bewertungen automatisch.']}};
 function subnav(){const L=STEPS[ui.ctx],btn=([k,n,t])=>`<button data-sub="${k}" ${ui.sub[ui.ctx]===k?'aria-current="step"':''}><span class="n">${n}</span><span class="t">${esc(t)}</span></button>`;
   if(!L.some(x=>x[3]))return `<nav class="subnav" aria-label="Schritte">${L.map(btn).join('')}</nav>`;
   const G=[];L.forEach(x=>{if(!G.length||G[G.length-1].g!==x[3])G.push({g:x[3],items:[]});G[G.length-1].items.push(x)});
@@ -31,7 +30,7 @@ function render(keepScroll){
   document.getElementById('view').innerHTML=html;
   const sub=ui.sub[ui.ctx];
   if(ui.ctx!=='method'&&sub==='fy')fillFY();
-  if(ui.ctx!=='method'&&sub==='settings')fillW();
+  if(ui.ctx!=='method'&&sub==='assess')fillW();
   document.querySelectorAll('textarea.in').forEach(autoGrow);
   if(keepScroll)window.scrollTo(0,y);
   save();

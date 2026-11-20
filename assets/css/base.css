@@ -240,6 +240,12 @@ svg .lab{fill:var(--ink);font-family:var(--f-body);font-size:15px;font-weight:50
 .legend span{display:inline-flex;gap:8px;align-items:center;font-weight:500;font-size:.9rem;color:var(--muted)}
 .toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));right:max(20px,env(safe-area-inset-right,0px));background:var(--ink);color:var(--accent-ink);padding:13px 18px;border-radius:6px;z-index:20;font-size:.9rem}
 
+/* Bezugszeile im Ideen-Check */
+.ref-line{font-size:.92rem;color:var(--muted)}
+.ref-line b{color:var(--ink);font-weight:500}
+.linkbtn{background:none;border:0;padding:0;color:var(--ice);cursor:pointer;text-decoration:underline;text-decoration-color:rgba(169,217,217,.4);text-underline-offset:3px}
+.linkbtn:hover{color:var(--copper)}
+
 /* KI-Bewertung */
 .panel.ai{border-color:rgba(169,217,217,.28);background:linear-gradient(180deg,#121d22,#0f171c)}
 .panel.ai h2 em{color:var(--ice);font-style:normal}

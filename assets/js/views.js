@@ -1,9 +1,9 @@
 /* ============================== Views ============================== */
 function ranked(){return state.list.map(a=>({a,r:calc(a)})).sort((p,q)=>(q.r.IR===Infinity?1e9:q.r.IR)-(p.r.IR===Infinity?1e9:p.r.IR))}
 const emptyMsg=()=>`<section class="panel"><p style="font-size:1.15rem">Noch keine Idee geprüft. Starte mit dem Ideen-Check.</p><div class="row" style="margin-top:16px"><button class="btn primary" data-tabgo="wizard">Zum Ideen-Check</button></div></section>`;
-function wNotice(){const ok=sum(state.w.n)===100&&sum(state.w.a)===100;return ok?'':`<div class="notice">Die Gewichte ergeben nicht je 100 % (Nutzen ${sum(state.w.n)} %, Aufwand ${sum(state.w.a)} %). Unter „Einstellungen“ korrigieren.</div>`}
+function wNotice(){const ok=sum(state.w.n)===100&&sum(state.w.a)===100;return ok?'':`<div class="notice">Die Gewichte ergeben nicht je 100 % (Nutzen ${sum(state.w.n)} %, Aufwand ${sum(state.w.a)} %). Unter „Feintuning“ korrigieren.</div>`}
 function vRanking(){
-  const L=state.list;if(!L.length)return emptyMsg();
+  const L=state.list;if(!L.length)return emptyMsg()+wbPanel()+sharePanel();
   const R=ranked(),best=R[0];
   const avgN=sum(R.map(o=>o.r.IN))/R.length, avgA=sum(R.map(o=>o.r.IA))/R.length;
   return `${wNotice()}
@@ -13,11 +13,13 @@ function vRanking(){
     <div class="tile"><span class="eyebrow">Ø Nutzen</span><span class="v gain">${f2(avgN)}</span><span class="s">von 5</span></div>
     <div class="tile"><span class="eyebrow">Ø Aufwand</span><span class="v cost">${f2(avgA)}</span><span class="s">von 5</span></div>
   </section>
+  ${wbPanel()}
   <section class="panel"><header><h2>Ranking nach Innovationsrendite</h2><span class="muted">Zeile anklicken für Details</span></header>
    <div class="tablewrap"><table><thead><tr><th>#</th><th>Idee</th><th class="r">Nutzen</th><th class="r">Aufwand</th><th class="r">Rendite</th><th>Portfolio</th></tr></thead><tbody>
    ${R.map((o,i)=>`<tr class="clickable" data-open="${o.a.id}"><td class="num" style="font-size:1.3rem">${i+1}</td><td><span class="row" style="flex-wrap:nowrap"><i class="dot" style="background:${colorOf(o.a)}"></i><span><b style="font-size:1.1rem">${esc(o.a.project)}</b>${o.a.assessor?`<br><span class="muted">${esc(o.a.assessor)}</span>`:''}</span></span></td>
    <td class="r num">${f2(o.r.IN)}</td><td class="r num">${f2(o.r.IA)}</td><td class="r">${irChip(o.r)}</td><td>${pfChip(o.r)}</td></tr>`).join('')}
-   </tbody></table></div></section>`;
+   </tbody></table></div></section>
+  ${sharePanel()}`;
 }
 function vPortfolio(){
   const L=state.list;if(!L.length)return emptyMsg();
@@ -116,6 +118,7 @@ function vWizard(){
    <h2 class="q">${esc(Q[c.k])}</h2>
    <p class="qdesc">${esc(c.d)}</p>
    ${lock?`<div class="notice info">Dieser Wert kommt aus deiner 5-Jahres-Kalkulation: ${quantWhy(a,c.g==='n'?'gain':'cost')}</div>`:''}
+   ${c.quant&&!lock?`<p class="ref-line">Bezug: ${c.g==='n'?'Gewinn':'F&amp;E-Kosten'} von ${esc(state.base.company)} im letzten Jahr <b class="num">${fInt(c.g==='n'?state.base.profit:state.base.rnd)} Mio ${esc(state.base.currency)}</b> · <button class="linkbtn" data-tabgo="fy">ändern oder genau berechnen</button></p>`:''}
    <div class="opts" role="group" aria-label="Bewertung">${[0,1,2,3,4,5].map(v=>`<button class="opt ${gc}" data-opt="${v}" aria-pressed="${val===v}" ${lock?'disabled':''}><span class="d">${v}</span><span class="l">${esc(labels[v])}</span></button>`).join('')}</div>
    <label class="f">Begründung (optional)<textarea class="in" rows="2" data-why="${c.k}" placeholder="Warum diese Einschätzung?">${esc(a.why[c.k]||'')}</textarea></label>
    <div class="wiznav"><button class="btn" data-wiz="prev">← Zurück</button><span class="kbd">Tasten 0–5 · Enter</span><button class="btn primary" data-wiz="next" ${answered(a,k)?'':'disabled'}>${st===12?'Ergebnis zeigen':'Weiter →'}</button></div>
@@ -148,7 +151,7 @@ function vWizResult(a){
 }
 function vAssess(){
   const a=cur();
-  if(!a)return `<section class="panel">${picker()}</section>`;
+  if(!a)return `<section class="panel">${picker()}</section>`+wPanel();
   const r=calc(a);
   const conf=ui.confirm==='del'?`<span class="row"><span>Bewertung wirklich löschen?</span><button class="btn small danger" data-act="del-yes">Löschen</button><button class="btn small" data-act="del-no">Abbrechen</button></span>`:`<button class="btn small danger" data-act="del">Löschen</button>`;
   return `<section class="panel">${picker()}</section>
@@ -171,12 +174,12 @@ function vAssess(){
    </div>
    <div id="resultSlot">${resultCard(a)}</div>
   </div>
-`;
+  ${wPanel()}`;
 }
 function vFY(){
   const a=cur();
-  if(!a)return emptyMsg();
-  const pk=`<section class="panel">${picker(false)}</section>`;
+  if(!a)return basePanel()+emptyMsg();
+  const pk=basePanel()+`<section class="panel">${picker(false)}</section>`;
   if(!a.fy)return pk+`<section class="panel" style="display:grid;gap:16px"><h2>${esc(a.project)}</h2><p style="font-size:1.1rem;max-width:60ch">Für diese Idee gibt es noch keine 5-Jahres-Kalkulation. Sie berechnet „Wirtschaftlicher Nutzen“ und „Investitionsaufwand F&amp;E“ aus Umsatz, Gewinn und Entwicklungskosten statt aus dem Bauchgefühl.</p><div><button class="btn primary" data-act="addfy">5-Jahres-Kalkulation anlegen</button></div></section>`;
   const fy=a.fy,b=state.base,cu=esc(b.currency),yrs=[0,1,2,3,4];
   const numIn=(path,v,step='any')=>`<input class="in" type="number" step="${step}" data-fy="${path}" value="${v}" aria-label="${path}">`;
@@ -233,37 +236,42 @@ function fillFY(){
   set('pScale',pl.map((t,i)=>`<span class="${i===c.pRating?'on':''}"><b>${i}</b><br>${t}</span>`).join(''));
   set('cScale',cl.map((t,i)=>`<span class="${i===c.cRating?'on':''}"><b>${i}</b><br>${t}</span>`).join(''));
 }
-function vSettings(){
-  const b=state.base;
+/* Früher „Einstellungen“: Jeder Block steht dort, wo er die Rechnung beeinflusst. */
+function wPanel(){
   const wRow=(list,kind)=>list.map((c,i)=>`<tr><td>${esc(c.t)}</td><td class="r"><input class="in" style="width:96px;text-align:right" type="number" min="0" max="100" data-w="${kind}.${i}" value="${state.w[kind][i]}" aria-label="Gewicht ${esc(c.t)}"></td><td class="r num muted">${HUBE_W[kind][i]} %</td></tr>`).join('');
-  return `<div class="grid2">
-  <section class="panel"><header><h2>Gewichtung</h2><button class="btn small" data-act="hubew">Standard nach Hube</button></header>
+  return `<section class="panel"><header><h2>Gewichtung der Kriterien</h2><button class="btn small" data-act="hubew">Standard nach Hube</button></header>
    <p class="muted" style="margin-bottom:12px">Die Gewichte gelten für alle Bewertungen und müssen je Block 100 % ergeben.</p>
    <div class="tablewrap"><table><thead><tr><th>Nutzen/Chancen</th><th class="r">Gewicht %</th><th class="r">Hube</th></tr></thead><tbody>${wRow(N_CRIT,'n')}
     <tr><td><b>Summe</b></td><td class="r num"><b data-out="wsum-n"></b></td><td></td></tr></tbody></table></div>
    <div class="tablewrap" style="margin-top:18px"><table><thead><tr><th>Aufwand/Risiko</th><th class="r">Gewicht %</th><th class="r">Hube</th></tr></thead><tbody>${wRow(A_CRIT,'a')}
     <tr><td><b>Summe</b></td><td class="r num"><b data-out="wsum-a"></b></td><td></td></tr></tbody></table></div>
-  </section>
-  <div style="display:grid;gap:24px;align-content:start;min-width:0">
-  <section class="panel"><header><h2>Arbeitsmappe</h2></header><div class="fields">
+  </section>`;
+}
+function wbPanel(){
+  return `<section class="panel"><header><h2>Arbeitsmappe</h2><span class="muted">Gilt für alle Ideen</span></header><div class="fields">
    <label class="f">Name<input id="s-wb" data-set="workbook" value="${esc(state.workbook)}"></label>
    <label class="f">Verwendung als<select id="s-mode" data-set="mode"><option ${state.mode==='Multiprojekt'?'selected':''}>Multiprojekt</option><option ${state.mode==='Multibeurteilende'?'selected':''}>Multibeurteilende</option></select></label>
    <label class="f">Zeithorizont<input id="s-hz" data-set="horizon" value="${esc(state.horizon)}"></label></div>
-   <p class="muted" style="margin-top:12px">Multiprojekt: mehrere Ideen vergleichen. Multibeurteilende: eine Idee aus Sicht mehrerer Personen (z. B. F&amp;E, Marketing, Geschäftsführung).</p></section>
-  <section class="panel"><header><h2>Basisdaten Unternehmen</h2></header><div class="fields">
+   <p class="muted" style="margin-top:12px">Multiprojekt: mehrere Ideen vergleichen. Multibeurteilende: eine Idee aus Sicht mehrerer Personen (z. B. F&amp;E, Marketing, Geschäftsführung).</p></section>`;
+}
+function basePanel(){
+  const b=state.base;
+  return `<section class="panel"><header><h2>Bezugsgrößen des Unternehmens</h2><span class="muted">Gelten für alle Ideen · Werte in Mio</span></header><div class="fields">
    <label class="f">Unternehmen<input id="b-co" data-base="company" value="${esc(b.company)}"></label>
    <label class="f">Währung<input id="b-cur" data-base="currency" value="${esc(b.currency)}"></label>
    <label class="f">Umsatz letztes Jahr (Mio)<input id="b-rev" type="number" data-base="revenue" value="${b.revenue}"></label>
    <label class="f">Gewinn letztes Jahr (Mio)<input id="b-pro" type="number" data-base="profit" value="${b.profit}"></label>
    <label class="f">F&amp;E-Kosten letztes Jahr (Mio)<input id="b-rnd" type="number" data-base="rnd" value="${b.rnd}"></label></div>
-   <label class="f" style="margin-top:12px">Erläuterung<textarea id="b-note" class="in" rows="3" data-base="note">${esc(b.note)}</textarea></label></section>
-  <section class="panel"><header><h2>Teilen und sichern</h2></header>
+   <label class="f" style="margin-top:12px">Erläuterung<textarea id="b-note" class="in" rows="3" data-base="note">${esc(b.note)}</textarea></label></section>`;
+}
+function sharePanel(){
+  return `<section class="panel"><header><h2>Teilen und sichern</h2></header>
    <p class="muted" style="margin-bottom:12px">Alle Eingaben liegen nur in diesem Browser. Zum Teilen exportieren und bei der Gruppe importieren.</p>
    <div class="row"><button class="btn" data-act="export">JSON kopieren</button><button class="btn" data-act="download">JSON herunterladen</button><label class="btn" for="importFile">Datei importieren</label><input type="file" id="importFile" accept="application/json,.json" hidden></div>
    <textarea id="io" class="in" rows="4" style="margin-top:12px;font-family:var(--f-mono);font-size:.78rem" placeholder="JSON hier einfügen und „Einfügen übernehmen“ klicken"></textarea>
    <div class="row" style="margin-top:8px"><button class="btn small" data-act="import">Einfügen übernehmen</button>
    ${ui.confirm==='reset'?`<span class="row"><span>Alle eigenen Ideen löschen und neu beginnen?</span><button class="btn small danger" data-act="reset-yes">Ersetzen</button><button class="btn small" data-act="reset-no">Abbrechen</button></span>`:`<button class="btn small danger" data-act="reset">Zurücksetzen</button>`}</div>
-  </section></div></div>`;
+  </section>`;
 }
 function vMethod(){
   return `<section class="panel method" style="display:grid;gap:16px">
