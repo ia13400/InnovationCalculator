@@ -21,6 +21,7 @@ Diese Anweisungen gelten für das gesamte Repository `InnovationCalculator`, una
 | `assets/js/model.js`, `data.js`, `state.js` | Rechenlogik nach Hube, Startdaten (`userSeed()`) sowie gespeicherter Zustand |
 | `assets/js/helpers.js`, `views.js`, `app.js` | Hilfen und SVG-Diagramme, Ansichten des Rechners und der Methode, Rendering, Ereignisse und Hash-Navigation |
 | `assets/js/ai.js` | KI-Bewertung („Zweite Meinung“): Anfrage an den Worker (`AI_ENDPOINT`), Speicherung als eigene Bewertung mit `aiOf`, Vergleichsansicht |
+| `assets/js/report.js` | PDF-Bericht: Druckansicht in `#report`, Druckregeln unter `@media print` in `base.css` |
 | `worker/` | Cloudflare Worker mit dem gemeinsamen Gemini-Schlüssel (Secret) und Einrichtungsanleitung |
 | `teil6/index.html` | Nur noch Weiterleitung früherer Links auf den Rechner |
 

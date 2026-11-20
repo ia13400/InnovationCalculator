@@ -14,7 +14,7 @@ function vRanking(){
     <div class="tile"><span class="eyebrow">Ø Aufwand</span><span class="v cost">${f2(avgA)}</span><span class="s">von 5</span></div>
   </section>
   ${wbPanel()}
-  <section class="panel"><header><h2>Ranking nach Innovationsrendite</h2><span class="muted">Zeile anklicken für Details</span></header>
+  <section class="panel"><header><h2>Ranking nach Innovationsrendite</h2><span class="row"><span class="muted">Zeile anklicken für Details</span><button class="btn small" data-act="pdfall">Alle Ideen als PDF</button></span></header>
    <div class="tablewrap"><table><thead><tr><th>#</th><th>Idee</th><th class="r">Nutzen</th><th class="r">Aufwand</th><th class="r">Rendite</th><th>Portfolio</th></tr></thead><tbody>
    ${R.map((o,i)=>`<tr class="clickable" data-open="${o.a.id}"><td class="num" style="font-size:1.3rem">${i+1}</td><td><span class="row" style="flex-wrap:nowrap"><i class="dot" style="background:${colorOf(o.a)}"></i><span><b style="font-size:1.1rem">${esc(o.a.project)}</b>${o.a.assessor?`<br><span class="muted">${esc(o.a.assessor)}</span>`:''}</span></span></td>
    <td class="r num">${f2(o.r.IN)}</td><td class="r num">${f2(o.r.IA)}</td><td class="r">${irChip(o.r)}</td><td>${pfChip(o.r)}</td></tr>`).join('')}
@@ -146,7 +146,7 @@ function vWizResult(a){
    <section class="panel"><header><h2>Aufwand/Nutzen-Portfolio</h2></header>${portfolio(aiOf(a)?[a,aiOf(a)]:[a])}</section>
    <section class="panel"><header><h2>Netzgrafik</h2><span class="muted">Einzelbewertungen 0–5</span></header><div class="chartbox">${radar(aiOf(a)?[a,aiOf(a)]:[a])}</div>${aiOf(a)?legend([a,aiOf(a)]):''}</section>
    <div class="wiznav"><button class="btn" data-wizgo="12">← Antworten ändern</button>
-    <span class="row"><button class="btn" data-tabgo="fy">5-Jahres-Kalkulation ergänzen</button><button class="btn" data-tabgo="ranking">Mit anderen Ideen vergleichen</button><button class="btn primary" data-wiz="restart">Neue Idee prüfen</button></span></div>
+    <span class="row"><button class="btn" data-act="pdf">Als PDF exportieren</button><button class="btn" data-tabgo="fy">5-Jahres-Kalkulation ergänzen</button><button class="btn" data-tabgo="ranking">Mit anderen Ideen vergleichen</button><button class="btn primary" data-wiz="restart">Neue Idee prüfen</button></span></div>
   </div>`;
 }
 function vAssess(){

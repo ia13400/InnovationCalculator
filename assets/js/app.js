@@ -76,6 +76,8 @@ document.getElementById('view').addEventListener('click',e=>{
   switch(act){
    case 'new':ui.sub.user='wizard';wizSet(0);break;
    case 'ai':runAI(a);break;
+   case 'pdf':printReport([a.id]);break;
+   case 'pdfall':printReport(state.list.map(x=>x.id));break;
    case 'editmode':ui.edit=true;render(true);break;
    case 'readmode':ui.edit=false;render(true);break;
    case 'dup':{const c=JSON.parse(JSON.stringify(a));c.id='b'+Date.now().toString(36);c.assessor=(c.assessor||'')+' (Kopie)';state.list.push(c);ui.sel[ui.ctx]=c.id;render(true);toast('Bewertung dupliziert');break}
