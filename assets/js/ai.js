@@ -1,7 +1,7 @@
 /* ============================== KI-Bewertung ============================== */
 /* Zweite Meinung durch ein KI-Modell über den gemeinsamen Dienst (Cloudflare Worker, siehe worker/README.md).
    Der API-Schlüssel liegt nur im Worker. Nach der Einrichtung hier die Worker-Adresse eintragen. */
-const AI_ENDPOINT='';
+const AI_ENDPOINT='https://mute-union-8e80.salluma0711.workers.dev/';
 const AI_TIMEOUT=60000;
 const aiOf=a=>a&&state.list.find(x=>x.aiOf===a.id);
 const aiParent=a=>a&&a.aiOf&&state.list.find(x=>x.id===a.aiOf);
