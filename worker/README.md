@@ -35,7 +35,7 @@ Die Worker-Adresse steht oben im Worker, z. B. `https://innovationsrendite-ki.<d
 
 ## 5. Website verbinden
 
-In [`assets/js/ai.js`](../assets/js/ai.js) die Adresse eintragen:
+In [`assets/js/features/ai.js`](../assets/js/features/ai.js) die Adresse eintragen:
 
 ```js
 const AI_ENDPOINT='https://innovationsrendite-ki.<dein-name>.workers.dev/';

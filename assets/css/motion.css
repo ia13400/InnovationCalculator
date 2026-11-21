@@ -1,0 +1,28 @@
+/*
+ * Bewegung: Übergänge nur ohne „reduzierte Bewegung“. Muss nach den übrigen Bildschirm-Stilen geladen werden.
+ * Teil der Website-Gestaltung nach DESIGN.md; Ladereihenfolge siehe index.html.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .bar2 .fill {
+    transition: width 0.3s var(--ease);
+  }
+  .opt,
+  .btn,
+  .subnav button,
+  .picker button {
+    transition:
+      border-color 0.15s,
+      background-color 0.15s,
+      color 0.15s,
+      transform 0.2s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+  .btn.primary:hover,
+  .pager button.next:hover {
+    transform: none;
+  }
+}

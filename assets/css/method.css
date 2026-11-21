@@ -1,0 +1,40 @@
+/*
+ * Reiter „Methode & Quellen“ und Fußzeile.
+ * Teil der Website-Gestaltung nach DESIGN.md; Ladereihenfolge siehe index.html.
+ */
+/* Methode & Quellen */
+.method {
+  gap: 20px;
+}
+.method h2 {
+  font-size: clamp(1.9rem, 3.6vw, 2.6rem);
+}
+.method h3 {
+  margin-top: 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.method p,
+.method ul {
+  max-width: 70ch;
+}
+.method > p {
+  color: var(--muted);
+}
+.method ul {
+  margin: 0;
+  padding-left: 22px;
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+}
+.method ul b {
+  color: var(--ink);
+}
+footer {
+  color: var(--muted);
+  padding-block: 24px 48px;
+  font-size: 0.82rem;
+  max-width: 90ch;
+  border-top: 1px solid var(--line);
+}

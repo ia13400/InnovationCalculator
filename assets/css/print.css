@@ -1,0 +1,316 @@
+/*
+ * PDF-Bericht (#report): nur im Druck sichtbar.
+ * A4-Seiten im dunklen Stil der Website; Farben per print-color-adjust erzwungen, auch ohne Option „Hintergrundgrafiken“.
+ * Teil der Website-Gestaltung nach DESIGN.md; Ladereihenfolge siehe index.html.
+ */
+/* PDF-Bericht: nur im Druck sichtbar, gleiche Palette und Schrift wie die Website */
+#report {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm 13mm 12mm;
+    background: #060b10;
+  }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  html,
+  body {
+    background: #060b10 !important;
+    background-image: none !important;
+  }
+  html {
+    font-size: 10.5px;
+  }
+  body::before {
+    display: none;
+  }
+  body > *:not(#report) {
+    display: none !important;
+  }
+  #report {
+    display: block;
+    color: var(--ink);
+    padding: 0;
+  }
+  #report .rp-break {
+    break-before: page;
+  }
+  #report .rp-keep,
+  #report .rp-tiles,
+  #report tr,
+  #report .rp-hero {
+    break-inside: avoid;
+  }
+  #report h1,
+  #report h2,
+  #report h3 {
+    break-after: avoid;
+  }
+  .rp-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 3.5mm;
+    margin-bottom: 6mm;
+    border-bottom: 1px solid var(--line);
+  }
+  .rp-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--copper);
+  }
+  .rp-brand svg {
+    width: 22px;
+    height: 22px;
+  }
+  .rp-brand > span {
+    display: grid;
+    color: var(--ink);
+    font-size: 1.25rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .rp-brand b {
+    font-weight: 500;
+  }
+  .rp-brand b i {
+    font-style: normal;
+    color: var(--copper);
+  }
+  .rp-brand small {
+    font-size: 0.55rem;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .rp-meta {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.5;
+  }
+  .rp-block {
+    margin-bottom: 7mm;
+  }
+  .rp-block > .eyebrow {
+    display: block;
+    margin-bottom: 6px;
+  }
+  #report h1 {
+    font-size: 2.6rem;
+    letter-spacing: -0.045em;
+    line-height: 1.08;
+  }
+  #report h2 {
+    font-size: 1.65rem;
+    letter-spacing: -0.03em;
+    margin-bottom: 4mm;
+  }
+  #report h3 {
+    font-size: 1.15rem;
+    margin: 5mm 0 2mm;
+  }
+  .rp-hero {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 9mm;
+    align-items: center;
+  }
+  .rp-hero .giant {
+    font-size: 6.6rem;
+  }
+  .rp-title {
+    display: grid;
+    gap: 8px;
+  }
+  .rp-title p {
+    font-size: 1.05rem;
+  }
+  .rp-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    grid-auto-flow: column;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 6mm;
+  }
+  .rp-tiles > div {
+    background: #0b1117;
+    padding: 4mm 4.5mm;
+    display: grid;
+    gap: 4px;
+  }
+  .rp-tiles b {
+    font-size: 1.9rem;
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .rp-tiles b.g {
+    color: var(--gain);
+  }
+  .rp-tiles b.c {
+    color: var(--cost);
+  }
+  .rp-tiles .rp-ai b {
+    color: var(--ice);
+  }
+  .rp-tiles small {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  #report .ai-summary {
+    font-size: 1rem;
+    margin-bottom: 6mm;
+  }
+  #report .pf {
+    grid-template-rows: repeat(3, minmax(24mm, auto)) auto;
+  }
+  .rp-chart {
+    max-width: 125mm;
+  }
+  #report .pf .item {
+    font-size: 0.95rem;
+  }
+  .rp-chart {
+    max-width: 150mm;
+    margin: 0 auto;
+  }
+  #report .legend span {
+    font-size: 0.9rem;
+  }
+  .rp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .rp-table th {
+    font-size: 0.6rem;
+    padding: 2.2mm 2mm;
+  }
+  .rp-table td {
+    padding: 2mm;
+    vertical-align: top;
+    border-bottom: 1px solid var(--line);
+  }
+  .rp-table td.num,
+  .rp-table td.r {
+    white-space: nowrap;
+  }
+  .rp-table .rp-crit {
+    width: 30%;
+    font-weight: 500;
+  }
+  .rp-table .rp-why {
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+  .rp-table .rp-sc {
+    font-size: 1.05rem;
+  }
+  .rp-table .rp-sc.g {
+    color: var(--gain);
+  }
+  .rp-table .rp-sc.c {
+    color: var(--cost);
+  }
+  .rp-table .rp-sc.k {
+    color: var(--ice);
+  }
+  .rp-table tr.rp-grp td {
+    font-size: 0.6rem;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--copper);
+    padding-top: 4mm;
+    font-weight: 500;
+  }
+  .rp-table tr.rp-sum td {
+    font-weight: 600;
+    background: #ffffff08;
+  }
+  .rp-fy td:first-child {
+    width: 34%;
+  }
+  .rp-note {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 3mm;
+    max-width: none;
+  }
+  .rp-dl {
+    display: grid;
+    grid-template-columns: 38mm 1fr;
+    gap: 2mm 5mm;
+    font-size: 0.85rem;
+    margin: 0;
+  }
+  .rp-dl dt {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .rp-dl dd {
+    margin: 0;
+    color: var(--muted);
+  }
+  #report ol.src {
+    font-size: 0.82rem;
+    gap: 4px;
+  }
+  .rp-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8mm;
+    align-items: start;
+  }
+  .rp-list {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 4px;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+  .rp-list b {
+    color: var(--ink);
+  }
+  .rp-foot {
+    margin-top: 8mm;
+    padding-top: 4mm;
+    border-top: 1px solid var(--line);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  #report svg text {
+    font-size: 13px;
+  }
+  #report .fx-row {
+    grid-template-columns: 42mm minmax(0, 1fr);
+    padding: 2.2mm 3mm;
+    break-inside: avoid;
+  }
+  #report .fx {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+  #report .fx-f {
+    font-size: 0.82rem;
+  }
+  #report .fx-n {
+    font-size: 0.72rem;
+  }
+  #report .notice {
+    font-size: 0.85rem;
+  }
+}

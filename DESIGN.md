@@ -4,7 +4,7 @@
 
 Die Website soll wie ein zusammenhängendes, hochwertig gestaltetes Produkt wirken. Neue Beiträge unterschiedlicher Teammitglieder teilen dieselbe visuelle Sprache: **ruhig, räumlich, präzise und inhaltlich geführt**. Bewegung macht eine Entwicklung oder Beziehung verständlich; jede Information behält einen gut erreichbaren, lesbaren Platz.
 
-Diese Richtlinie gilt für alle Oberflächen im Repository. Gestalterische Referenz ist der Pitch der Gruppe (Repository `InnovationManagement`, Ordner `pitch/`): dunkler Hintergrund `#060b10`, System-Schrift, Kupfer- und Eis-Akzent, feine Linien, kleine gesperrte Großbuchstaben als Beschriftung. `assets/css/base.css` setzt diese Sprache für den Rechner um. Die Referenz legt die Richtung fest, nicht jedes einzelne Maß.
+Diese Richtlinie gilt für alle Oberflächen im Repository. Gestalterische Referenz ist der Pitch der Gruppe (Repository `InnovationManagement`, Ordner `pitch/`): dunkler Hintergrund `#060b10`, System-Schrift, Kupfer- und Eis-Akzent, feine Linien, kleine gesperrte Großbuchstaben als Beschriftung. Die Dateien in `assets/css/` setzen diese Sprache für den Rechner um. Die Referenz legt die Richtung fest, nicht jedes einzelne Maß.
 
 InnovationCalculator ist der Innovationsrendite-Rechner nach Prof. Hube mit den Bereichen „Eigene Idee prüfen“ und „Methode & Quellen“. Inhalte zum SpaceX-Case und zum RocketLight Dinner gehören nicht auf diese Website. Die Referenz an hochwertigen Produktseiten betrifft Komposition, Übergänge und Ausführungsqualität; Assets, Texte und Markenauftritt bleiben eigenständig.
 
@@ -22,7 +22,7 @@ Alle drei Darstellungen teilen Farben, Typografie, Abstände, Navigation und Zus
 
 ## 3. Farben und Oberflächen
 
-Die folgende Zielpalette entspricht dem Pitch (`pitch/pitch.css`) und ist in `assets/css/base.css` als einzige Darstellung umgesetzt (dunkel; die frühere Hell-Darstellung wurde auf Wunsch zugunsten des einheitlichen Pitch-Looks entfernt). In `base.css` heißen die Rollen `--bg`, `--surface`, `--ink`, `--muted`, `--copper`, `--ice` und `--line`.
+Die folgende Zielpalette entspricht dem Pitch (`pitch/pitch.css`) und ist in `assets/css/tokens.css` als einzige Darstellung umgesetzt (dunkel; die frühere Hell-Darstellung wurde auf Wunsch zugunsten des einheitlichen Pitch-Looks entfernt). In `tokens.css` heißen die Rollen `--bg`, `--surface`, `--ink`, `--muted`, `--copper`, `--ice` und `--line`.
 
 | Rolle | Bestehende Variable | Wert | Verwendung |
 | --- | --- | --- | --- |
@@ -34,7 +34,7 @@ Die folgende Zielpalette entspricht dem Pitch (`pitch/pitch.css`) und ist in `as
 | Kühler Akzent | `--ice` | `#a9d9d9` | Zeichnungen, Verbindungen, Fokus |
 | Feine Trennlinie | `--line` | `rgba(241,237,232,.14)` | Gruppen und Flächengrenzen |
 
-Weitere Rollen in `base.css`: `--gain` (Nutzen, Eis) und `--cost` (Aufwand, Kupfer) sowie `--warn` und `--bad` für Status. Neue Bereiche verwenden diese Variablen statt eigener Farbwerte.
+Weitere Rollen in `tokens.css`: `--gain` (Nutzen, Eis) und `--cost` (Aufwand, Kupfer) sowie `--warn` und `--bad` für Status. Neue Bereiche verwenden diese Variablen statt eigener Farbwerte.
 
 Die Website hat bewusst nur die dunkle Darstellung des Pitches.
 
@@ -108,7 +108,7 @@ Die Zeitangaben sind Startwerte, keine Wartezeiten vor der Bedienung. Vorhandene
 
 Oberflächentexte sind überwiegend deutsch, konkret und ruhig. Beschriftungen benennen Handlung und Ergebnis. Implementierungsdetails, Dateinamen und Agenten-Anweisungen gehören in die Projektdokumentation; die Website erklärt ihr fachliches Thema.
 
-Trenne fachliche Daten, redaktionelle Verdichtung und Darstellung. Im Rechner sind `model.js` (Rechenlogik) und `data.js` (Startdaten) die fachliche Quelle, `views.js` die Darstellung. Fachliche Änderungen müssen die betroffenen Darstellungen konsistent nachführen; reine Designänderungen lassen die zugrunde liegenden Zahlen unverändert.
+Trenne fachliche Daten, redaktionelle Verdichtung und Darstellung. Im Rechner sind `assets/js/core/` (Kriterien und Rechenlogik) und `assets/js/store/seed.js` (Startdaten) die fachliche Quelle, `assets/js/views/` und `assets/js/ui/` die Darstellung. Fachliche Änderungen müssen die betroffenen Darstellungen konsistent nachführen; reine Designänderungen lassen die zugrunde liegenden Zahlen unverändert.
 
 Zeitliche Überschneidungen und Abhängigkeiten erhalten: Eine erzählerische Reihenfolge macht parallel geplante Arbeit nicht nachträglich sequenziell. Plantermine und animierte Fortschrittsanzeigen dürfen keinen tatsächlich erreichten Projektstatus oder eine Live-Datenquelle suggerieren.
 

@@ -1,0 +1,224 @@
+/*
+ * Ideen-Check: Startbereich, Fortschritt, Fragen mit Antwortknöpfen und Ergebnisseite.
+ * Teil der Website-Gestaltung nach DESIGN.md; Ladereihenfolge siehe index.html.
+ */
+/* Einstieg und Ideen-Check */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 56px;
+  align-items: center;
+  padding-block: 32px 8px;
+}
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+}
+.hero .eyebrow {
+  margin-bottom: 22px;
+}
+.hero h2.claim {
+  font-size: clamp(3rem, 7.5vw, 5.6rem);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.055em;
+}
+.hero h2.claim span {
+  display: block;
+  color: var(--copper);
+}
+.hero h2.claim em {
+  font-style: normal;
+  color: var(--ice);
+}
+.hero .lead {
+  font-size: clamp(1.1rem, 1.65vw, 1.3rem);
+  color: var(--muted);
+  max-width: 40ch;
+  margin-top: 24px;
+}
+.howto {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+.howto div {
+  display: grid;
+  gap: 4px;
+}
+.howto b {
+  font-size: 2.6rem;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+.howto span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.startcard {
+  display: grid;
+  gap: 18px;
+}
+.startcard h3 {
+  font-size: 1.5rem;
+}
+.startcard .btn.primary {
+  padding: 15px 22px;
+  font-size: 1rem;
+  justify-content: space-between;
+}
+.wiz {
+  max-width: 860px;
+  width: 100%;
+  margin: 0 auto;
+  display: grid;
+  gap: 26px;
+}
+.prog {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+}
+.prog button {
+  height: 6px;
+  border: 0;
+  border-radius: 3px;
+  background: #ffffff14;
+  cursor: pointer;
+  padding: 0;
+}
+.prog button.g.done {
+  background: var(--gain);
+}
+.prog button.c.done {
+  background: var(--cost);
+}
+.prog button.here {
+  outline: 1px solid var(--ink);
+  outline-offset: 3px;
+}
+.wiz h2.q {
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  line-height: 1.08;
+}
+.wiz .qdesc {
+  font-size: 1.1rem;
+  color: var(--muted);
+}
+.opts {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+@media (max-width: 700px) {
+  .opts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.opt {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 22px 8px 16px;
+  cursor: pointer;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  text-align: center;
+  min-width: 0;
+}
+.opt .d {
+  font-weight: 400;
+  font-size: 2.6rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.opt .l {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.25;
+}
+.opt:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-2);
+}
+.opt[aria-pressed='true'].g {
+  background: var(--gain);
+  border-color: var(--gain);
+  color: var(--accent-ink);
+}
+.opt[aria-pressed='true'].c {
+  background: var(--cost);
+  border-color: var(--cost);
+  color: var(--accent-ink);
+}
+.opt[aria-pressed='true'] .l {
+  color: inherit;
+}
+.wiznav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.wiznav .btn {
+  padding: 13px 22px;
+}
+.kbd {
+  font-family: var(--f-mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.res-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 40px;
+  align-items: center;
+}
+@media (max-width: 700px) {
+  .res-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.giant {
+  font-weight: 400;
+  font-size: clamp(4.5rem, 12vw, 8rem);
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+}
+.giant.ok {
+  color: var(--gain);
+}
+.giant.mid {
+  color: var(--warn);
+}
+.giant.bad {
+  color: var(--bad);
+}
+.verdict-line {
+  font-size: 1.15rem;
+  color: var(--muted);
+}
+.verdict-line b {
+  color: var(--ink);
+}
+.sw {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 24px;
+}
+.sw ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+}

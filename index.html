@@ -7,7 +7,17 @@
 <meta name="description" content="Innovationsrendite-Rechner nach Prof. Dr. Gerhard Hube: eigene Ideen bewerten, vergleichen und im Aufwand/Nutzen-Portfolio einordnen.">
 <title>Innovationsrendite-Rechner</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="assets/css/base.css?v=925bdd8df2a9">
+<!-- Stile in fester Reihenfolge (Kaskade): Variablen → Grundgerüst → Bereiche → Bewegung → Druck -->
+<link rel="stylesheet" href="assets/css/tokens.css?v=bbaa1d8be1e4">
+<link rel="stylesheet" href="assets/css/base.css?v=2350c9e4b5e3">
+<link rel="stylesheet" href="assets/css/wizard.css?v=3c3508fbe126">
+<link rel="stylesheet" href="assets/css/components.css?v=437be42f86c9">
+<link rel="stylesheet" href="assets/css/calculator.css?v=8e1b48ec8f30">
+<link rel="stylesheet" href="assets/css/charts.css?v=1baf1d0b0aa4">
+<link rel="stylesheet" href="assets/css/features.css?v=be8a1fc27ee4">
+<link rel="stylesheet" href="assets/css/method.css?v=27cddccd99cc">
+<link rel="stylesheet" href="assets/css/motion.css?v=5330ad040573">
+<link rel="stylesheet" href="assets/css/print.css?v=21ad5105ef5a">
 </head>
 <body>
 
@@ -29,13 +39,33 @@
 </div>
 <div class="toast" id="toast" hidden></div>
 
-<script src="assets/js/model.js?v=067ec09560b0"></script>
-<script src="assets/js/data.js?v=adc606a3478f"></script>
-<script src="assets/js/state.js?v=0c927fbac417"></script>
-<script src="assets/js/helpers.js?v=4885eca90f2c"></script>
-<script src="assets/js/views.js?v=72b4992d251c"></script>
-<script src="assets/js/ai.js?v=4a091d447506"></script>
-<script src="assets/js/report.js?v=16648d838ce0"></script>
-<script src="assets/js/app.js?v=5b21b3095176"></script>
+<!-- Klassische Skripte ohne Build-Schritt (funktionieren auch per file://). Die Reihenfolge ist Teil der Logik:
+     jede Datei nutzt nur, was davor geladen wurde; Details in AGENTS.md („Code-Architektur“). -->
+<!-- Grundlagen: Kriterien, Rechenlogik, Formatierung -->
+<script src="assets/js/core/criteria.js?v=48762d5917b5"></script>
+<script src="assets/js/core/model.js?v=bd2de670301c"></script>
+<script src="assets/js/core/format.js?v=3a37c6fb6ac2"></script>
+<!-- Daten: Startwerte und gespeicherter Zustand -->
+<script src="assets/js/store/seed.js?v=c0e40e62c751"></script>
+<script src="assets/js/store/state.js?v=edb5e55cebe4"></script>
+<!-- Bausteine der Oberfläche: Komponenten, Diagramme, Rechenweg -->
+<script src="assets/js/ui/components.js?v=ef932084969d"></script>
+<script src="assets/js/ui/charts.js?v=d045a6dcc76b"></script>
+<script src="assets/js/ui/formulas.js?v=df64629cd979"></script>
+<!-- Ansichten (erzeugen nur Markup) -->
+<script src="assets/js/views/panels.js?v=1fc0a50af3db"></script>
+<script src="assets/js/views/wizard.js?v=6b50b12921ac"></script>
+<script src="assets/js/views/compare.js?v=8c20859a5c0b"></script>
+<script src="assets/js/views/assess.js?v=580b147479a9"></script>
+<script src="assets/js/views/fy.js?v=b04d42de754e"></script>
+<script src="assets/js/views/method.js?v=2464f157a65d"></script>
+<!-- Zusatzfunktionen: KI-Bewertung und PDF-Bericht -->
+<script src="assets/js/features/ai.js?v=882ebf4b1ca0"></script>
+<script src="assets/js/features/report.js?v=ee12e3789ad6"></script>
+<!-- Anwendung: Navigation, Aktionen, Ereignisse, Start (main.js zuletzt) -->
+<script src="assets/js/app/navigation.js?v=517749a1b161"></script>
+<script src="assets/js/app/actions.js?v=aedb95deb76e"></script>
+<script src="assets/js/app/events.js?v=ec7318c84883"></script>
+<script src="assets/js/app/main.js?v=75102196d2d2"></script>
 </body>
 </html>

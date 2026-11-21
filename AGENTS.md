@@ -6,7 +6,7 @@ Diese Anweisungen gelten für das gesamte Repository `InnovationCalculator`, una
 
 **Lies vor Änderungen an sichtbarer Oberfläche, Navigation, Bildern oder Animationen die [Designrichtlinie](DESIGN.md) und die betroffenen Bestandsdateien.** `DESIGN.md` ist die zentrale gestalterische Referenz. Bei einer reinen Textkorrektur genügt der betroffene Abschnitt; reine Dokumentationsarbeit benötigt keinen vollständigen UI-Test.
 
-- Gestalterische Referenz ist der Pitch der Gruppe (Repository `InnovationManagement`, `pitch/`): dunkler Hintergrund, System-Schrift, sparsame Kupfer- und Eis-Akzente, feine Linien. `assets/css/base.css` setzt diese Sprache um.
+- Gestalterische Referenz ist der Pitch der Gruppe (Repository `InnovationManagement`, `pitch/`): dunkler Hintergrund, System-Schrift, sparsame Kupfer- und Eis-Akzente, feine Linien. `assets/css/` setzt diese Sprache um (Variablen in `tokens.css`).
 - Die Website enthält nur den Rechner („Eigene Idee prüfen“) und „Methode & Quellen“. Inhalte zum SpaceX-Case oder zum RocketLight Dinner gehören nicht hierher.
 - Rechner und Datentabellen müssen unmittelbar bedienbar bleiben. Verwende vorhandene Farben, Abstände, Komponenten und Interaktionsmuster.
 - Bewahre vollständige Inhalte, Quellen, Annahmen und funktionsfähige Detailzugänge.
@@ -14,18 +14,25 @@ Diese Anweisungen gelten für das gesamte Repository `InnovationCalculator`, una
 
 ## Orientierung im Repository
 
-| Datei | Verantwortung |
+| Datei / Ordner | Verantwortung |
 | --- | --- |
 | `index.html` | Einstieg: Kopfzeile mit den Reitern „Eigene Idee prüfen“ und „Methode & Quellen“, Werkzeugbereich `#werkzeug` und die Reihenfolge der eingebundenen Dateien mit `?v=`-Versionen |
-| `assets/css/base.css` | Gesamte Gestaltung (dunkle Pitch-Palette, Typografie, Rechner, Diagramme) |
-| `assets/js/model.js`, `data.js`, `state.js` | Rechenlogik nach Hube, Startdaten (`userSeed()`) sowie gespeicherter Zustand |
-| `assets/js/helpers.js`, `views.js`, `app.js` | Hilfen und SVG-Diagramme, Ansichten des Rechners und der Methode, Rendering, Ereignisse und Hash-Navigation |
-| `assets/js/ai.js` | KI-Bewertung („Zweite Meinung“): Anfrage an den Worker (`AI_ENDPOINT`), Speicherung als eigene Bewertung mit `aiOf`, Vergleichsansicht |
-| `assets/js/report.js` | PDF-Bericht: Druckansicht in `#report`, Druckregeln unter `@media print` in `base.css` |
+| `assets/css/` | Gestaltung in Kaskadenreihenfolge: `tokens` (Variablen) → `base` → `wizard` → `components` → `calculator` → `charts` → `features` → `method` → `motion` → `print` (PDF-Bericht unter `@media print`) |
+| `assets/js/core/` | Fachlogik ohne Oberfläche: `criteria.js` (Kriterien, Gewichte, Portfolio-Felder), `model.js` (Rechenlogik nach Hube), `format.js` (Formatierung, `esc`) |
+| `assets/js/store/` | `seed.js` (Startdaten `userSeed()`), `state.js` (gespeicherter Zustand `innorendite.v4`, Migration, `ui`-Zustand) |
+| `assets/js/ui/` | Wiederverwendbare Bausteine: `components.js`, `charts.js` (SVG-Diagramme), `formulas.js` (Rechenweg) |
+| `assets/js/views/` | Ansichten, die nur Markup erzeugen: `panels`, `wizard`, `compare`, `assess`, `fy`, `method` |
+| `assets/js/features/` | `ai.js` (KI-Bewertung über `AI_ENDPOINT`, Speicherung mit `aiOf`, Vergleich) und `report.js` (PDF-Bericht in `#report`) |
+| `assets/js/app/` | `navigation.js` (Schritte, `render()`), `actions.js` (Knopf-Aktionen `ACTIONS[data-act]`), `events.js` (Ereignis-Delegation), `main.js` (Start, Direktlinks; zuletzt geladen) |
 | `worker/` | Cloudflare Worker mit dem gemeinsamen Gemini-Schlüssel (Secret) und Einrichtungsanleitung |
 | `teil6/index.html` | Nur noch Weiterleitung früherer Links auf den Rechner |
 
-Die Skripte sind klassische Skripte ohne Module (funktionieren auch per `file://`); ihre Reihenfolge in `index.html` ist Teil der Logik.
+## Code-Architektur
+
+- Die Skripte sind klassische Skripte ohne Module (funktionieren auch per `file://`); ihre Reihenfolge in `index.html` ist Teil der Logik. Abhängigkeiten laufen nur in eine Richtung: `core` → `store` → `ui` → `views` → `features` → `app`. Eine Datei darf beim Laden nur verwenden, was davor geladen wurde; Aufrufe innerhalb von Funktionen werden erst zur Laufzeit aufgelöst.
+- Jede JS-Datei beginnt mit einem Kopfkommentar (Aufgabe, Benötigt, Stellt bereit); Funktionen haben einen kurzen JSDoc-Kommentar. Neue Dateien folgen diesem Muster und werden in `index.html`, `README.md` und dieser Tabelle ergänzt.
+- Ansichten erzeugen Markup mit `data-`Attributen; Reaktionen stehen in `app/events.js`. Neue Knöpfe mit `data-act="name"` bekommen einen Eintrag in `ACTIONS` (`app/actions.js`).
+- Rechenlogik gehört nach `core/model.js`, nicht in Ansichten. Formeln, die angezeigt werden, kommen aus `ui/formulas.js`, damit Website und PDF dieselbe Herleitung zeigen.
 
 ## Bestehende Verträge erhalten
 

@@ -1,0 +1,50 @@
+/*
+ * Diagramme (SVG) und Legende.
+ * Teil der Website-Gestaltung nach DESIGN.md; Ladereihenfolge siehe index.html.
+ */
+/* Diagramme */
+svg {
+  display: block;
+}
+svg text {
+  fill: var(--muted);
+  font-family: var(--f-mono);
+  font-size: 13px;
+}
+svg .lab {
+  fill: var(--ink);
+  font-family: var(--f-body);
+  font-size: 15px;
+  font-weight: 500;
+}
+.chartbox {
+  max-width: 820px;
+  margin: 0 auto;
+  width: 100%;
+}
+.legend {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  justify-content: center;
+}
+.legend span {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.toast {
+  position: fixed;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  right: max(20px, env(safe-area-inset-right, 0px));
+  background: var(--ink);
+  color: var(--accent-ink);
+  padding: 13px 18px;
+  border-radius: 6px;
+  z-index: 20;
+  font-size: 0.9rem;
+}
