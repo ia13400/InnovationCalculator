@@ -27,9 +27,10 @@ function rpFY(a){
   return `<section class="rp-block rp-break"><div class="eyebrow">5-Jahres-Kalkulation</div><h2>Gewinn und Entwicklungskosten über fünf Jahre</h2>
    <div class="rp-tiles">
     <div><span class="eyebrow">Umsatz 5 Jahre</span><b>${fMio(c.R)} ${cu}</b></div>
-    <div><span class="eyebrow">Gewinn 5 Jahre</span><b class="g">${fMio(c.P)} ${cu}</b><small>Gewinnanteil ${fPct(c.pShare)} → Bewertung ${c.pRating}</small></div>
-    <div><span class="eyebrow">F&amp;E-Kosten 5 Jahre</span><b class="c">${fMio(c.C)} ${cu}</b><small>Kostenanteil ${fPct(c.cShare)} → Bewertung ${c.cRating}</small></div>
+    <div><span class="eyebrow">Gewinn 5 Jahre</span><b class="g">${fMio(c.P)} ${cu}</b><small>Gewinnanteil ${fPct(c.pShare)} → Bewertung ${c.pRating??'–'}</small></div>
+    <div><span class="eyebrow">F&amp;E-Kosten 5 Jahre</span><b class="c">${fMio(c.C)} ${cu}</b><small>Kostenanteil ${fPct(c.cShare)} → Bewertung ${c.cRating??'–'}</small></div>
    </div>
+   <div class="rp-keep" style="margin-bottom:5mm">${fyRechenweg(a)}</div>
    <table class="rp-table rp-fy"><thead><tr><th>Jahr</th>${yrs.map(i=>`<th class="r">${i+1}</th>`).join('')}<th class="r">Summe</th></tr></thead><tbody>
     <tr><td>${esc(fy.unit)}</td>${yrs.map(i=>`<td class="r num">${m(fy.qty[i])}</td>`).join('')}<td class="r num">${m(c.qtySum)}</td></tr>
     <tr><td>${esc(fy.priceUnit)} (${cu})</td>${yrs.map(i=>`<td class="r num">${m(fy.price[i])}</td>`).join('')}<td></td></tr>
@@ -67,6 +68,7 @@ function rpIdea(a,first){
    <section class="rp-block rp-keep"><div class="eyebrow">Ergebnis</div><h2>Aufwand/Nutzen-Portfolio</h2>${portfolio(items)}</section>
    <section class="rp-block rp-keep rp-break"><div class="eyebrow">Einzelbewertungen</div><h2>Netzgrafik</h2><div class="rp-chart">${radar(items)}</div>${legend(items)}</section>
    <section class="rp-block"><div class="eyebrow">Eingaben</div><h2>Bewertung im Detail${k?' · Du vs. KI':''}</h2>${rpScoreTable(a,k)}</section>
+   <section class="rp-block"><div class="eyebrow">Rechenweg</div><h2>So wurde gerechnet</h2>${rechenweg(a)}</section>
    ${rpFY(a)}
   </article>`;
 }
@@ -80,19 +82,19 @@ function rpBasis(){
      <tr><td>Gewinn letztes Jahr</td><td class="r num">${fInt(b.profit)} Mio ${esc(b.currency)}</td></tr><tr><td>F&amp;E-Kosten letztes Jahr</td><td class="r num">${fInt(b.rnd)} Mio ${esc(b.currency)}</td></tr>
      <tr><td>Verwendung · Zeithorizont</td><td class="r">${esc(state.mode)} · ${esc(state.horizon)}</td></tr></tbody></table>
      ${b.note?`<p class="rp-note">${esc(b.note)}</p>`:''}
-     <h3>Methode</h3><ul class="rp-list"><li>Je sechs Kriterien für Nutzen/Chancen und Aufwand/Risiko, Skala 0 bis 5.</li><li>Gewichtete Bewertung = Punkte × Gewicht ÷ 100; IN und IA sind die Summen.</li><li><b>Innovationsrendite IR = IN ÷ IA</b>, Bilanz = IN − IA.</li><li>Kategorien: unter 2 niedrig, 2 bis unter 3 mittel, ab 3 hoch.</li></ul></div>
+     <h3>Methode</h3><ul class="rp-list"><li>Je sechs Kriterien für Nutzen/Chancen und Aufwand/Risiko, Skala 0 bis 5.</li><li>Gewichtete Bewertung = Punkte × Gewicht ÷ 100</li><li>IN = Σ (Punkte × Gewicht) ÷ 100 der Nutzen-Kriterien, IA entsprechend</li><li><b>Innovationsrendite IR = IN ÷ IA</b> (über 1 „profitabel“)</li><li>Bilanz = IN − IA · Mittelwerte = IN ÷ 6 bzw. IA ÷ 6</li><li>Kategorien: unter 2 niedrig, 2 bis unter 3 mittel, ab 3 hoch</li><li>Gewinnanteil = Gewinn 5 Jahre ÷ Unternehmensgewinn; Kostenanteil = F&amp;E-Kosten 5 Jahre ÷ F&amp;E-Budget</li></ul></div>
     <div><h3>Gewichtung ${isHube?'(Standard nach Hube)':'(angepasst)'}</h3><table class="rp-table"><tbody><tr class="rp-grp"><td colspan="2">Nutzen/Chancen</td></tr>${wl(N_CRIT,'n')}<tr class="rp-grp"><td colspan="2">Aufwand/Risiko</td></tr>${wl(A_CRIT,'a')}</tbody></table></div>
    </div>
    <p class="rp-foot">Methode und Originalwerkzeug: Prof. Dr. Gerhard Hube, THWS Business School. Hube, G. (2024): Innovationsrendite-Formel und Innovationsrendite-Kalkulator. In: Wissenschaftsmanagement, 20.03.2024. Studentischer Nachbau für die Vorlesung Innovationsmanagement. KI-Bewertungen sind eine zweite Meinung eines Sprachmodells und ersetzen keine eigene Einschätzung.</p>
   </section>`;
 }
 function rpOverview(list){
-  const R=list.map(a=>({a,r:calc(a)})).sort((p,q)=>(q.r.IR===Infinity?1e9:q.r.IR)-(p.r.IR===Infinity?1e9:p.r.IR));
+  const R=list.map(a=>({a,r:calc(a)})).sort(irSort);
   const all=R.map(o=>o.a);
   return `<article class="rp-idea">${rpHead('Alle Ideen im Vergleich')}
    <section class="rp-block"><div class="eyebrow">Übersicht</div><h1>Alle Ideen im Vergleich</h1><p class="muted">${list.length} Bewertungen · ${esc(state.workbook||'')}</p></section>
    <section class="rp-block"><h2>Ranking nach Innovationsrendite</h2><table class="rp-table"><thead><tr><th>#</th><th>Idee</th><th class="r">Nutzen</th><th class="r">Aufwand</th><th class="r">Rendite</th><th>Portfolio</th></tr></thead><tbody>
-    ${R.map((o,i)=>`<tr><td class="num">${i+1}</td><td><i class="dot" style="background:${colorOf(o.a)}"></i> ${esc(label(o.a))}</td><td class="r num">${f2(o.r.IN)}</td><td class="r num">${f2(o.r.IA)}</td><td class="r">${irChip(o.r)}</td><td>${pfChip(o.r)}</td></tr>`).join('')}</tbody></table></section>
+    ${R.map((o,i)=>`<tr><td class="num">${i+1}</td><td><i class="dot" style="background:${colorOf(o.a)}"></i> ${esc(label(o.a))}</td><td class="r num">${f2(o.r.IN)}</td><td class="r num">${f2(o.r.IA)}</td><td class="r">${irChip(o.r)}</td><td>${pfChip(o.r)}${o.r.open?` <span class="chip neutral">unvollständig (${12-o.r.open}/12)</span>`:''}</td></tr>`).join('')}</tbody></table></section>
    <section class="rp-block rp-keep"><h2>Rendite</h2>${barChart(all,{key:'IR',ref:1,title:'Rendite je Bewertung'})}</section>
    <section class="rp-block rp-keep rp-break">${rpHead('Alle Ideen im Vergleich')}<h2>Aufwand/Nutzen-Portfolio</h2>${portfolio(all)}</section>
    <section class="rp-block rp-keep"><h2>Bilanz</h2>${barChart(all,{key:'bil',title:'Bilanz je Bewertung'})}</section>

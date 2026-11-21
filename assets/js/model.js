@@ -36,18 +36,24 @@ function calcFY(fy,base){
   const P=sum(profit),C=sum(rnd);
   const pShare=base.profit>0?P/(base.profit*1e6):0, cShare=base.rnd>0?C/(base.rnd*1e6):0;
   return {margin,revenue,profit,staffCost,rnd,R:sum(revenue),P,C,pShare,cShare,
-    pRating:profitRating(P,pShare),cRating:costRating(C,cShare),qtySum:sum(fy.qty.map(Number))};
+    pRating:base.profit>0?profitRating(P,pShare):null,cRating:base.rnd>0?costRating(C,cShare):null,qtySum:sum(fy.qty.map(Number))};
 }
 function effScores(a){
   const n=a.n.slice(),x=a.a.slice();
   let fy=null;
-  if(a.fy){fy=calcFY(a.fy,state.base);if(a.link){n[0]=fy.pRating;x[0]=fy.cRating}}
+  if(a.fy){fy=calcFY(a.fy,state.base);if(a.link){if(fy.pRating!==null)n[0]=fy.pRating;if(fy.cRating!==null)x[0]=fy.cRating}}
   return {n,x,fy};
 }
 function calc(a){
   const {n,x,fy}=effScores(a);
-  const wn=n.map((s,i)=>(+s||0)*state.w.n[i]/100), wa=x.map((s,i)=>(+s||0)*state.w.a[i]/100);
-  const IN=sum(wn), IA=sum(wa);
-  return {n,x,fy,wn,wa,IN,IA,IR:IA>0?IN/IA:Infinity,bil:IN-IA,
-    mN:IN/6,mA:IA/6,cN:cat(IN),cA:cat(IA),pf:PF_LABELS[cat(IA)][cat(IN)]};
+  /* Gewichtete Bewertung = Punkte × Gewicht ÷ 100 (wie im Excel-Werkzeug). Summiert wird über Punkte × Gewicht
+     und erst danach durch 100 geteilt und auf 9 Nachkommastellen gerundet: So ergibt z. B. 2,00 exakt 2 und nicht
+     1,9999999999999998, und die Kategoriegrenzen 2 und 3 werden nicht durch Rundungsfehler verfehlt. */
+  const r9=v=>Math.round(v*1e9)/1e9;
+  const pn=n.map((s,i)=>(+s||0)*(+state.w.n[i]||0)), pa=x.map((s,i)=>(+s||0)*(+state.w.a[i]||0));
+  const wn=pn.map(v=>r9(v/100)), wa=pa.map(v=>r9(v/100));
+  const IN=r9(sum(pn)/100), IA=r9(sum(pa)/100);
+  const open=[...n,...x].filter(v=>v===null||v===undefined||v==='').length;
+  return {n,x,fy,wn,wa,IN,IA,IR:IA>0?IN/IA:Infinity,bil:r9(IN-IA),open,
+    mN:r9(IN/6),mA:r9(IA/6),cN:cat(IN),cA:cat(IA),pf:PF_LABELS[cat(IA)][cat(IN)]};
 }

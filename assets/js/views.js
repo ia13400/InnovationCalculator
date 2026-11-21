@@ -1,5 +1,7 @@
 /* ============================== Views ============================== */
-function ranked(){return state.list.map(a=>({a,r:calc(a)})).sort((p,q)=>(q.r.IR===Infinity?1e9:q.r.IR)-(p.r.IR===Infinity?1e9:p.r.IR))}
+/* Ranking nach IR; unvollständige Ideen (offene Kriterien zählen als 0) stehen am Ende, damit sie nicht mit IR ∞ vorne landen. */
+const irSort=(p,q)=>(!!p.r.open-!!q.r.open)||((q.r.IR===Infinity?1e9:q.r.IR)-(p.r.IR===Infinity?1e9:p.r.IR));
+function ranked(){return state.list.map(a=>({a,r:calc(a)})).sort(irSort)}
 const emptyMsg=()=>`<section class="panel"><p style="font-size:1.15rem">Noch keine Idee geprüft. Starte mit dem Ideen-Check.</p><div class="row" style="margin-top:16px"><button class="btn primary" data-tabgo="wizard">Zum Ideen-Check</button></div></section>`;
 function wNotice(){const ok=sum(state.w.n)===100&&sum(state.w.a)===100;return ok?'':`<div class="notice">Die Gewichte ergeben nicht je 100 % (Nutzen ${sum(state.w.n)} %, Aufwand ${sum(state.w.a)} %). Unter „Feintuning“ korrigieren.</div>`}
 function vRanking(){
@@ -17,7 +19,7 @@ function vRanking(){
   <section class="panel"><header><h2>Ranking nach Innovationsrendite</h2><span class="row"><span class="muted">Zeile anklicken für Details</span><button class="btn small" data-act="pdfall">Alle Ideen als PDF</button></span></header>
    <div class="tablewrap"><table><thead><tr><th>#</th><th>Idee</th><th class="r">Nutzen</th><th class="r">Aufwand</th><th class="r">Rendite</th><th>Portfolio</th></tr></thead><tbody>
    ${R.map((o,i)=>`<tr class="clickable" data-open="${o.a.id}"><td class="num" style="font-size:1.3rem">${i+1}</td><td><span class="row" style="flex-wrap:nowrap"><i class="dot" style="background:${colorOf(o.a)}"></i><span><b style="font-size:1.1rem">${esc(o.a.project)}</b>${o.a.assessor?`<br><span class="muted">${esc(o.a.assessor)}</span>`:''}</span></span></td>
-   <td class="r num">${f2(o.r.IN)}</td><td class="r num">${f2(o.r.IA)}</td><td class="r">${irChip(o.r)}</td><td>${pfChip(o.r)}</td></tr>`).join('')}
+   <td class="r num">${f2(o.r.IN)}</td><td class="r num">${f2(o.r.IA)}</td><td class="r">${irChip(o.r)}</td><td>${pfChip(o.r)}${o.r.open?` <span class="chip neutral" title="Offene Kriterien werden mit 0 gerechnet">unvollständig (${12-o.r.open}/12)</span>`:''}</td></tr>`).join('')}
    </tbody></table></div></section>
   ${sharePanel()}`;
 }
@@ -46,8 +48,43 @@ function critBlock(list,arr,scoresEff,kind,a){
      <div class="why"><textarea class="in" rows="1" placeholder="${locked?'Ergänzende Begründung (optional)':'Begründung'}" data-why="${c.k}" aria-label="Begründung ${esc(c.t)}">${esc(a.why[c.k]||'')}</textarea></div></div>`}).join('');
 }
 function quantWhy(a,kind){const c=calcFY(a.fy,state.base),cu=esc(state.base.currency);
+  if(kind==='gain'&&c.pRating===null)return `Gewinnanteil nicht berechenbar: Der Unternehmensgewinn muss größer als 0 sein. Es gilt die manuell vergebene Punktzahl.`;
+  if(kind!=='gain'&&c.cRating===null)return `Kostenanteil nicht berechenbar: Das F&E-Budget des Unternehmens muss größer als 0 sein. Es gilt die manuell vergebene Punktzahl.`;
   return kind==='gain'?`Quantitativ: 5-Jahres-Gewinn ${fMio(c.P)} ${cu} = ${fPct(c.pShare)} des Unternehmensgewinns (${fInt(state.base.profit)} Mio ${cu}) → Bewertung ${c.pRating}.`
   :`Quantitativ: kumulierte F&E-Kosten ${fMio(c.C)} ${cu} = ${fPct(c.cShare)} des F&E-Budgets (${fInt(state.base.rnd)} Mio ${cu}) → Bewertung ${c.cRating}.`}
+/* Rechenweg mit den tatsächlichen Zahlen (Website und PDF). Formeln wie im Excel-Werkzeug von Prof. Hube. */
+const fN=v=>(+v||0).toLocaleString('de-DE',{maximumFractionDigits:2});
+function rechenweg(a){
+  const r=calc(a),w=state.w,cu=esc(state.base.currency);
+  const terms=(sc,ws)=>sc.map((v,i)=>`${v===null||v===undefined?0:v}×${fN(ws[i])}`).join(' + ');
+  const sN=sum(w.n),sA=sum(w.a);
+  const row=(l,f,note='')=>`<div class="fx-row"><span class="fx-l">${l}</span><span class="fx-f">${f}</span>${note?`<span class="fx-n">${note}</span>`:''}</div>`;
+  let h='';
+  h+=row('Gewichtete Bewertung','Punkte × Gewicht ÷ 100','je Kriterium, Skala 0–5, Gewichte je Block 100 %');
+  h+=row('Nutzen IN',`Σ (Punkte × Gewicht) ÷ 100 = (${terms(r.n,w.n)}) ÷ 100 = <b>${f2(r.IN)}</b>`);
+  h+=row('Aufwand IA',`Σ (Punkte × Gewicht) ÷ 100 = (${terms(r.x,w.a)}) ÷ 100 = <b>${f2(r.IA)}</b>`);
+  h+=row('Innovationsrendite IR',r.IA>0?`IN ÷ IA = ${f2(r.IN)} ÷ ${f2(r.IA)} = <b>${f2(r.IR)}</b>`:`IN ÷ IA mit IA = 0 → <b>∞</b>`,r.IR>=1?'über 1: „profitabel“':'unter 1: nicht „profitabel“');
+  h+=row('Bilanz',`IN − IA = ${f2(r.IN)} − ${f2(r.IA)} = <b>${r.bil>=0?'+':''}${f2(r.bil)}</b>`);
+  h+=row('Mittelwerte',`IN ÷ 6 = ${f2(r.mN)} · IA ÷ 6 = ${f2(r.mA)}`,'Durchschnitt der gewichteten Bewertungen');
+  h+=row('Portfolio-Feld',`Nutzen ${f2(r.IN)} → ${catName(r.cN)} · Aufwand ${f2(r.IA)} → ${catName(r.cA)} → <b>${esc(r.pf[0])}</b>`,'Kategorien: unter 2 niedrig · 2 bis unter 3 mittel · ab 3 hoch');
+  if(a.fy&&a.link){const c=calcFY(a.fy,state.base);
+    h+=row('Wirtschaftlicher Nutzen',c.pRating===null?'nicht berechenbar (Unternehmensgewinn ≤ 0), manuelle Punktzahl':`Gewinn 5 Jahre ÷ Unternehmensgewinn = ${fInt(c.P)} ÷ ${fInt(state.base.profit*1e6)} ${cu} = ${fPct(c.pShare)} → <b>${c.pRating}</b>`,'Skala: 0 kein Gewinn · 1 ≤ 3 % · 2 ≤ 5 % · 3 ≤ 20 % · 4 ≤ 30 % · 5 > 30 %');
+    h+=row('Investitionsaufwand F&amp;E',c.cRating===null?'nicht berechenbar (F&amp;E-Budget ≤ 0), manuelle Punktzahl':`F&amp;E-Kosten 5 Jahre ÷ F&amp;E-Budget = ${fInt(c.C)} ÷ ${fInt(state.base.rnd*1e6)} ${cu} = ${fPct(c.cShare)} → <b>${c.cRating}</b>`,'Skala: 0 keine Kosten · 1 ≤ 10 % · 2 ≤ 20 % · 3 ≤ 50 % · 4 ≤ 100 % · 5 > 100 %');}
+  const warn=[sN!==100||sA!==100?`Die Gewichte ergeben nicht je 100 % (Nutzen ${fN(sN)} %, Aufwand ${fN(sA)} %).`:'',r.open?`${r.open} von 12 Kriterien sind noch offen und werden mit 0 gerechnet.`:''].filter(Boolean);
+  return `<div class="fx">${h}</div>${warn.map(t=>`<div class="notice" style="margin-top:12px">${esc(t)}</div>`).join('')}`;
+}
+function fyRechenweg(a){
+  const c=calcFY(a.fy,state.base),b=state.base,cu=esc(b.currency);
+  const row=(l,f,note='')=>`<div class="fx-row"><span class="fx-l">${l}</span><span class="fx-f">${f}</span>${note?`<span class="fx-n">${note}</span>`:''}</div>`;
+  return `<div class="fx">
+   ${row('Umsatzrendite',`Gewinn ÷ Umsatz des Unternehmens = ${fN(b.profit)} ÷ ${fN(b.revenue)} Mio ${cu} = <b>${fPct(c.margin)}</b>`)}
+   ${row('Umsatz',`Menge × Preis je Jahr; Summe 5 Jahre = <b>${fInt(c.R)} ${cu}</b>`)}
+   ${row('Gewinn',`Umsatz × Umsatzrendite je Jahr; Summe 5 Jahre = ${fInt(c.R)} × ${fPct(c.margin)} = <b>${fInt(c.P)} ${cu}</b>`)}
+   ${row('Gewinnanteil',c.pRating===null?'nicht berechenbar: Unternehmensgewinn muss größer als 0 sein':`Gewinn 5 Jahre ÷ Unternehmensgewinn = ${fInt(c.P)} ÷ ${fInt(b.profit*1e6)} ${cu} = ${fPct(c.pShare)} → <b>Bewertung ${c.pRating}</b>`,'Skala: 0 kein Gewinn · 1 ≤ 3 % · 2 ≤ 5 % · 3 ≤ 20 % · 4 ≤ 30 % · 5 > 30 %')}
+   ${row('F&amp;E-Kosten',`Σ (FTE × Jahreskosten je FTE) + Sachkosten je Jahr; Summe 5 Jahre = <b>${fInt(c.C)} ${cu}</b>`)}
+   ${row('Kostenanteil',c.cRating===null?'nicht berechenbar: F&amp;E-Budget muss größer als 0 sein':`F&amp;E-Kosten 5 Jahre ÷ F&amp;E-Budget = ${fInt(c.C)} ÷ ${fInt(b.rnd*1e6)} ${cu} = ${fPct(c.cShare)} → <b>Bewertung ${c.cRating}</b>`,'Skala: 0 keine Kosten · 1 ≤ 10 % · 2 ≤ 20 % · 3 ≤ 50 % · 4 ≤ 100 % · 5 > 100 %')}
+  </div>`;
+}
 function resultCard(a){
   const r=calc(a);const maxv=5;
   const vcls={g:'ok',y:'mid',r:'bad'}[r.pf[1]];
@@ -142,6 +179,7 @@ function vWizResult(a){
      <div><span class="eyebrow">Größte Nutzentreiber</span><ul>${contrib('n').map(o=>`<li>${esc(o.t)} <span class="num muted">(${o.s} → ${f2(o.v)})</span></li>`).join('')}</ul></div>
      <div><span class="eyebrow">Größte Aufwandstreiber</span><ul>${contrib('a').map(o=>`<li>${esc(o.t)} <span class="num muted">(${o.s} → ${f2(o.v)})</span></li>`).join('')}</ul></div>
     </div></section>
+   <section class="panel"><header><h2>So wurde gerechnet</h2><span class="muted">Formeln nach Prof. Hube mit deinen Zahlen</span></header>${rechenweg(a)}</section>
    ${vAI(a)}
    <section class="panel"><header><h2>Aufwand/Nutzen-Portfolio</h2></header>${portfolio(aiOf(a)?[a,aiOf(a)]:[a])}</section>
    <section class="panel"><header><h2>Netzgrafik</h2><span class="muted">Einzelbewertungen 0–5</span></header><div class="chartbox">${radar(aiOf(a)?[a,aiOf(a)]:[a])}</div>${aiOf(a)?legend([a,aiOf(a)]):''}</section>
@@ -174,6 +212,7 @@ function vAssess(){
    </div>
    <div id="resultSlot">${resultCard(a)}</div>
   </div>
+  <section class="panel"><header><h2>So wurde gerechnet</h2><span class="muted">Formeln nach Prof. Hube mit diesen Zahlen</span></header>${rechenweg(a)}</section>
   ${wPanel()}`;
 }
 function vFY(){
@@ -195,7 +234,8 @@ function vFY(){
    <section class="panel"><header><h2>Investitionsaufwand F&amp;E</h2><span class="giant" style="font-size:3.4rem;color:var(--cost)" data-out="cRating"></span></header>
     <p>Kostenanteil <b class="num" data-out="cShare"></b> = F&amp;E-Kosten über 5 Jahre ÷ F&amp;E-Budget ${esc(b.company)} (${fInt(b.rnd)} Mio ${cu})</p><div class="scale" data-out="cScale"></div></section>
   </div>
-  ${a.link?'':'<div class="notice">Die Übernahme in die Bewertung ist ausgeschaltet. Unter „Bewertung bearbeiten“ den Haken setzen.</div>'}
+  <section class="panel"><header><h2>Rechenweg</h2><span class="muted">aktualisiert sich bei jeder Eingabe</span></header><div data-out="fyfx">${fyRechenweg(a)}</div></section>
+  ${a.link?'':'<div class="notice">Die Übernahme in die Bewertung ist ausgeschaltet. Unter „Feintuning“ den Haken setzen.</div>'}
   <section class="panel"><header><h2>Gewinnrechnung</h2><span class="muted">Gewinn = Umsatz × Umsatzrendite</span></header>
    <div class="tablewrap"><table class="fy"><thead><tr><th>Jahr</th>${yrs.map(i=>`<th class="r">${i+1}</th>`).join('')}<th class="r">Summe</th></tr></thead><tbody>
     <tr><td><input class="in wide" data-fyt="unit" value="${esc(fy.unit)}" aria-label="Einheit Menge"></td>${yrs.map(i=>`<td>${numIn('qty.'+i,fy.qty[i],'1')}</td>`).join('')}<td class="calc" data-out="qtySum"></td></tr>
@@ -231,7 +271,7 @@ function fillFY(){
   a.fy.staff.forEach((s,k)=>set('fte.'+k,sum(s.fte).toLocaleString('de-DE')));
   set('R',fInt(c.R));set('Rm',fMio(c.R));set('Pm',fMio(c.P));set('Cm',fMio(c.C));set('P',fInt(c.P));set('STC',fInt(sum(c.staffCost)));set('MAT',fInt(sum(a.fy.material)));set('C',fInt(c.C));
   set('pShare',fPct(c.pShare));set('cShare',fPct(c.cShare));
-  set('pRating',c.pRating);set('cRating',c.cRating);
+  set('pRating',c.pRating??'–');set('cRating',c.cRating??'–');set('fyfx',fyRechenweg(a));
   const pl=['0','≤3 %','≤5 %','≤20 %','≤30 %','>30 %'],cl=['0','≤10 %','≤20 %','≤50 %','≤100 %','>100 %'];
   set('pScale',pl.map((t,i)=>`<span class="${i===c.pRating?'on':''}"><b>${i}</b><br>${t}</span>`).join(''));
   set('cScale',cl.map((t,i)=>`<span class="${i===c.cRating?'on':''}"><b>${i}</b><br>${t}</span>`).join(''));
@@ -277,20 +317,26 @@ function vMethod(){
   return `<section class="panel method" style="display:grid;gap:16px">
   <h2>So rechnet der Kalkulator</h2>
   <p>Der Rechner bildet den Innovations-Rendite-Kalkulator von Prof. Dr. Gerhard Hube nach. Er ist ein Scoring-Modell: Quantitative und qualitative Kriterien werden in dimensionslose Punkte umgewandelt. Die Innovationsrendite ist ein Indikator, keine finanzielle Rendite.</p>
-  <ul>
-   <li><b>Bewertung:</b> Je sechs Kriterien für Nutzen/Chancen und Aufwand/Risiko auf der Skala 0 (nicht vorhanden) bis 5 (sehr hoch).</li>
-   <li><b>Gewichtete Bewertung:</b> Punkte × Gewicht ÷ 100. Die Gewichte je Block ergeben 100 %.</li>
-   <li><b>IN</b> = Summe der gewichteten Nutzen, <b>IA</b> = Summe der gewichteten Aufwände (jeweils 0–5).</li>
-   <li><b>Rendite IR = IN ÷ IA.</b> Über 1 ist die Idee „profitabel“. Ist IA = 0, geht die Rendite gegen unendlich.</li>
-   <li><b>Bilanz = IN − IA.</b></li>
-   <li><b>Kategorien:</b> unter 2 niedrig, 2 bis unter 3 mittel, ab 3 hoch. Daraus ergibt sich das Feld im Aufwand/Nutzen-Portfolio.</li>
-  </ul>
+  <div class="fx">
+   <div class="fx-row"><span class="fx-l">Bewertung</span><span class="fx-f">Punkte 0 (nicht vorhanden) bis 5 (sehr hoch) je Kriterium</span><span class="fx-n">je sechs Kriterien für Nutzen/Chancen und Aufwand/Risiko</span></div>
+   <div class="fx-row"><span class="fx-l">Gewichtete Bewertung</span><span class="fx-f">Punkte × Gewicht ÷ 100</span><span class="fx-n">Gewichte je Block zusammen 100 %</span></div>
+   <div class="fx-row"><span class="fx-l">Nutzen IN</span><span class="fx-f">Σ (Punkte × Gewicht) ÷ 100 der sechs Nutzen-Kriterien</span><span class="fx-n">Wertebereich 0 bis 5</span></div>
+   <div class="fx-row"><span class="fx-l">Aufwand IA</span><span class="fx-f">Σ (Punkte × Gewicht) ÷ 100 der sechs Aufwand-Kriterien</span><span class="fx-n">Wertebereich 0 bis 5</span></div>
+   <div class="fx-row"><span class="fx-l">Innovationsrendite IR</span><span class="fx-f"><b>IR = IN ÷ IA</b></span><span class="fx-n">über 1 „profitabel“; bei IA = 0 geht IR gegen unendlich</span></div>
+   <div class="fx-row"><span class="fx-l">Bilanz</span><span class="fx-f">IN − IA</span></div>
+   <div class="fx-row"><span class="fx-l">Mittelwerte</span><span class="fx-f">IN ÷ 6 und IA ÷ 6</span><span class="fx-n">Durchschnitt der gewichteten Bewertungen</span></div>
+   <div class="fx-row"><span class="fx-l">Kategorien</span><span class="fx-f">unter 2 niedrig · 2 bis unter 3 mittel · ab 3 hoch</span><span class="fx-n">für IN und IA; zusammen ergeben sie das Portfolio-Feld</span></div>
+  </div>
+  <p class="muted">Die Innovationsrendite ist ein Indikator aus dimensionslosen Punkten, keine finanzielle Rendite. Gerechnet wird mit vollen Nachkommastellen; angezeigt werden zwei.</p>
   <h3>5-Jahres-Kalkulation</h3>
-  <ul>
-   <li>Umsatz = Menge × Preis je Jahr. Gewinn = Umsatz × Umsatzrendite des Unternehmens im letzten Jahr.</li>
-   <li>Gewinnanteil = Summe Gewinn über 5 Jahre ÷ Gewinn des Unternehmens im letzten Jahr. Skala: 0 kein Gewinn · 1 ≤ 3 % · 2 ≤ 5 % · 3 ≤ 20 % · 4 ≤ 30 % · 5 &gt; 30 %.</li>
-   <li>F&amp;E-Kosten = FTE × Jahreskosten + Sachkosten. Kostenanteil = kumulierte F&amp;E-Kosten ÷ F&amp;E-Kosten des Unternehmens im letzten Jahr. Skala: 0 keine · 1 ≤ 10 % · 2 ≤ 20 % · 3 ≤ 50 % · 4 ≤ 100 % · 5 &gt; 100 %.</li>
-  </ul>
+  <div class="fx">
+   <div class="fx-row"><span class="fx-l">Umsatzrendite</span><span class="fx-f">Gewinn ÷ Umsatz des Unternehmens im letzten Jahr</span></div>
+   <div class="fx-row"><span class="fx-l">Umsatz</span><span class="fx-f">Menge × Preis je Jahr</span></div>
+   <div class="fx-row"><span class="fx-l">Gewinn</span><span class="fx-f">Umsatz × Umsatzrendite je Jahr</span></div>
+   <div class="fx-row"><span class="fx-l">Gewinnanteil</span><span class="fx-f">Σ Gewinn über 5 Jahre ÷ Gewinn des Unternehmens im letzten Jahr</span><span class="fx-n">Skala: 0 kein Gewinn · 1 ≤ 3 % · 2 ≤ 5 % · 3 ≤ 20 % · 4 ≤ 30 % · 5 &gt; 30 %</span></div>
+   <div class="fx-row"><span class="fx-l">F&amp;E-Kosten</span><span class="fx-f">Σ (FTE × Jahreskosten je FTE) + Sachkosten je Jahr</span></div>
+   <div class="fx-row"><span class="fx-l">Kostenanteil</span><span class="fx-f">Σ F&amp;E-Kosten über 5 Jahre ÷ F&amp;E-Kosten des Unternehmens im letzten Jahr</span><span class="fx-n">Skala: 0 keine · 1 ≤ 10 % · 2 ≤ 20 % · 3 ≤ 50 % · 4 ≤ 100 % · 5 &gt; 100 %</span></div>
+  </div>
   <h3>Portfolio-Felder</h3>
   <div class="tablewrap"><table><thead><tr><th>Aufwand ↓ / Nutzen →</th><th>niedrig</th><th>mittel</th><th>hoch</th></tr></thead><tbody>
    ${[1,2,3].map(ca=>`<tr><td>${catName(ca)}</td>${[1,2,3].map(cn=>`<td>${esc(PF_LABELS[ca][cn][0])}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
